@@ -6,8 +6,9 @@ import androidx.lifecycle.ViewModel
 
 class DealViewModel : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is notifications Fragment"
+    private val text = MutableLiveData<String>().apply {
+        value = "This is deal Fragment"
     }
-    val text: LiveData<String> = _text
+
+    val fragmentName: LiveData<String> = text
 }

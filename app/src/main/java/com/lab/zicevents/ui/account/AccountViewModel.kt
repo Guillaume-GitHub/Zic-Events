@@ -1,13 +1,13 @@
-package com.lab.zicevents.ui.chat
+package com.lab.zicevents.ui.account
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class ChatViewModel : ViewModel() {
+class AccountViewModel : ViewModel() {
 
     private val text = MutableLiveData<String>().apply {
-        value = "This is chat Fragment"
+        value = "This is account Fragment"
     }
     val fragmentName: LiveData<String> = text
 }

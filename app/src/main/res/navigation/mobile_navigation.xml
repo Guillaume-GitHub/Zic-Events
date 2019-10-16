@@ -7,19 +7,31 @@
 
     <fragment
         android:id="@+id/bottom_navigation_deal"
-        android:name="com.lab.zicevents.ui.chat.ChatFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        android:name="com.lab.zicevents.ui.deal.DealFragment"
+        android:label="@string/title_deal"
+        tools:layout="@layout/fragment_deal" />
 
     <fragment
         android:id="@+id/bottom_navigation_event"
-        android:name="com.lab.zicevents.ui.profile.ProfileFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:name="com.lab.zicevents.ui.event.EventFragment"
+        android:label="@string/title_event"
+        tools:layout="@layout/fragment_event" />
 
     <fragment
         android:id="@+id/bottom_navigation_deal_management"
-        android:name="com.lab.zicevents.ui.deal.DealFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:name="com.lab.zicevents.ui.manager.DealManagerFragment"
+        android:label="@string/title_deal_management"
+        tools:layout="@layout/fragment_deal_manager" />
+
+    <fragment
+        android:id="@+id/bottom_navigation_chat"
+        android:name="com.lab.zicevents.ui.chat.ChatFragment"
+        android:label="@string/title_chat"
+        tools:layout="@layout/fragment_chat" />
+
+    <fragment
+        android:id="@+id/bottom_navigation_account"
+        android:name="com.lab.zicevents.ui.account.AccountFragment"
+        android:label="@string/title_account"
+        tools:layout="@layout/fragment_account" />
 </navigation>

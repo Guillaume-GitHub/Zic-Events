@@ -1,22 +1,22 @@
-package com.lab.zicevents.ui.event
+package com.lab.zicevents.ui.account
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-
+import androidx.lifecycle.ViewModelProviders
 import com.lab.zicevents.R
-import kotlinx.android.synthetic.main.fragment_event.*
+import kotlinx.android.synthetic.main.fragment_account.*
 
-class EventFragment : Fragment() {
+class AccountFragment : Fragment() {
 
-    private lateinit var eventViewModel: EventViewModel
+    private lateinit var accountViewModel: AccountViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_event, container, false)
+        return inflater.inflate(R.layout.fragment_account, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -26,13 +26,12 @@ class EventFragment : Fragment() {
     }
 
     private fun initViewModel(){
-        this.eventViewModel = ViewModelProviders.of(this).get(EventViewModel::class.java)
+       this.accountViewModel = ViewModelProviders.of(this).get(AccountViewModel::class.java)
     }
 
     private fun bindView(){
-        this.eventViewModel.fragmentName.observe(this, Observer {text ->
-            text_event.text = text
+        this.accountViewModel.fragmentName.observe(this, Observer { text ->
+            text_account.text = text
         })
     }
-
 }
