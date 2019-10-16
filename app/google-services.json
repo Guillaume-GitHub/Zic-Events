@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1092298002864",
+    "firebase_url": "https://zic-events.firebaseio.com",
+    "project_id": "zic-events",
+    "storage_bucket": "zic-events.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1092298002864:android:1663e87cfe1bde2b9b4675",
+        "android_client_info": {
+          "package_name": "com.lab.zicevents"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1092298002864-kqllv2qnr9ghnba40f8hu85qovp7qkl7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lab.zicevents",
+            "certificate_hash": "e58d0bea884c8f6c18d61c4c84ff3b8ae4f9103a"
+          }
+        },
+        {
+          "client_id": "1092298002864-ogu70t66cr0454ubs60lb1cqddf4lkc7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBphP1ioWyYcJY2_WM7iJGTeZTFhgVEe-M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1092298002864-ogu70t66cr0454ubs60lb1cqddf4lkc7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
