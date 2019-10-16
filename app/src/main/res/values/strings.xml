@@ -1,6 +1,11 @@
 <resources>
+
+    <!-- ***** BOTTOM NAVIGATION ***** -->
     <string name="app_name">Zic Events</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_deal">Annonces</string>
+    <string name="title_event">Evénements</string>
+    <string name="title_deal_management">Gestion</string>
+    <string name="title_chat">Messages</string>
+    <string name="title_account">Compte</string>
+
 </resources>
