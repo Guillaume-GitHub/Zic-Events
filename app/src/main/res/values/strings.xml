@@ -1,7 +1,13 @@
 <resources>
 
-    <!-- ***** BOTTOM NAVIGATION ***** -->
     <string name="app_name">Zic Events</string>
+
+    <!-- ***** LOGIN ***** -->
+    <string name="hint_password">Mot de passe</string>
+    <string name="hint_email">Adresse e-mail</string>
+    <string name="hint_sign_in">Connexion</string>
+
+    <!-- ***** BOTTOM NAVIGATION ***** -->
     <string name="title_deal">Annonces</string>
     <string name="title_event">Evénements</string>
     <string name="title_deal_management">Gestion</string>
