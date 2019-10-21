@@ -7,6 +7,12 @@
     <string name="hint_email">Adresse e-mail</string>
     <string name="hint_sign_in">Connexion</string>
 
+    <!-- ***** LOGIN ERROR MESSAGES ***** -->
+    <string name="invalid_email">Addresse email non valide</string>
+    <string name="invalid_password">Mode de passe  non valide</string>
+    <string name="signIn_fail">Echec de l\'authentification</string>
+    <string name="user_creation_fail">Erreur lors de la crétion du profil</string>
+
     <!-- ***** BOTTOM NAVIGATION ***** -->
     <string name="title_deal">Annonces</string>
     <string name="title_event">Evénements</string>

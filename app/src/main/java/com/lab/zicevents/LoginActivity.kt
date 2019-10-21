@@ -3,7 +3,10 @@ package com.lab.zicevents
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.firebase.auth.FirebaseAuth
@@ -25,19 +28,66 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onStart() {
         super.onStart()
-        //check if user is sign in
-        val currentUser = auth.currentUser
-        this.launchMainActivity(currentUser)
 
-        login.setOnClickListener(this)
+        //check if user is sign in
+        if (isUserAuth()) launchMainActivity()
+        else {
+            configureViewModel()
+            observeFormState()
+            // Add click listener to submit button
+            login.setOnClickListener(this)
+            //Trigger input username text changes
+            username.addTextChangedListener(object : TextWatcher{
+                override fun afterTextChanged(text: Editable?) {
+                    loginViewModel.loginDataChanged(email = text.toString(), password = "")
+                }
+                override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {}
+            })
+            //Trigger input password text changes
+            password.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(text: Editable?) {
+                    loginViewModel.loginDataChanged("", password = text.toString())
+                }
+                override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {}
+            })
+        }
+    }
+
+    /**
+     * Check if an user are already authenticated
+     *@return True = User already authenticated, False = No user authenticate
+     */
+    private fun isUserAuth(): Boolean{
+        return auth.currentUser != null
+    }
+
+    /**
+     * Observe form state and display errors messages if data are not valid
+     * Set submit button Enable / Disable
+     */
+    private fun observeFormState(){
+        loginViewModel.loginFormState.observe(this, Observer {
+            val loginState = it
+
+            login.isEnabled = loginState.isDataValid
+
+            if (loginState.usernameError != null) inputLayoutUsername.error = getString(loginState.usernameError)
+            else inputLayoutUsername.error = null
+
+            if (loginState.passwordError != null) inputLayoutPassword.error = getString(loginState.passwordError)
+            else inputLayoutPassword.error = null
+        })
     }
 
     /**
      * OnClick method Overriding
      */
     override fun onClick(view: View?) {
+        view?.clearFocus()
         when (view) {
-            login -> signInWithEmailAndPassword()
+            login -> signInWithEmailAndPassword(username.text.toString(), password.text.toString())
             else -> {}
         }
     }
@@ -47,31 +97,43 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
      * @Success : Finish LoginActivity and Start MainActivity
      * @Fail : Display error
      */
-    private fun signInWithEmailAndPassword() {
+    private fun signInWithEmailAndPassword(email: String, password: String) {
         showProgressBar(true) // Show ProgressBAr
 
-        loginViewModel.login(username.text.toString(), password.text.toString())
+        loginViewModel.signInWithEmailAndPassword(email, password)
             .observe(this, Observer {
                 if (it) finish() // Destroy LoginActivity TODO : Intent to MainActivity
 
                 //TODO : Fail case
                 showProgressBar(false) // Hide progressBar
+                Toast.makeText(this, R.string.signIn_fail,Toast.LENGTH_LONG).show()
             })
     }
 
+    /**
+     * Try to create user with his e-mail and password and Observe result
+     * @Success : Finish LoginActivity and Start MainActivity
+     * @Fail : Display error
+     */
+    private fun createUserWithEmailAndPassword(email: String, password: String) {
+        showProgressBar(true) // Show ProgressBAr
+
+        loginViewModel.createUserWithEmailAndPassword(email, password)
+            .observe(this, Observer {
+                if (it) finish() // Destroy LoginActivity TODO : Intent to MainActivity
+
+                //TODO : Fail case
+                showProgressBar(false) // Hide progressBar
+                Toast.makeText(this, R.string.user_creation_fail,Toast.LENGTH_LONG).show()
+            })
+    }
 
     /**
-     * Check current user object passed in param and start MainActivity.kt if non null
-     * @param currentUser is FirebaseUser object, must be null
+     * Start MainActivity and finish LoginActivity
      */
-    private fun launchMainActivity(currentUser: FirebaseUser?){
-        if (currentUser != null) {
-            startActivity(Intent(this, MainActivity::class.java))
-            this.finish()
-        }
-        else {
-            configureViewModel()
-        }
+    private fun launchMainActivity() {
+        startActivity(Intent(this, MainActivity::class.java))
+        this.finish()
     }
 
     /**
@@ -83,7 +145,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     /**
      * Show / Hide ProgressBar
-     * @param display true = Show, False = Hide
+     * @param display True = Show, False = Hide
      */
     private fun showProgressBar(display: Boolean){
         if (display){
