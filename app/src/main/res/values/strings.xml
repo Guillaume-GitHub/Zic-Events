@@ -6,6 +6,11 @@
     <string name="hint_password">Mot de passe</string>
     <string name="hint_email">Adresse e-mail</string>
     <string name="hint_sign_in">Connexion</string>
+    <string name="forgot_password_text">Mode de passe oublié ?</string>
+    <string name="alt_login_text">Connecte toi avec</string>
+    <string name="sign_up_text">Pas encore de compte ?</string>
+    <string name="sign_up"><u>S\' inscrire</u></string>
+
 
     <!-- ***** LOGIN ERROR MESSAGES ***** -->
     <string name="invalid_email">Addresse email non valide</string>
