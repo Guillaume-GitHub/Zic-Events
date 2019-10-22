@@ -20,4 +20,7 @@
     <string name="title_chat">Messages</string>
     <string name="title_account">Profil</string>
 
+    <!-- ***** LOGIN NAVIGATION ***** -->
+    <string name="title_signIn">Connexion</string>
+    <string name="title_signUp">Inscription</string>
 </resources>
