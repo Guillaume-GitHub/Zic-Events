@@ -12,6 +12,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -37,6 +39,8 @@ class LoginActivity : AppCompatActivity() {
         if (isUserAuth()) launchMainActivity()
         else {
             navController = findNavController(R.id.login_nav_host_fragment)
+            val appBarConfiguration = AppBarConfiguration(navController.graph)
+            login_toolbar.setupWithNavController(navController, appBarConfiguration)
         }
     }
 
@@ -55,4 +59,5 @@ class LoginActivity : AppCompatActivity() {
         startActivity(Intent(this, MainActivity::class.java))
         this.finish()
     }
+
 }

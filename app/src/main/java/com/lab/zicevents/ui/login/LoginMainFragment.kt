@@ -1,5 +1,6 @@
 package com.lab.zicevents.ui.login
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,6 +12,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
+import com.lab.zicevents.MainActivity
 
 import com.lab.zicevents.R
 import kotlinx.android.synthetic.main.fragment_login_main.*
@@ -31,6 +34,8 @@ class LoginMainFragment : Fragment(), View.OnClickListener {
         observeFormState()
         // Add click listener to submit button
         login.setOnClickListener(this)
+        // Add click listener to Sign Up text view
+        sign_up.setOnClickListener(this)
         //Trigger input username text changes
         username.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(text: Editable?) {
@@ -59,7 +64,7 @@ class LoginMainFragment : Fragment(), View.OnClickListener {
 
             login.isEnabled = loginState.isDataValid
 
-            if (loginState.usernameError != null) inputLayoutUsername.error = getString(loginState.usernameError)
+            if (loginState.emailError != null) inputLayoutUsername.error = getString(loginState.emailError)
             else inputLayoutUsername.error = null
 
             if (loginState.passwordError != null) inputLayoutPassword.error = getString(loginState.passwordError)
@@ -74,6 +79,7 @@ class LoginMainFragment : Fragment(), View.OnClickListener {
         view?.clearFocus()
         when (view) {
             login -> signInWithEmailAndPassword(username.text.toString(), password.text.toString())
+            sign_up -> findNavController().navigate(R.id.action_navigation_login_main_to_navigation_login_sign_up)
             else -> {}
         }
     }
@@ -88,29 +94,17 @@ class LoginMainFragment : Fragment(), View.OnClickListener {
 
         loginViewModel.signInWithEmailAndPassword(email, password)
             .observe(this, Observer {
-               // if (it) finish() // Destroy LoginActivity TODO : Intent to MainActivity
+                if (it) {
+                    startActivity(Intent(context, MainActivity::class.java))
+                    activity?.finish()
+                    // Destroy LoginActivity TODO : Intent to MainActivity
+                }
+                else{
+                    //TODO : Fail case
+                }
 
-                //TODO : Fail case
                 showProgressBar(false) // Hide progressBar
                 Toast.makeText(context, R.string.signIn_fail, Toast.LENGTH_LONG).show()
-            })
-    }
-
-    /**
-     * Try to create user with his e-mail and password and Observe result
-     * @Success : Finish LoginActivity and Start MainActivity
-     * @Fail : Display error
-     */
-    private fun createUserWithEmailAndPassword(email: String, password: String) {
-        showProgressBar(true) // Show ProgressBAr
-
-        loginViewModel.createUserWithEmailAndPassword(email, password)
-            .observe(this, Observer {
-               // if (it) finish() // Destroy LoginActivity TODO : Intent to MainActivity
-
-                //TODO : Fail case
-                showProgressBar(false) // Hide progressBar
-                Toast.makeText(context, R.string.user_creation_fail, Toast.LENGTH_LONG).show()
             })
     }
 

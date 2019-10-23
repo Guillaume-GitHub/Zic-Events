@@ -6,13 +6,17 @@
     <string name="hint_password">Mot de passe</string>
     <string name="hint_email">Adresse e-mail</string>
     <string name="hint_sign_in">Connexion</string>
+    <string name="hint_username">Nom d\' utilisateur</string>
     <string name="forgot_password_text">Mode de passe oublié ?</string>
     <string name="alt_login_text">Connecte toi avec</string>
     <string name="sign_up_text">Pas encore de compte ?</string>
     <string name="sign_up"><u>S\' inscrire</u></string>
-
+    <string name="title_signIn">Connexion</string>
+    <string name="title_signUp">Inscription</string>
+    <string name="create_account">Créer mon compte</string>
 
     <!-- ***** LOGIN ERROR MESSAGES ***** -->
+    <string name="invalid_username">Nom d\' utilisateur non valide</string>
     <string name="invalid_email">Addresse email non valide</string>
     <string name="invalid_password">Mode de passe  non valide</string>
     <string name="signIn_fail">Echec de l\'authentification</string>
@@ -25,7 +29,4 @@
     <string name="title_chat">Messages</string>
     <string name="title_account">Profil</string>
 
-    <!-- ***** LOGIN NAVIGATION ***** -->
-    <string name="title_signIn">Connexion</string>
-    <string name="title_signUp">Inscription</string>
 </resources>

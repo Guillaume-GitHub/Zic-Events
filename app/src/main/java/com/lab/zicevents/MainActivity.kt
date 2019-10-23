@@ -7,6 +7,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,7 +24,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.bottom_navigation_deal, R.id.bottom_navigation_event, R.id.bottom_navigation_deal_management , R.id.bottom_navigation_chat, R.id.bottom_navigation_account
             )
         )
-        setupActionBarWithNavController(navController, appBarConfiguration)
+        main_toolbar.setupWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
 }
