@@ -1,10 +1,9 @@
 package com.lab.zicevents.ui.login
 
-
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
+
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +11,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.findNavController
-import com.lab.zicevents.LoginActivity
 
 import com.lab.zicevents.R
 import kotlinx.android.synthetic.main.fragment_login_main.*
@@ -23,7 +20,6 @@ class LoginMainFragment : Fragment(), View.OnClickListener {
     private lateinit var loginViewModel: LoginViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        Log.d("TAG", "NEW LOGIN FRAGMENT")
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_login_main, container, false)
     }
