@@ -4,6 +4,7 @@ import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.lab.zicevents.R
 import com.lab.zicevents.data.login.LoginRepository
 
@@ -12,12 +13,21 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel() 
     private val loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = loginForm
 
+
     /**
-     * Send email and password to the repository to signIn user with email and password (async task)
+     * Send email and password to LoginRepository to signIn user with email and password (async task)
      * @return LiveData< Boolean> Observable boolean
      */
     fun signInWithEmailAndPassword(email: String, password: String): LiveData< Boolean> {
         return  loginRepository.signInWithEmailAndPassword(email, password)
+    }
+
+    /**
+     * Send email and password to LoginRepository to signIn user with his Google Account(async task)
+     * @return LiveData< Boolean> Observable boolean
+     */
+    fun signInWithGoogle(account: GoogleSignInAccount): LiveData< Boolean> {
+        return  loginRepository.signInWithGoogle(account)
     }
 
     /**

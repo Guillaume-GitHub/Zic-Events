@@ -1,6 +1,7 @@
 package com.lab.zicevents.data.login
 
 import androidx.lifecycle.LiveData
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 
 class LoginRepository(private val loginDataSource: LoginDataSource) {
 
@@ -16,5 +17,12 @@ class LoginRepository(private val loginDataSource: LoginDataSource) {
      */
     fun createUserWithEmailAndPassword(email: String, password: String): LiveData<Boolean> {
         return  loginDataSource.createUserWithEmailAndPassword(email, password)
+    }
+
+    /**
+     * @return LiveData<Boolean> that can be observe to trigger success / fail Google signIn
+     */
+    fun signInWithGoogle(account: GoogleSignInAccount): LiveData<Boolean> {
+        return loginDataSource.signInhWithGoogle(account)
     }
 }
