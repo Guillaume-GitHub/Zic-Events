@@ -6,18 +6,29 @@
     app:startDestination="@id/navigation_login_main">
 
     <fragment
-        android:id="@+id/navigation_login_main"
-        android:name="com.lab.zicevents.ui.login.LoginMainFragment"
-        tools:layout="@layout/fragment_login_main" >
-        <action
-            android:id="@+id/action_navigation_login_main_to_navigation_login_sign_up"
-            app:destination="@id/navigation_login_sign_up"
-            app:popUpTo="@+id/navigation_login_main" />
-    </fragment>
+        android:id="@+id/navigation_login_sign_in"
+        android:name="com.lab.zicevents.ui.login.SignInFragment"
+        tools:layout="@layout/fragment_sign_in" />
 
     <fragment
         android:id="@+id/navigation_login_sign_up"
         android:name="com.lab.zicevents.ui.login.SignUpFragment"
         tools:layout="@layout/fragment_sign_up"/>
+
+    <fragment
+        android:id="@+id/navigation_login_main"
+        android:name="com.lab.zicevents.ui.login.LoginMainFragment"
+        tools:layout="@layout/fragment_login_main">
+
+        <action
+            android:id="@+id/action_navigation_login_main_to_navigation_login_sign_up"
+            app:destination="@id/navigation_login_sign_up"
+            app:popUpTo="@+id/navigation_login_sign_in" />
+        <action
+            android:id="@+id/action_navigation_login_main_to_navigation_login_sign_in"
+            app:destination="@id/navigation_login_sign_in"
+            app:popUpTo="@+id/navigation_login_sign_in" />
+
+    </fragment>
 
 </navigation>

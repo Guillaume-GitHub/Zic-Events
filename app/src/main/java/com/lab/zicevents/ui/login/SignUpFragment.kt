@@ -12,10 +12,10 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 
 import com.lab.zicevents.R
-import kotlinx.android.synthetic.main.fragment_login_main.*
-import kotlinx.android.synthetic.main.fragment_login_main.loading
-import kotlinx.android.synthetic.main.fragment_login_main.password
-import kotlinx.android.synthetic.main.fragment_login_main.username
+import kotlinx.android.synthetic.main.fragment_sign_in.*
+import kotlinx.android.synthetic.main.fragment_sign_in.loading
+import kotlinx.android.synthetic.main.fragment_sign_in.password
+import kotlinx.android.synthetic.main.fragment_sign_in.username
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 
 /**
