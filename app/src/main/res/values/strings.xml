@@ -29,4 +29,8 @@
     <string name="title_chat">Messages</string>
     <string name="title_account">Profil</string>
 
+    <!-- ***** FACEBOOK ***** -->
+    <string name="facebook_app_id">572815233259134</string>
+    <string name="fb_login_protocol_scheme">fb572815233259134</string>
+
 </resources>

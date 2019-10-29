@@ -3,9 +3,9 @@ package com.lab.zicevents.data.login
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.facebook.AccessToken
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.*
 
 class LoginDataSource {
 
@@ -24,16 +24,17 @@ class LoginDataSource {
     fun signInWithEmailAndPassword(email: String, password: String): LiveData<Boolean> {
 
         val loginSuccessful = MutableLiveData<Boolean>()
+        val credential = EmailAuthProvider.getCredential(email, password)
 
-        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+        auth.signInWithCredential(credential).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 // Sign in success, update UI with the signed-in user's information
-                Log.d(TAG," signInWithEmail:success")
+                Log.d(TAG, " signInWithCredential:success")
                 loginSuccessful.value = true
 
             } else {
                 // If sign in fails, display a message to the user.
-                Log.w(TAG," signInWithEmail:failure", task.exception)
+                Log.w(TAG, "signInWithCredential:failure", task.exception)
                 loginSuccessful.value = false
             }
         }
@@ -94,4 +95,28 @@ class LoginDataSource {
         return  googleSignInSuccess
     }
 
+    /**
+     * Try to signIn user with a facebook account
+     * @param token AccessToken
+     * @return LiveData<Boolean>
+     */
+    fun signInWithFacebook(token: AccessToken): LiveData<Boolean> {
+        Log.d(TAG, "facebookToken : $token")
+
+        val facebookSignInSuccess = MutableLiveData<Boolean>()
+        val credential = FacebookAuthProvider.getCredential(token.token)
+        auth.signInWithCredential(credential).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithCredential:success")
+                    facebookSignInSuccess.value = true
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    facebookSignInSuccess.value = false
+                }
+            }
+
+        return facebookSignInSuccess
+    }
 }

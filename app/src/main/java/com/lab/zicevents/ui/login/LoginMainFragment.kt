@@ -14,10 +14,18 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import com.facebook.*
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.EmailAuthCredential
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseAuth
 import com.lab.zicevents.MainActivity
 
 import com.lab.zicevents.R
@@ -25,6 +33,7 @@ import kotlinx.android.synthetic.main.fragment_login_main.*
 
 class LoginMainFragment : Fragment(), View.OnClickListener {
 
+    private lateinit var callbackManager: CallbackManager
     private lateinit var loginViewModel: LoginViewModel
     // Configure Google Sign In
     private lateinit var gso : GoogleSignInOptions
@@ -50,6 +59,7 @@ class LoginMainFragment : Fragment(), View.OnClickListener {
         sign_up.setOnClickListener(this)
 
         google_login.setOnClickListener(this)
+        facebook_login.setOnClickListener(this)
         //Trigger input username text changes
         username.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(text: Editable?) {
@@ -95,6 +105,7 @@ class LoginMainFragment : Fragment(), View.OnClickListener {
             login -> signInWithEmailAndPassword(username.text.toString(), password.text.toString())
             sign_up -> findNavController().navigate(R.id.action_navigation_login_main_to_navigation_login_sign_up)
             google_login -> startActivityForResult(GoogleSignIn.getClient(context!!, gso).signInIntent, RC_GOOGLE_SIGN_IN)
+            facebook_login -> startFacebookAuthentication()
             else -> {}
         }
     }
@@ -144,7 +155,6 @@ class LoginMainFragment : Fragment(), View.OnClickListener {
             })
     }
 
-    
     /**
      *  Instantiate a LoginViewModel class from LoginViewModelFactory
      */
@@ -169,6 +179,7 @@ class LoginMainFragment : Fragment(), View.OnClickListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_GOOGLE_SIGN_IN) {
             try {
@@ -183,5 +194,61 @@ class LoginMainFragment : Fragment(), View.OnClickListener {
                 // ...
             }
         }
+
+        else {
+            // Result Callback Facebook SignIn
+            callbackManager.onActivityResult(requestCode, resultCode, data)
+        }
     }
+
+    /**
+     *  Register Facebook login callback and observe result
+     */
+    private fun startFacebookAuthentication() {
+        callbackManager = CallbackManager.Factory.create()
+
+        val lm = LoginManager.getInstance()
+
+        //Observe result
+        lm.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+            override fun onSuccess(result: LoginResult?) {
+                if (result?.accessToken != null) firebaseSignInWithFacebook(result.accessToken)
+            }
+
+            override fun onCancel() {
+                //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onError(error: FacebookException?) {
+                //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+        })
+
+        // Start Facebook connection view
+        lm.logIn(this, listOf("email","public_profile"))
+    }
+
+
+    /**
+     * Try to sign in user with his Facebook token and Observe result
+     * @Success : Finish LoginActivity and Start MainActivity
+     * @Fail : Display error
+    */
+    fun firebaseSignInWithFacebook(token: AccessToken){
+        showProgressBar(true) // Show ProgressBAr
+
+        loginViewModel.signInWithFacebook(token)
+            .observe(this, Observer {
+                if (it) {
+                    startActivity(Intent(context, MainActivity::class.java))
+                    activity?.finish()
+                }
+                else {
+                    Toast.makeText(context, R.string.signIn_fail, Toast.LENGTH_LONG).show()
+                }
+
+                showProgressBar(false) // Hide progressBar
+            })
+    }
+
 }

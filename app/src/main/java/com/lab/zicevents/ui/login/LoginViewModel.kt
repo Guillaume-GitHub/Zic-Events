@@ -1,9 +1,14 @@
 package com.lab.zicevents.ui.login
 
 import android.util.Patterns
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import com.facebook.AccessToken
+import com.facebook.CallbackManager
+import com.facebook.login.LoginManager
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.lab.zicevents.R
 import com.lab.zicevents.data.login.LoginRepository
@@ -12,7 +17,6 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel() 
 
     private val loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = loginForm
-
 
     /**
      * Send email and password to LoginRepository to signIn user with email and password (async task)
@@ -26,8 +30,12 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel() 
      * Send email and password to LoginRepository to signIn user with his Google Account(async task)
      * @return LiveData< Boolean> Observable boolean
      */
-    fun signInWithGoogle(account: GoogleSignInAccount): LiveData< Boolean> {
+    fun signInWithGoogle(account: GoogleSignInAccount): LiveData<Boolean> {
         return  loginRepository.signInWithGoogle(account)
+    }
+
+    fun signInWithFacebook(token: AccessToken): LiveData<Boolean> {
+        return  loginRepository.signInWithFacebook(token)
     }
 
     /**
@@ -74,7 +82,7 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel() 
      */
     private fun isPasswordValid(password: String): Boolean{
         //TODO: Split regex to trigger specific error
-        return password.matches(Regex("^.*(?=.{8,})(?=..*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$"))
+        return password.matches(Regex("^.*(?=.{8,})(?=..*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_]).*$"))
     }
 
 }
