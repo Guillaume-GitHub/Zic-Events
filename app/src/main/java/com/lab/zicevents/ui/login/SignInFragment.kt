@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.findNavController
 import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
@@ -57,15 +56,16 @@ class SignInFragment : Fragment(), View.OnClickListener {
         //Trigger input username text changes
         username.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(text: Editable?) {
-                loginViewModel.loginDataChanged(email = text.toString(), password = "")
+                loginViewModel.signInFormDataChanged(email = text.toString(), password = "")
             }
             override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+
         //Trigger input password text changes
         password.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(text: Editable?) {
-                loginViewModel.loginDataChanged("", password = text.toString())
+                loginViewModel.signInFormDataChanged(email = "", password = password.text.toString())
             }
             override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {}

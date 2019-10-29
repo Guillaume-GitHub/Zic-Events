@@ -51,11 +51,28 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel() 
      * @param email email input text
      * @param password password input text
      */
-    fun loginDataChanged(email: String, password: String){
+    fun signUpFormDataChanged(email: String, password: String){
         if (!isValidEmail(email)) {
             loginForm.value = LoginFormState(emailError = R.string.invalid_email)
         }
         else if (!isPasswordValid(password)) {
+            loginForm.value = LoginFormState(passwordError = R.string.invalid_password)
+        }
+        else {
+            loginForm.value = LoginFormState(isDataValid = true)
+        }
+    }
+
+    /**
+     * Change loginForm LiveData value
+     * @param email email input text
+     * @param password password input text
+     */
+    fun signInFormDataChanged(email: String, password: String){
+        if (!isValidEmail(email)) {
+            loginForm.value = LoginFormState(emailError = R.string.invalid_email)
+        }
+        else if (password.isBlank()) {
             loginForm.value = LoginFormState(passwordError = R.string.invalid_password)
         }
         else {

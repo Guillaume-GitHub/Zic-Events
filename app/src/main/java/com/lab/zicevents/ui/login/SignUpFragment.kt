@@ -9,13 +9,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.findNavController
 
 import com.lab.zicevents.R
-import kotlinx.android.synthetic.main.fragment_sign_in.*
-import kotlinx.android.synthetic.main.fragment_sign_in.loading
-import kotlinx.android.synthetic.main.fragment_sign_in.password
-import kotlinx.android.synthetic.main.fragment_sign_in.username
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 
 /**
@@ -41,7 +36,7 @@ class SignUpFragment : Fragment(), View.OnClickListener {
         //Trigger input email text changes
         sign_up_fragment_email.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(text: Editable?) {
-                loginViewModel.loginDataChanged(email = text.toString(), password = "")
+                loginViewModel.signUpFormDataChanged(email = text.toString(), password = "")
             }
             override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -49,7 +44,7 @@ class SignUpFragment : Fragment(), View.OnClickListener {
         //Trigger input password text changes
         sign_up_fragment_password.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(text: Editable?) {
-                loginViewModel.loginDataChanged("", password = text.toString())
+                loginViewModel.signUpFormDataChanged("", password = text.toString())
             }
             override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {}
