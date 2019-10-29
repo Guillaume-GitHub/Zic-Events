@@ -138,25 +138,25 @@
             android:layout_height="46dp"
             android:layout_margin="4dp"
             android:background="@drawable/ic_icon_google_circle"/>
-
+<!--
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/sign_up_fragment_twitter_login"
             android:layout_width="46dp"
             android:layout_height="46dp"
             android:layout_margin="4dp"
             android:background="@drawable/ic_icon_twitter_circle"/>
-
+-->
     </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/sign_up_fragment_loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/sign_up_fragment_input_layout_password"
-        app:layout_constraintBottom_toTopOf="@id/sign_up_fragment_login"
-        app:layout_constraintEnd_toEndOf="@id/sign_up_fragment_input_layout_password"
-        app:layout_constraintStart_toStartOf="@id/sign_up_fragment_input_layout_password"/>
+        <ProgressBar
+            android:id="@+id/sign_up_fragment_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/sign_up_fragment_input_layout_password"
+            app:layout_constraintBottom_toTopOf="@id/sign_up_fragment_login"
+            app:layout_constraintEnd_toEndOf="@id/sign_up_fragment_input_layout_password"
+            app:layout_constraintStart_toStartOf="@id/sign_up_fragment_input_layout_password"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

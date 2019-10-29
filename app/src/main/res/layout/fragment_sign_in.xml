@@ -126,14 +126,14 @@
             android:layout_height="46dp"
             android:layout_margin="4dp"
             android:background="@drawable/ic_icon_google_circle"/>
-
+<!--
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/twitter_login"
             android:layout_width="46dp"
             android:layout_height="46dp"
             android:layout_margin="4dp"
             android:background="@drawable/ic_icon_twitter_circle"/>
-
+-->
     </LinearLayout>
 
     <ProgressBar

@@ -47,6 +47,7 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel() 
     }
 
     /**
+     * From data validation witch correct formatted email address and complex password
      * Change loginForm LiveData value
      * @param email email input text
      * @param password password input text
@@ -64,6 +65,7 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel() 
     }
 
     /**
+     * From data validation witch correct formatted email address and not blank password
      * Change loginForm LiveData value
      * @param email email input text
      * @param password password input text
