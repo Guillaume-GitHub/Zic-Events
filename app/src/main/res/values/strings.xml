@@ -17,13 +17,14 @@
 
     <!-- ***** LOGIN ERROR MESSAGES ***** -->
     <string name="invalid_username">Nom d\' utilisateur non valide</string>
-    <string name="invalid_email">Addresse email non valide</string>
-    <string name="invalid_password">Mode de passe  non valide</string>
+    <string name="invalid_email">Addresse email invalide</string>
+    <string name="invalid_password">Mode de passe invalide</string>
     <string name="sign_in_fail">Echec de l\'authentification</string>
     <string name="sign_in_canceled">Authentification annulée</string>
     <string name="email_already_used">Cette adresse est déjà utilisée</string>
     <string name="email_used_by_other_provider">Ce compte utilise un autre mode de connexion</string>
     <string name="user_disable">Ce compte est désactivé</string>
+    <string name="invalid_user_password">Adresse email ou mot de passe invalide</string>
 
 
     <!-- ***** BOTTOM NAVIGATION ***** -->

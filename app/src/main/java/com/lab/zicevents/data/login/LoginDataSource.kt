@@ -28,27 +28,15 @@ class LoginDataSource {
      * @param password input password string
      * @return LiveData<Boolean>
      */
-    fun createUserWithEmailAndPassword(email: String, password: String) : LiveData<Boolean>{
-        val createSuccessful = MutableLiveData<Boolean>()
-        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, " createUserWithEmail:success")
-                    createSuccessful.value = true
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, " createUserWithEmail:failure", task.exception)
-                    createSuccessful.value = true
-                }
-            }
-
-        return createSuccessful
+    fun createUserWithEmailAndPassword(email: String, password: String) : Task<AuthResult> {
+        Log.d(TAG, "Create account for : $email")
+        return auth.createUserWithEmailAndPassword(email, password)
     }
 
     /**
      * Try to signIn user with a auth credential
      * @param credential AuthCredential
-     * @return LiveData<Boolean>//todo gfh
+     * @return Firebase Task<AuthResult>
      */
    fun signInWithCredential(credential: AuthCredential): Task<AuthResult> {
         Log.d(TAG, "Sign In with : ${credential.provider}")

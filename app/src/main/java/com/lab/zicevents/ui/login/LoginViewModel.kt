@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuthException
 import com.lab.zicevents.R
 import com.lab.zicevents.data.login.LoginRepository
@@ -23,46 +24,66 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel() 
     val loginUserState: LiveData<LoginUserState> = loginUser
 
     /**
-     * Launch Firebase sign in coroutine and pass the result to LiveData<LoginUserState> object
+     * Launch Firebase sign in coroutine and get the authentication result as Result<AuthResult>
+     * Pass Result to loginUserStateChanged method
      * @param credential AuthCredential
      */
     fun signInWithCredential(credential: AuthCredential) {
         GlobalScope.launch(Dispatchers.Main) {
-            when (val result = loginRepository.signInWithFacebook(credential)) {
-                is Result.Success -> {
-                    val data = result.data
-                    val user = data.user
-                    loginUser.value = LoginUserState(user)
-                }
-                is Result.Error -> {
-                    Log.e(TAG,"Sign In error : " , result.exception)
-                    val exp = result.exception as FirebaseAuthException
-                    when(exp.errorCode){
-                        "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL" -> {
-                            loginUser.value = LoginUserState(error = R.string.email_used_by_other_provider)
-                        }
-                        "ERROR_USER_DISABLED" -> {
-                            loginUser.value = LoginUserState(error = R.string.user_disable)
-                        }
-                        "ERROR_EMAIL_ALREADY_IN_USE" -> {
-                            loginUser.value = LoginUserState(error = R.string.email_already_used)
-                        }
-                        else -> {
-                            loginUser.value = LoginUserState(error = R.string.sign_in_fail)
-                        }
-                    }
-                }
-                is Result.Canceled -> loginUser.value = LoginUserState(error = R.string.sign_in_canceled)
-            }
+            val result = loginRepository.signInWithCredential(credential)
+            loginUserStateChanged(result)
         }
     }
 
     /**
-     * Send email and password to the repository to create new user with email and password (async task)
-     * @return LiveData< Boolean> Observable boolean
+     * Launch new user creation coroutine and get the authentication result as Result<AuthResult>
+     * Pass Result to loginUserStateChanged method
+     * @param email String containing email address
+     * @param password String containing password
      */
-    fun createUserWithEmailAndPassword(email: String, password: String): LiveData< Boolean> {
-        return  loginRepository.createUserWithEmailAndPassword(email, password)
+    fun createUserWithEmailAndPassword(email: String, password: String) {
+        GlobalScope.launch(Dispatchers.Main) {
+            val result = loginRepository.createUserWithEmailAndPassword(email, password)
+            loginUserStateChanged(result)
+        }
+    }
+
+    /**
+     * Manage result receive from Firebase auth coroutine
+     * transform the result to liveDate<LoginUserState>
+     * @param result Result<AuthResult> containing user auth information's
+     */
+    private fun loginUserStateChanged(result: Result<AuthResult>){
+        when (result) {
+            is Result.Success -> {
+                val data = result.data
+                val user = data.user
+                loginUser.value = LoginUserState(user)
+            }
+            is Result.Error -> {
+                Log.e(TAG,"Sign In error : " , result.exception)
+                val exp = result.exception as FirebaseAuthException
+                when(exp.errorCode){
+                    "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL" -> {
+                        loginUser.value = LoginUserState(error = R.string.email_used_by_other_provider)
+                    }
+                    "ERROR_USER_DISABLED" -> {
+                        loginUser.value = LoginUserState(error = R.string.user_disable)
+                    }
+                    "ERROR_EMAIL_ALREADY_IN_USE" -> {
+                        loginUser.value = LoginUserState(error = R.string.email_already_used)
+                    }
+                    "ERROR_WRONG_PASSWORD","ERROR_USER_NOT_FOUND" -> {
+                        loginUser.value = LoginUserState(error = R.string.invalid_user_password)
+                    }
+                    else -> {
+                        loginUser.value = LoginUserState(error = R.string.sign_in_fail)
+                    }
+                }
+            }
+            is Result.Canceled -> loginUser.value = LoginUserState(error = R.string.sign_in_canceled)
+        }
+
     }
 
     /**

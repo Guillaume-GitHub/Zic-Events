@@ -1,7 +1,5 @@
 package com.lab.zicevents.data.login
 
-import androidx.lifecycle.LiveData
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
@@ -17,8 +15,12 @@ class LoginRepository(private val loginDataSource: LoginDataSource) {
     /**
      * @return LiveData<Boolean> that can be observe to trigger success / fail user creation
      */
-    fun createUserWithEmailAndPassword(email: String, password: String): LiveData<Boolean> {
-        return loginDataSource.createUserWithEmailAndPassword(email, password)
+    suspend fun createUserWithEmailAndPassword(email: String, password: String): Result<AuthResult> {
+        return when(val result = loginDataSource.createUserWithEmailAndPassword(email, password).await()){
+            is Result.Success -> Result.Success(result.data)
+            is Result.Error -> Result.Error(result.exception)
+            is Result.Canceled -> Result.Canceled(result.exception)
+        }
     }
 
     /**
@@ -26,17 +28,11 @@ class LoginRepository(private val loginDataSource: LoginDataSource) {
      * @param credential AuthCredential
      * @return Result<AuthResult> contain the result of Firebase sign in Task
      */
-    suspend fun signInWithFacebook(credential: AuthCredential): Result<AuthResult> {
+    suspend fun signInWithCredential(credential: AuthCredential): Result<AuthResult> {
         return when (val result = loginDataSource.signInWithCredential(credential).await()) {
-            is Result.Success -> {
-                Result.Success(result.data)
-            }
-            is Result.Error -> {
-                Result.Error(result.exception)
-            }
-            is Result.Canceled -> {
-                Result.Canceled(result.exception)
-            }
+            is Result.Success -> Result.Success(result.data)
+            is Result.Error -> Result.Error(result.exception)
+            is Result.Canceled -> Result.Canceled(result.exception)
         }
     }
 

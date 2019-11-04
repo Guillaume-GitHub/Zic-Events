@@ -30,6 +30,7 @@ class SignUpFragment : Fragment(), View.OnClickListener{
 
         configureViewModel()
         observeFormState()
+        observeLoginUserSate()
 
         // Add click to submit button
         sign_up_fragment_login.setOnClickListener(this)
@@ -92,22 +93,33 @@ class SignUpFragment : Fragment(), View.OnClickListener{
     }
 
     /**
+     * Observe user login result state
+     * if user is null, display error
+     * else show user profile
+     */
+    private fun observeLoginUserSate(){
+        loginViewModel.loginUserState.observe(this, Observer {result ->
+            if (result.user != null) {
+                showProgressBar(false) // Hide ProgressBAr
+                Toast.makeText(context, "User ID = ${result.user.uid}", Toast.LENGTH_LONG).show()
+            } else {
+                showProgressBar(false) // Hide ProgressBAr
+                val error = result.error
+                if (error != null) Toast.makeText(context, getText(result.error), Toast.LENGTH_LONG).show()
+            }
+        })
+    }
+
+    /**
      * Try to create user with his e-mail and password and Observe result
      * @Success : Finish LoginActivity and Start MainActivity
      * @Fail : Display error
      */
     private fun createUserWithEmailAndPassword(email: String, password: String) {
         showProgressBar(true) // Show ProgressBAr
-
         loginViewModel.createUserWithEmailAndPassword(email, password)
-            .observe(this, Observer {
-                // if (it) finish() // Destroy LoginActivity TODO : Intent to MainActivity
-
-                //TODO : Fail case
-                showProgressBar(false) // Hide progressBar
-                Toast.makeText(context, R.string.email_already_used, Toast.LENGTH_LONG).show()
-            })
     }
+
 
     /**
      * Show / Hide ProgressBar
