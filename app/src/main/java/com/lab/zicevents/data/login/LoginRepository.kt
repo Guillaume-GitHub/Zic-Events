@@ -1,38 +1,62 @@
 package com.lab.zicevents.data.login
 
 import androidx.lifecycle.LiveData
-import com.facebook.AccessToken
-import com.facebook.CallbackManager
-import com.facebook.login.LoginManager
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.AuthResult
+import com.lab.zicevents.data.Result
+import kotlinx.coroutines.*
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
+@Suppress("UNCHECKED_CAST")
 class LoginRepository(private val loginDataSource: LoginDataSource) {
-
-    /**
-     * @return LiveData<Boolean> that can be observe to trigger success / fail signIn
-     */
-    fun signInWithEmailAndPassword(email: String, password: String): LiveData<Boolean> {
-        return  loginDataSource.signInWithEmailAndPassword(email, password)
-    }
 
     /**
      * @return LiveData<Boolean> that can be observe to trigger success / fail user creation
      */
     fun createUserWithEmailAndPassword(email: String, password: String): LiveData<Boolean> {
-        return  loginDataSource.createUserWithEmailAndPassword(email, password)
+        return loginDataSource.createUserWithEmailAndPassword(email, password)
     }
 
     /**
-     * @return LiveData<Boolean> that can be observe to trigger success / fail Google signIn
+     * Await Result of Firebase Task<> and return Result<AuthResult>
+     * @param credential AuthCredential
+     * @return Result<AuthResult> contain the result of Firebase sign in Task
      */
-    fun signInWithGoogle(account: GoogleSignInAccount): LiveData<Boolean> {
-        return loginDataSource.signInhWithGoogle(account)
+    suspend fun signInWithFacebook(credential: AuthCredential): Result<AuthResult> {
+        return when (val result = loginDataSource.signInWithCredential(credential).await()) {
+            is Result.Success -> {
+                Result.Success(result.data)
+            }
+            is Result.Error -> {
+                Result.Error(result.exception)
+            }
+            is Result.Canceled -> {
+                Result.Canceled(result.exception)
+            }
+        }
     }
 
+
     /**
-     * @return LiveData<Boolean> that can be observe to trigger success / fail facebook signIn
+     * Task extension to transform Firebase Task<> to Kotlin suspendCoroutine
      */
-    fun signInWithFacebook(token: AccessToken): LiveData<Boolean> {
-        return loginDataSource.signInWithFacebook(token)
+    suspend fun <T> Task<T>.await(): Result<T> = suspendCoroutine { continuation ->
+        addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val e = exception
+                if (e == null) {
+                    if (isCanceled) continuation.resumeWithException(CancellationException("Task $this was cancelled normally."))
+                    else continuation.resume(Result.Success(result as T))
+                } else {
+                    continuation.resume(Result.Error(e))
+                }
+            } else{
+                continuation.resume(Result.Error(exception!!))
+            }
+        }
     }
 }

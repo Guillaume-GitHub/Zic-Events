@@ -5,7 +5,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.facebook.AccessToken
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.suspendCancellableCoroutine
+import java.lang.Exception
+import kotlin.coroutines.coroutineContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class LoginDataSource {
 
@@ -14,34 +22,6 @@ class LoginDataSource {
     // Firebase Auth instance
     private val auth = FirebaseAuth.getInstance()
 
-
-    /**
-     * Try to authenticate user with his email and password
-     * @param email input email string
-     * @param password input password string
-     * @return LiveData<Boolean>
-     */
-    fun signInWithEmailAndPassword(email: String, password: String): LiveData<Boolean> {
-
-        val loginSuccessful = MutableLiveData<Boolean>()
-        val credential = EmailAuthProvider.getCredential(email, password)
-
-        auth.signInWithCredential(credential).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                // Sign in success, update UI with the signed-in user's information
-                Log.d(TAG, " signInWithCredential:success")
-                loginSuccessful.value = true
-
-            } else {
-                // If sign in fails, display a message to the user.
-                Log.w(TAG, "signInWithCredential:failure", task.exception)
-                loginSuccessful.value = false
-            }
-        }
-
-        return loginSuccessful
-    }
-
     /**
      * Try to create user with his email and password
      * @param email input email string
@@ -49,9 +29,7 @@ class LoginDataSource {
      * @return LiveData<Boolean>
      */
     fun createUserWithEmailAndPassword(email: String, password: String) : LiveData<Boolean>{
-
         val createSuccessful = MutableLiveData<Boolean>()
-
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
@@ -68,55 +46,12 @@ class LoginDataSource {
     }
 
     /**
-     * Try to signIn user with a google account
-     * @param account GoogleSinInAccount
-     * @return LiveData<Boolean>
+     * Try to signIn user with a auth credential
+     * @param credential AuthCredential
+     * @return LiveData<Boolean>//todo gfh
      */
-    fun signInhWithGoogle(account: GoogleSignInAccount): LiveData<Boolean> {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + account.id!!)
-
-        val googleSignInSuccess = MutableLiveData<Boolean>()
-
-        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-        auth.signInWithCredential(credential).addOnCompleteListener { task ->
-
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, " signInWithCredential:success")
-                    googleSignInSuccess.value = true
-                }
-                else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    googleSignInSuccess.value = false
-                }
-            }
-
-        return  googleSignInSuccess
-    }
-
-    /**
-     * Try to signIn user with a facebook account
-     * @param token AccessToken
-     * @return LiveData<Boolean>
-     */
-    fun signInWithFacebook(token: AccessToken): LiveData<Boolean> {
-        Log.d(TAG, "facebookToken : $token")
-
-        val facebookSignInSuccess = MutableLiveData<Boolean>()
-        val credential = FacebookAuthProvider.getCredential(token.token)
-        auth.signInWithCredential(credential).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithCredential:success")
-                    facebookSignInSuccess.value = true
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    facebookSignInSuccess.value = false
-                }
-            }
-
-        return facebookSignInSuccess
+   fun signInWithCredential(credential: AuthCredential): Task<AuthResult> {
+        Log.d(TAG, "Sign In with : ${credential.provider}")
+        return auth.signInWithCredential(credential)
     }
 }

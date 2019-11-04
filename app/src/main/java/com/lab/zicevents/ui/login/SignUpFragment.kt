@@ -14,9 +14,10 @@ import com.lab.zicevents.R
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 
 /**
- * A simple [Fragment] subclass.
+ * Sign Up [Fragment] class.
  */
-class SignUpFragment : Fragment(), View.OnClickListener {
+class SignUpFragment : Fragment(), View.OnClickListener{
+
     private lateinit var loginViewModel: LoginViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -49,7 +50,6 @@ class SignUpFragment : Fragment(), View.OnClickListener {
             override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {}
         })
-
     }
 
     /**
@@ -105,7 +105,7 @@ class SignUpFragment : Fragment(), View.OnClickListener {
 
                 //TODO : Fail case
                 showProgressBar(false) // Hide progressBar
-                Toast.makeText(context, R.string.user_creation_fail, Toast.LENGTH_LONG).show()
+                Toast.makeText(context, R.string.email_already_used, Toast.LENGTH_LONG).show()
             })
     }
 
