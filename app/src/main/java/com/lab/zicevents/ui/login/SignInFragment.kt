@@ -5,11 +5,9 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.*
 
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -20,10 +18,7 @@ import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FacebookAuthProvider
-import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.*
 
 import com.lab.zicevents.R
 import kotlinx.android.synthetic.main.fragment_sign_in.*
@@ -109,7 +104,7 @@ class SignInFragment : Fragment(), View.OnClickListener {
         loginViewModel.loginUserState.observe(this, Observer {result ->
             if (result.user != null) {
                 showProgressBar(false) // Hide ProgressBAr
-                Toast.makeText(context, "User ID = ${result.user.uid}", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "User ID = ${result.user.providerId}", Toast.LENGTH_LONG).show()
             } else {
                 showProgressBar(false) // Hide ProgressBAr
                 val error = result.error

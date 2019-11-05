@@ -12,6 +12,7 @@ import com.lab.zicevents.R
 import com.lab.zicevents.data.login.LoginRepository
 import com.lab.zicevents.data.Result
 import kotlinx.coroutines.*
+import java.lang.ClassCastException
 
 class LoginViewModel(private val loginRepository: LoginRepository): ViewModel() {
     
@@ -61,24 +62,30 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel() 
                 loginUser.value = LoginUserState(user)
             }
             is Result.Error -> {
-                Log.e(TAG,"Sign In error : " , result.exception)
-                val exp = result.exception as FirebaseAuthException
-                when(exp.errorCode){
-                    "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL" -> {
-                        loginUser.value = LoginUserState(error = R.string.email_used_by_other_provider)
+                Log.e(TAG, "Sign In error : ", result.exception)
+                try {
+                    val exp = result.exception as FirebaseAuthException
+                    when (exp.errorCode) {
+                        "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL" -> {
+                            loginUser.value =
+                                LoginUserState(error = R.string.email_used_by_other_provider)
+                        }
+                        "ERROR_USER_DISABLED" -> {
+                            loginUser.value = LoginUserState(error = R.string.user_disable)
+                        }
+                        "ERROR_EMAIL_ALREADY_IN_USE" -> {
+                            loginUser.value = LoginUserState(error = R.string.email_already_used)
+                        }
+                        "ERROR_WRONG_PASSWORD", "ERROR_USER_NOT_FOUND" -> {
+                            loginUser.value = LoginUserState(error = R.string.invalid_user_password)
+                        }
+                        else -> {
+                            loginUser.value = LoginUserState(error = R.string.sign_in_fail)
+                        }
                     }
-                    "ERROR_USER_DISABLED" -> {
-                        loginUser.value = LoginUserState(error = R.string.user_disable)
-                    }
-                    "ERROR_EMAIL_ALREADY_IN_USE" -> {
-                        loginUser.value = LoginUserState(error = R.string.email_already_used)
-                    }
-                    "ERROR_WRONG_PASSWORD","ERROR_USER_NOT_FOUND" -> {
-                        loginUser.value = LoginUserState(error = R.string.invalid_user_password)
-                    }
-                    else -> {
-                        loginUser.value = LoginUserState(error = R.string.sign_in_fail)
-                    }
+                }
+                catch (e:ClassCastException){
+                    loginUser.value = LoginUserState(error = R.string.sign_in_fail)
                 }
             }
             is Result.Canceled -> loginUser.value = LoginUserState(error = R.string.sign_in_canceled)
