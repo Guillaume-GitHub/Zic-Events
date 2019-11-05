@@ -2,6 +2,8 @@ package com.lab.zicevents.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.lab.zicevents.data.database.UserDataSource
+import com.lab.zicevents.data.database.UserRepository
 import com.lab.zicevents.data.login.LoginDataSource
 import com.lab.zicevents.data.login.LoginRepository
 
@@ -16,6 +18,9 @@ class LoginViewModelFactory : ViewModelProvider.Factory {
             return LoginViewModel(
                 loginRepository = LoginRepository(
                     loginDataSource =  LoginDataSource()
+                ),
+                userRepository = UserRepository(
+                    userDataSource = UserDataSource()
                 )
             ) as T
         }

@@ -11,10 +11,11 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.lab.zicevents.R
 import com.lab.zicevents.data.login.LoginRepository
 import com.lab.zicevents.data.Result
+import com.lab.zicevents.data.database.UserRepository
 import kotlinx.coroutines.*
 import java.lang.ClassCastException
 
-class LoginViewModel(private val loginRepository: LoginRepository): ViewModel() {
+class LoginViewModel(private val loginRepository: LoginRepository, private val userRepository: UserRepository): ViewModel() {
     
     private val TAG = this::class.java.simpleName
 
