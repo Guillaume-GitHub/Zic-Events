@@ -12,6 +12,9 @@ import com.lab.zicevents.R
 import com.lab.zicevents.data.login.LoginRepository
 import com.lab.zicevents.data.Result
 import com.lab.zicevents.data.database.UserRepository
+import com.lab.zicevents.data.model.database.User
+import com.lab.zicevents.data.model.local.LoginFormState
+import com.lab.zicevents.data.model.local.LoginUserState
 import kotlinx.coroutines.*
 import java.lang.ClassCastException
 
@@ -50,6 +53,17 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
         }
     }
 
+    fun getFirestoreUser(uid: String){
+        GlobalScope.launch(Dispatchers.Main) {
+            when(val result = userRepository.getFirestoreUser(uid)){
+                is Result.Success -> {
+                    val user = result.data.toObject(User::class.java)
+                    if (user)
+                }
+            }
+        }
+    }
+
     /**
      * Manage result receive from Firebase auth coroutine
      * transform the result to liveDate<LoginUserState>
@@ -72,24 +86,30 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
                                 LoginUserState(error = R.string.email_used_by_other_provider)
                         }
                         "ERROR_USER_DISABLED" -> {
-                            loginUser.value = LoginUserState(error = R.string.user_disable)
+                            loginUser.value =
+                                LoginUserState(error = R.string.user_disable)
                         }
                         "ERROR_EMAIL_ALREADY_IN_USE" -> {
-                            loginUser.value = LoginUserState(error = R.string.email_already_used)
+                            loginUser.value =
+                                LoginUserState(error = R.string.email_already_used)
                         }
                         "ERROR_WRONG_PASSWORD", "ERROR_USER_NOT_FOUND" -> {
-                            loginUser.value = LoginUserState(error = R.string.invalid_user_password)
+                            loginUser.value =
+                                LoginUserState(error = R.string.invalid_user_password)
                         }
                         else -> {
-                            loginUser.value = LoginUserState(error = R.string.sign_in_fail)
+                            loginUser.value =
+                                LoginUserState(error = R.string.sign_in_fail)
                         }
                     }
                 }
                 catch (e:ClassCastException){
-                    loginUser.value = LoginUserState(error = R.string.sign_in_fail)
+                    loginUser.value =
+                        LoginUserState(error = R.string.sign_in_fail)
                 }
             }
-            is Result.Canceled -> loginUser.value = LoginUserState(error = R.string.sign_in_canceled)
+            is Result.Canceled -> loginUser.value =
+                LoginUserState(error = R.string.sign_in_canceled)
         }
 
     }
@@ -102,9 +122,11 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
      */
     fun signUpFormDataChanged(email: String, password: String){
         if (!isValidEmail(email)) {
-            loginForm.value = LoginFormState(emailError = R.string.invalid_email)
+            loginForm.value =
+                LoginFormState(emailError = R.string.invalid_email)
         } else if (!isPasswordValid(password)) {
-            loginForm.value = LoginFormState(passwordError = R.string.invalid_password)
+            loginForm.value =
+                LoginFormState(passwordError = R.string.invalid_password)
         } else {
             loginForm.value = LoginFormState(isDataValid = true)
         }
@@ -118,9 +140,11 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
      */
     fun signInFormDataChanged(email: String, password: String){
         if (!isValidEmail(email)) {
-            loginForm.value = LoginFormState(emailError = R.string.invalid_email)
+            loginForm.value =
+                LoginFormState(emailError = R.string.invalid_email)
         } else if (password.isBlank()) {
-            loginForm.value = LoginFormState(passwordError = R.string.invalid_password)
+            loginForm.value =
+                LoginFormState(passwordError = R.string.invalid_password)
         } else {
             loginForm.value = LoginFormState(isDataValid = true)
         }

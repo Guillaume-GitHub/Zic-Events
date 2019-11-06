@@ -1,4 +1,4 @@
-package com.lab.zicevents.ui.login
+package com.lab.zicevents.data.model.local
 
 data class LoginFormState
     (val emailError: Int? = null,
