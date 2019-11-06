@@ -30,6 +30,7 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var navController : NavController
+    private lateinit var loginViewModel: LoginViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,11 +42,12 @@ class LoginActivity : AppCompatActivity() {
         super.onStart()
 
         //check if user is sign in
-        if (isUserAuth()) launchMainActivity()
-        else {
-            navController = findNavController(R.id.login_nav_host_fragment)
-            val appBarConfiguration = AppBarConfiguration(navController.graph)
-            login_toolbar.setupWithNavController(navController, appBarConfiguration)
+        if (isUserAuth()){
+            configureViewModel()
+            loginViewModel.getFirestoreUser(auth.currentUser!!.uid)
+            observeFirestoreUserProfile()
+        } else {
+            configureNavController()
         }
     }
 
@@ -65,4 +67,31 @@ class LoginActivity : AppCompatActivity() {
         this.finish()
     }
 
+    /**
+     *  Instantiate a LoginViewModel class from LoginViewModelFactory
+     */
+    private fun configureViewModel(){
+        loginViewModel = ViewModelProviders.of(this, LoginViewModelFactory()).get(LoginViewModel::class.java)
+    }
+
+    /**
+     * Configure nav controller and appBarConfiguration
+     */
+    private fun configureNavController(){
+        navController = findNavController(R.id.login_nav_host_fragment)
+        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        login_toolbar.setupWithNavController(navController, appBarConfiguration)
+    }
+
+    /**
+     * Observe result of firestore user data fetching operation
+     * Show different views depending to result
+     */
+    private fun observeFirestoreUserProfile(){
+        loginViewModel.profileUserState.observe(this, Observer {userProfile ->
+            if (userProfile.firestoreUser != null) launchMainActivity()
+            else Toast.makeText(this, "User signed in with no profile into database", Toast.LENGTH_LONG).show()
+            // TODO : REDIRECT TO CREATION PROFILE VIEW OR LOGOUT CURRENT USER
+        })
+    }
 }

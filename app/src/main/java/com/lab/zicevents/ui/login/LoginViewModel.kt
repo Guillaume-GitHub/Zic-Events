@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.firestore.DocumentSnapshot
 import com.lab.zicevents.R
 import com.lab.zicevents.data.login.LoginRepository
 import com.lab.zicevents.data.Result
@@ -15,6 +16,7 @@ import com.lab.zicevents.data.database.UserRepository
 import com.lab.zicevents.data.model.database.User
 import com.lab.zicevents.data.model.local.LoginFormState
 import com.lab.zicevents.data.model.local.LoginUserState
+import com.lab.zicevents.data.model.local.ProfileUserState
 import kotlinx.coroutines.*
 import java.lang.ClassCastException
 
@@ -27,6 +29,9 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
 
     private val loginUser = MutableLiveData<LoginUserState>()
     val loginUserState: LiveData<LoginUserState> = loginUser
+
+    private val profileUser = MutableLiveData<ProfileUserState>()
+    val profileUserState: LiveData<ProfileUserState> = profileUser
 
     /**
      * Launch Firebase sign in coroutine and get the authentication result as Result<AuthResult>
@@ -53,16 +58,19 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
         }
     }
 
-    fun getFirestoreUser(uid: String){
+    /**
+     * *Coroutine*
+     * Get User with uid from Firestore database
+     * observe LoginViewModel.profileUserState to get result
+     * @param uid String that corresponding to user uid
+     */
+    fun getFirestoreUser(uid: String) {
         GlobalScope.launch(Dispatchers.Main) {
-            when(val result = userRepository.getFirestoreUser(uid)){
-                is Result.Success -> {
-                    val user = result.data.toObject(User::class.java)
-                    if (user)
-                }
-            }
+            val result = userRepository.getFirestoreUser(uid)
+            userProfileDataChanged(result)
         }
     }
+
 
     /**
      * Manage result receive from Firebase auth coroutine
@@ -151,6 +159,26 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
     }
 
     /**
+     * Send result of LoginViewModel.getFirestoreUser to LoginViewModel.profileUserSate Live data
+     * Observe result with LoginViewModel.profileUserSate
+     * @param result Result<DocumentSnapshot> value return by userRepository.getFirestoreUser(uid: String)
+     */
+    fun userProfileDataChanged(result: Result<DocumentSnapshot>) = when(result) {
+        is Result.Success -> {
+            val user: User? = result.data.toObject(User::class.java)
+            profileUser.value = ProfileUserState(firestoreUser = user)
+        }
+        is Result.Error -> {
+            Log.w(TAG,"Error when trying to get user from firestore", result.exception)
+            profileUser.value = ProfileUserState(error = R.string.fetching_user_error)
+        }
+        is Result.Canceled ->  {
+            Log.w(TAG,"Action canceled", result.exception)
+            profileUser.value = ProfileUserState(error = R.string.fetching_user_canceled)
+        }
+    }
+
+    /**
      * Valid the e-mail address passed in param
      * @param email input email text
      * @return Boolean that indicate if e-mail is valid or not
@@ -171,5 +199,6 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
         //TODO: Split regex to trigger specific error
         return password.matches(Regex("^.*(?=.{8,})(?=..*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_]).*$"))
     }
+
 }
 
