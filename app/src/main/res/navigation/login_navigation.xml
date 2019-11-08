@@ -8,12 +8,24 @@
     <fragment
         android:id="@+id/navigation_login_sign_in"
         android:name="com.lab.zicevents.ui.login.SignInFragment"
-        tools:layout="@layout/fragment_sign_in" />
+        tools:layout="@layout/fragment_sign_in" >
+        <action
+            android:id="@+id/action_navigation_login_sign_in_to_createProfileFragment"
+            app:destination="@id/navigation_profile_creation"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/navigation_login_main" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_login_sign_up"
         android:name="com.lab.zicevents.ui.login.SignUpFragment"
-        tools:layout="@layout/fragment_sign_up"/>
+        tools:layout="@layout/fragment_sign_up">
+        <action
+            android:id="@+id/action_navigation_login_sign_up_to_createProfileFragment"
+            app:destination="@id/navigation_profile_creation"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/navigation_login_main" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_login_main"
@@ -30,5 +42,16 @@
             app:popUpTo="@+id/navigation_login_sign_in" />
 
     </fragment>
+
+    <fragment
+        android:id="@+id/navigation_profile_creation"
+        android:name="com.lab.zicevents.ui.login.CreateProfileFragment"
+        android:label="CreateProfileFragment" >
+        <action
+            android:id="@+id/action_navigation_profile_creation_to_mobile_navigation"
+            app:destination="@id/mobile_navigation" />
+    </fragment>
+
+    <include app:graph="@navigation/mobile_navigation" />
 
 </navigation>
