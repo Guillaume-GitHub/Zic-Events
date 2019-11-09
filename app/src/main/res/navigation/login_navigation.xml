@@ -10,10 +10,8 @@
         android:name="com.lab.zicevents.ui.login.SignInFragment"
         tools:layout="@layout/fragment_sign_in" >
         <action
-            android:id="@+id/action_navigation_login_sign_in_to_createProfileFragment"
-            app:destination="@id/navigation_profile_creation"
-            app:launchSingleTop="true"
-            app:popUpTo="@+id/navigation_login_main" />
+            android:id="@+id/action_navigation_login_sign_in_to_mobile_navigation"
+            app:destination="@id/mobile_navigation" />
     </fragment>
 
     <fragment
@@ -21,7 +19,7 @@
         android:name="com.lab.zicevents.ui.login.SignUpFragment"
         tools:layout="@layout/fragment_sign_up">
         <action
-            android:id="@+id/action_navigation_login_sign_up_to_createProfileFragment"
+            android:id="@+id/from_sign_up_to_create_profile"
             app:destination="@id/navigation_profile_creation"
             app:launchSingleTop="true"
             app:popUpTo="@+id/navigation_login_main" />
@@ -46,10 +44,16 @@
     <fragment
         android:id="@+id/navigation_profile_creation"
         android:name="com.lab.zicevents.ui.login.CreateProfileFragment"
-        android:label="CreateProfileFragment" >
+        tools:layout= "@layout/fragment_create_profile">
         <action
             android:id="@+id/action_navigation_profile_creation_to_mobile_navigation"
             app:destination="@id/mobile_navigation" />
+        <argument
+            android:name="pseudo"
+            app:argType="string" />
+        <argument
+            android:name="email"
+            app:argType="string" />
     </fragment>
 
     <include app:graph="@navigation/mobile_navigation" />

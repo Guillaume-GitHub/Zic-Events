@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 
 import com.lab.zicevents.R
 import kotlinx.android.synthetic.main.fragment_sign_up.*
@@ -101,6 +102,8 @@ class SignUpFragment : Fragment(), View.OnClickListener{
         loginViewModel.loginUserState.observe(this, Observer {result ->
             if (result.user != null) {
                 showProgressBar(false) // Hide ProgressBAr
+
+                navigateToProfileCreationFragment(sign_up_fragment_username.text.toString(), result.user.email!!)
                 Toast.makeText(context, "User ID = ${result.user.uid}", Toast.LENGTH_LONG).show()
             } else {
                 showProgressBar(false) // Hide ProgressBAr
@@ -120,6 +123,15 @@ class SignUpFragment : Fragment(), View.OnClickListener{
         loginViewModel.createUserWithEmailAndPassword(email, password)
     }
 
+    /**
+     * Display CreateProfileFragment with signed user information's
+     * @param pseudo username or pseudo of signed user
+     * @param email email address of signed user
+     */
+    private fun navigateToProfileCreationFragment(pseudo: String, email: String){
+        val action = SignUpFragmentDirections.fromSignUpToCreateProfile(pseudo, email)
+        findNavController().navigate(action)
+    }
 
     /**
      * Show / Hide ProgressBar
