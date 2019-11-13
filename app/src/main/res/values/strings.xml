@@ -1,6 +1,7 @@
 <resources>
 
     <string name="app_name">Zic Events</string>
+    <string name="welcome">Bienvenue</string>
 
     <!-- ***** NAVIGATION ***** -->
     <string name="hint_next">Suivant</string>
@@ -21,7 +22,7 @@
     <string name="create_account">Créer mon compte</string>
 
     <!-- ***** LOGIN ERROR MESSAGES ***** -->
-    <string name="invalid_username">Nom d\' utilisateur non valide</string>
+    <string name="invalid_username">Nom d\' utilisateur invalide</string>
     <string name="invalid_email">Addresse email invalide</string>
     <string name="invalid_password">Mode de passe invalide</string>
     <string name="sign_in_fail">Echec de l\'authentification</string>
@@ -34,6 +35,8 @@
     <!-- ***** USER PROFILE ERROR MESSAGES ***** -->
     <string name="fetching_user_error">Erreur lors de la récupération du profil</string>
     <string name="fetching_user_canceled">Action annulée</string>
+    <string name="invalid_phone_number">Numéro invalide</string>
+    <string name="invalid_user_category">Vous devez choisir une catégorie</string>
 
     <!-- ***** BOTTOM NAVIGATION ***** -->
     <string name="title_deal">Annonces</string>
@@ -45,5 +48,13 @@
     <!-- ***** FACEBOOK ***** -->
     <string name="facebook_app_id">572815233259134</string>
     <string name="fb_login_protocol_scheme">fb572815233259134</string>
+
+    <!-- ***** USER CATEGORY (do not change id, add new instead) ***** -->
+    <array name="user_category">
+        <item>{"'id'":0,"'category'":"'Particulier'"}</item>
+        <item>{"'id'":1,"'category'":"'Association'"}</item>
+        <item>{"'id'":2,"'category'":"'Musicien Indé'"}</item>
+        <item>{"'id'":3,"'category'":"'Musicien Pro'"}</item>
+    </array>
 
 </resources>

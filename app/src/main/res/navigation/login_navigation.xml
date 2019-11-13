@@ -54,6 +54,10 @@
         <argument
             android:name="email"
             app:argType="string" />
+        <argument
+            android:name="phoneNumber"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 
     <include app:graph="@navigation/mobile_navigation" />

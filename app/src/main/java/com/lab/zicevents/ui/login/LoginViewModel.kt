@@ -1,5 +1,6 @@
 package com.lab.zicevents.ui.login
 
+import android.content.Context
 import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.LiveData
@@ -9,16 +10,17 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.lab.zicevents.R
 import com.lab.zicevents.data.login.LoginRepository
 import com.lab.zicevents.data.Result
 import com.lab.zicevents.data.database.UserRepository
 import com.lab.zicevents.data.model.database.User
-import com.lab.zicevents.data.model.local.LoginFormState
-import com.lab.zicevents.data.model.local.LoginUserState
-import com.lab.zicevents.data.model.local.ProfileUserState
+import com.lab.zicevents.data.model.local.*
 import kotlinx.coroutines.*
 import java.lang.ClassCastException
+import kotlin.contracts.Returns
 
 class LoginViewModel(private val loginRepository: LoginRepository, private val userRepository: UserRepository): ViewModel() {
     
@@ -32,6 +34,11 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
 
     private val profileUser = MutableLiveData<ProfileUserState>()
     val profileUserState: LiveData<ProfileUserState> = profileUser
+
+    private var userTypeList: ArrayList<UserCategory>? = null
+
+    private val profileForm = MutableLiveData<ProfileCreationFormState>()
+    val profileformState: LiveData<ProfileCreationFormState> = profileForm
 
     /**
      * Launch Firebase sign in coroutine and get the authentication result as Result<AuthResult>
@@ -163,7 +170,7 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
      * Observe result with LoginViewModel.profileUserSate
      * @param result Result<DocumentSnapshot> value return by userRepository.getFirestoreUser(uid: String)
      */
-    fun userProfileDataChanged(result: Result<DocumentSnapshot>) = when(result) {
+    private fun userProfileDataChanged(result: Result<DocumentSnapshot>) = when(result) {
         is Result.Success -> {
             val user: User? = result.data.toObject(User::class.java)
             profileUser.value = ProfileUserState(firestoreUser = user)
@@ -175,6 +182,22 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
         is Result.Canceled ->  {
             Log.w(TAG,"Action canceled", result.exception)
             profileUser.value = ProfileUserState(error = R.string.fetching_user_canceled)
+        }
+    }
+
+    /**
+     * From data validation witch correct formatted phone and user category
+     * Change profileForm LiveData value
+     * @param phoneNumber phone input text
+     * @param category userCategory id
+     */
+    fun creationProfileDataChanged(phoneNumber: String? = null, category: Int){
+        if (!isPhoneNumberValid(phoneNumber)) {
+            profileForm.value = ProfileCreationFormState(phoneNumberError = R.string.invalid_phone_number)
+        } else if (category <= -1) {
+            profileForm.value = ProfileCreationFormState(userTypeError = R.string.invalid_user_category)
+        } else {
+            profileForm.value = ProfileCreationFormState(isDataValid = true)
         }
     }
 
@@ -198,6 +221,40 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
     private fun isPasswordValid(password: String): Boolean{
         //TODO: Split regex to trigger specific error
         return password.matches(Regex("^.*(?=.{8,})(?=..*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_]).*$"))
+    }
+
+    /**
+     * Valid phone number format passed in param
+     * @param phoneNumber input phone number text
+     * @return Boolean that indicate if phone number is correctly formatted
+     */
+    private fun isPhoneNumberValid(phoneNumber: String?): Boolean{
+        return if (phoneNumber.isNullOrBlank()) true
+        else //French number format regex
+            phoneNumber.matches(Regex("^(?:(?:\\+|00)33|0)\\s*[1-9](?:[\\s.-]*\\d{2}){4}\$"))
+        //TODO : add regex for other phone format
+    }
+
+    /**
+     * Return all user category
+     * @param context
+     * @return ArrayList<UserCategory>
+     */
+    fun getUserType(context: Context): ArrayList<UserCategory>{
+        var arrayList = userTypeList
+
+        if (arrayList == null) {
+            val array = context.resources.getTextArray(R.array.user_category)
+            val type = object : TypeToken<UserCategory>(){}.type
+            arrayList = ArrayList()
+
+            for (json in array){
+                val map: UserCategory = Gson().fromJson(json.toString(), type)
+                arrayList.add(map)
+            }
+            userTypeList = arrayList
+        }
+        return arrayList
     }
 
 }

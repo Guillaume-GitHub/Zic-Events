@@ -129,7 +129,7 @@ class SignUpFragment : Fragment(), View.OnClickListener{
      * @param email email address of signed user
      */
     private fun navigateToProfileCreationFragment(pseudo: String, email: String){
-        val action = SignUpFragmentDirections.fromSignUpToCreateProfile(pseudo, email)
+        val action = SignUpFragmentDirections.fromSignUpToCreateProfile(pseudo,email,null)
         findNavController().navigate(action)
     }
 
