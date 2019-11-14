@@ -8,11 +8,7 @@
     <fragment
         android:id="@+id/navigation_login_sign_in"
         android:name="com.lab.zicevents.ui.login.SignInFragment"
-        tools:layout="@layout/fragment_sign_in" >
-        <action
-            android:id="@+id/action_navigation_login_sign_in_to_mobile_navigation"
-            app:destination="@id/mobile_navigation" />
-    </fragment>
+        tools:layout="@layout/fragment_sign_in" />
 
     <fragment
         android:id="@+id/navigation_login_sign_up"
@@ -45,9 +41,6 @@
         android:id="@+id/navigation_profile_creation"
         android:name="com.lab.zicevents.ui.login.CreateProfileFragment"
         tools:layout= "@layout/fragment_create_profile">
-        <action
-            android:id="@+id/action_navigation_profile_creation_to_mobile_navigation"
-            app:destination="@id/mobile_navigation" />
         <argument
             android:name="pseudo"
             app:argType="string" />
@@ -59,7 +52,5 @@
             app:argType="string"
             app:nullable="true" />
     </fragment>
-
-    <include app:graph="@navigation/mobile_navigation" />
 
 </navigation>

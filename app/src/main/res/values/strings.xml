@@ -37,6 +37,9 @@
     <string name="fetching_user_canceled">Action annulée</string>
     <string name="invalid_phone_number">Numéro invalide</string>
     <string name="invalid_user_category">Vous devez choisir une catégorie</string>
+    <string name="profile_creation_fail">Erreur lors de la création du profil</string>
+    <string name="profile_creation_cancel">Création du profil annulée</string>
+    <string name="incomplete_profile_info">Profil incomplet</string>
 
     <!-- ***** BOTTOM NAVIGATION ***** -->
     <string name="title_deal">Annonces</string>

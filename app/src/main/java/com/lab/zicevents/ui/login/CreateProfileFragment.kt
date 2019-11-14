@@ -1,5 +1,6 @@
 package com.lab.zicevents.ui.login
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,11 +10,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.firebase.auth.FirebaseAuth
+import com.lab.zicevents.MainActivity
 
 import com.lab.zicevents.R
+import com.lab.zicevents.data.model.database.User
 import com.lab.zicevents.data.model.local.UserCategory
 import com.lab.zicevents.utils.adapter.UserCategoryAdapter
 import kotlinx.android.synthetic.main.fragment_create_profile.*
@@ -25,11 +31,12 @@ import kotlinx.android.synthetic.main.fragment_create_profile.*
 class CreateProfileFragment : Fragment(), View.OnClickListener, AdapterView.OnItemClickListener {
 
     private val args: CreateProfileFragmentArgs by navArgs()
+    private val auth = FirebaseAuth.getInstance()
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var pseudo: String
     private lateinit var email: String
     private var phone: String? = null
-    private var userType: Int = -1
+    private var selectedCategory: UserCategory? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -48,13 +55,15 @@ class CreateProfileFragment : Fragment(), View.OnClickListener, AdapterView.OnIt
         displayPhoneNumber(phone)
         fillCategoryDropDown(loginViewModel.getUserType(context!!))
         observeDataFormState()
+        observeProfileCreationSate()
 
         // Set input button click listener
         create_profile_next.setOnClickListener(this)
         // Set TextWatcher to input phone Number
         create_profile_phone.addTextChangedListener(object : TextWatcher{
             override fun afterTextChanged(text: Editable?) {
-                loginViewModel.creationProfileDataChanged(phoneNumber = text.toString(), category = userType)
+                phone = text.toString()
+                loginViewModel.creationProfileDataChanged(phoneNumber = phone, category = selectedCategory)
             }
             override fun beforeTextChanged(text: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(text: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -67,7 +76,7 @@ class CreateProfileFragment : Fragment(), View.OnClickListener, AdapterView.OnIt
      */
     override fun onClick(view: View?) {
         when(view?.id){
-            R.id.create_profile_next -> Log.d("Tag", "isClicked") //TODO : Firebase Profile Creation
+            R.id.create_profile_next -> createUserProfile()
             else -> {}
         }
     }
@@ -78,14 +87,10 @@ class CreateProfileFragment : Fragment(), View.OnClickListener, AdapterView.OnIt
      */
     override fun onItemClick(adapterView: AdapterView<*>?, view: View?, position: Int, p3: Long) {
         val category = adapterView?.getItemAtPosition(position) as UserCategory
+        selectedCategory = category
         // Display category name of selected item in autocompleteTextView
         create_profile_type.setText(category.category)
-
-        // Pass id to userType var
-        if (category.id != null){
-            userType = category.id
-            loginViewModel.creationProfileDataChanged(phoneNumber = null, category = userType)
-        }
+        loginViewModel.creationProfileDataChanged(phoneNumber = phone, category = selectedCategory)
     }
 
     /**
@@ -139,12 +144,20 @@ class CreateProfileFragment : Fragment(), View.OnClickListener, AdapterView.OnIt
         create_profile_type.onItemClickListener = this
     }
 
+    private fun createUserProfile(){
+        val user = loginViewModel.validUserInfo(auth.currentUser, pseudo,phone,selectedCategory)
+        if (user != null)
+            loginViewModel.createFirestoreUser(user)
+        else
+            Toast.makeText(context,getText(R.string.incomplete_profile_info),Toast.LENGTH_LONG).show()
+    }
+
     /**
      * Observe form state and display errors messages if data are not valid
      * Set submit button Enable / Disable
      */
     private fun observeDataFormState(){
-        loginViewModel.profileformState.observe(this, Observer {
+        loginViewModel.profileFormState.observe(this, Observer {
             val dataState = it
 
             create_profile_next.isEnabled = dataState.isDataValid
@@ -154,6 +167,24 @@ class CreateProfileFragment : Fragment(), View.OnClickListener, AdapterView.OnIt
 
             if (dataState.userTypeError != null) create_profile_input_layout_type.error = getString(dataState.userTypeError)
             else create_profile_input_layout_type.error = null
+        })
+    }
+
+    /**
+     * Observe profile creation to firestore
+     * Start MainActivity if user is not null else display errors
+     */
+    private fun observeProfileCreationSate(){
+        loginViewModel.profileUserState.observe(this, Observer {
+            val profileState = it
+
+            if (profileState.firestoreUser != null){
+                startActivity(Intent(context,MainActivity::class.java))
+                activity?.finish()
+
+            } else if (profileState.error != null) {
+                Toast.makeText(context, getString(profileState.error),Toast.LENGTH_SHORT).show()
+            }
         })
     }
 }

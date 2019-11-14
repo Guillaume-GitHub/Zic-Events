@@ -1,6 +1,7 @@
 package com.lab.zicevents.ui.login
 
 import android.content.Context
+import android.provider.MediaStore
 import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.LiveData
@@ -9,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -38,7 +40,7 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
     private var userTypeList: ArrayList<UserCategory>? = null
 
     private val profileForm = MutableLiveData<ProfileCreationFormState>()
-    val profileformState: LiveData<ProfileCreationFormState> = profileForm
+    val profileFormState: LiveData<ProfileCreationFormState> = profileForm
 
     /**
      * Launch Firebase sign in coroutine and get the authentication result as Result<AuthResult>
@@ -78,6 +80,21 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
         }
     }
 
+    /**
+     * *Coroutine*
+     * Create user profile to Firestore database
+     * observe LoginViewModel.profileUserState to get result
+     * @param user User object who contain user infos
+     */
+    fun createFirestoreUser(user: User){
+        GlobalScope.launch(Dispatchers.Main) {
+            when(userRepository.createFirestoreUser(user)){
+                is Result.Success -> profileUser.value = ProfileUserState(firestoreUser = user)
+                is Result.Error -> profileUser.value = ProfileUserState(error = R.string.profile_creation_fail)
+                is Result.Canceled -> profileUser.value = ProfileUserState(error = R.string.profile_creation_cancel)
+            }
+        }
+    }
 
     /**
      * Manage result receive from Firebase auth coroutine
@@ -191,10 +208,10 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
      * @param phoneNumber phone input text
      * @param category userCategory id
      */
-    fun creationProfileDataChanged(phoneNumber: String? = null, category: Int){
+    fun creationProfileDataChanged(phoneNumber: String? = null, category: UserCategory?){
         if (!isPhoneNumberValid(phoneNumber)) {
             profileForm.value = ProfileCreationFormState(phoneNumberError = R.string.invalid_phone_number)
-        } else if (category <= -1) {
+        } else if (category == null) {
             profileForm.value = ProfileCreationFormState(userTypeError = R.string.invalid_user_category)
         } else {
             profileForm.value = ProfileCreationFormState(isDataValid = true)
@@ -236,6 +253,28 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
     }
 
     /**
+     * Verify User profile information and return user object
+     * @param firebaseUser FirebaseUser?
+     * @param displayName String? : displaying username
+     * @param phoneNumber String? : user phone number
+     * @param userCategory UserCategory? : category of user
+     * @return User? object containing user infos or null if data are invalid or missing
+     */
+    fun validUserInfo(firebaseUser: FirebaseUser?,
+                      displayName: String?, phoneNumber: String?, userCategory: UserCategory?): User? {
+        var user: User? = null
+        val username = displayName ?: firebaseUser?.displayName
+
+        try {
+            user = User(firebaseUser!!.uid, username!! ,firebaseUser.photoUrl?.path, phoneNumber, userCategory?.id!!)
+
+        } catch (e: NullPointerException){
+            Log.e(TAG, "Error on valid user infos", e)
+        }
+        return user
+    }
+
+    /**
      * Return all user category
      * @param context
      * @return ArrayList<UserCategory>
@@ -256,6 +295,7 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
         }
         return arrayList
     }
-
 }
+
+
 
