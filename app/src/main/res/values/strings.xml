@@ -33,6 +33,7 @@
     <string name="invalid_user_password">Adresse email ou mot de passe invalide</string>
 
     <!-- ***** USER PROFILE ERROR MESSAGES ***** -->
+    <string name="incomplete_sign_in_account">Impossible d\' utiliser ce compte</string>
     <string name="fetching_user_error">Erreur lors de la récupération du profil</string>
     <string name="fetching_user_canceled">Action annulée</string>
     <string name="invalid_phone_number">Numéro invalide</string>
@@ -52,7 +53,7 @@
     <string name="facebook_app_id">572815233259134</string>
     <string name="fb_login_protocol_scheme">fb572815233259134</string>
 
-    <!-- ***** USER CATEGORY (do not change id, add new instead) ***** -->
+    <!-- ***** USER CATEGORY JSON(do not change id, add new instead) ***** -->
     <array name="user_category">
         <item>{"'id'":0,"'category'":"'Particulier'"}</item>
         <item>{"'id'":1,"'category'":"'Association'"}</item>

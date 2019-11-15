@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
@@ -19,6 +20,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.*
+import com.lab.zicevents.MainActivity
 
 import com.lab.zicevents.R
 import kotlinx.android.synthetic.main.fragment_sign_in.*
@@ -31,6 +33,7 @@ class SignInFragment : Fragment(), View.OnClickListener {
 
     private lateinit var callbackManager: CallbackManager
     private lateinit var loginViewModel: LoginViewModel
+    private lateinit var  currentUser: FirebaseUser
     private val RC_GOOGLE_SIGN_IN = 10
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -44,6 +47,7 @@ class SignInFragment : Fragment(), View.OnClickListener {
         configureViewModel()
         observeFormState()
         observeSignInResult()
+        observeFirestoreUserProfile()
 
         // Add click listener to buttons
         login.setOnClickListener(this)
@@ -102,15 +106,43 @@ class SignInFragment : Fragment(), View.OnClickListener {
      */
     private fun observeSignInResult(){
         loginViewModel.loginUserState.observe(this, Observer {result ->
-            if (result.user != null) {
-                showProgressBar(false) // Hide ProgressBAr
-                Toast.makeText(context, "User ID = ${result.user.providerId}", Toast.LENGTH_LONG).show()
+            val user = result.user
+            if (user != null) { // Check if username and email are not null
+                currentUser = user
+                loginViewModel.getFirestoreUser(user.uid)
             } else {
                 showProgressBar(false) // Hide ProgressBAr
                 val error = result.error
                 if (error != null) Toast.makeText(context, getText(result.error), Toast.LENGTH_LONG).show()
             }
         })
+    }
+
+    private fun observeFirestoreUserProfile(){
+        loginViewModel.profileUserState.observe(this, Observer {
+            showProgressBar(false)
+
+            if (it.firestoreUser != null)
+                startMainActivity()
+            else if (it.error != null)
+                Toast.makeText(context, getText(it.error), Toast.LENGTH_LONG).show()
+            else
+               if (currentUser.displayName != null && currentUser.email != null)
+                   navigateToProfileCreationFragment(currentUser.displayName!!,currentUser.email!!,currentUser.phoneNumber)
+               else
+                   Toast.makeText(context, getText(R.string.incomplete_sign_in_account), Toast.LENGTH_LONG).show()
+        })
+    }
+
+    /**
+     * Display CreateProfileFragment with signed user information's
+     * @param pseudo username or pseudo of signed user
+     * @param email email address of signed user
+     * @param phoneNumber phone number of user
+     */
+    private fun navigateToProfileCreationFragment(displayName: String, email: String, phoneNumber: String?){
+        val action = SignInFragmentDirections.actionFromSignInToCreateProfile(displayName,email,phoneNumber)
+        findNavController().navigate(action)
     }
 
     /**
@@ -203,6 +235,14 @@ class SignInFragment : Fragment(), View.OnClickListener {
             loading.visibility = View.GONE
             loading.isIndeterminate = false
         }
+    }
+
+    /**
+     * Start main activity and finish LoginActivity
+     */
+    private fun startMainActivity(){
+        startActivity(Intent(context, MainActivity::class.java))
+        activity?.finish() // finish this
     }
 
     // Catch activity results
