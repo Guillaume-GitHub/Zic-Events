@@ -1,11 +1,14 @@
 package com.lab.zicevents.ui.login
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
+import android.widget.EditText
+import android.widget.LinearLayout
 
 import androidx.fragment.app.Fragment
 import android.widget.Toast
@@ -49,10 +52,12 @@ class SignInFragment : Fragment(), View.OnClickListener {
         observeSignInResult()
         observeFirestoreUserProfile()
 
+
         // Add click listener to buttons
         login.setOnClickListener(this)
         google_login.setOnClickListener(this)
         facebook_login.setOnClickListener(this)
+        forgot_password.setOnClickListener(this)
 
         //Trigger input username text changes
         username.addTextChangedListener(object : TextWatcher {
@@ -118,19 +123,32 @@ class SignInFragment : Fragment(), View.OnClickListener {
         })
     }
 
+    /**
+     * Observe firestore user profile to check if current auth user is save in firestore
+     */
     private fun observeFirestoreUserProfile(){
         loginViewModel.profileUserState.observe(this, Observer {
             showProgressBar(false)
 
             if (it.firestoreUser != null)
-                startMainActivity()
-            else if (it.error != null)
+                startMainActivity() // User is already create in firestore -> Start main activity
+            else if (it.error != null) // Display error message
                 Toast.makeText(context, getText(it.error), Toast.LENGTH_LONG).show()
-            else
+            else  //Create user profile in firestore if possible
                if (currentUser.displayName != null && currentUser.email != null)
                    navigateToProfileCreationFragment(currentUser.displayName!!,currentUser.email!!,currentUser.phoneNumber)
                else
                    Toast.makeText(context, getText(R.string.incomplete_sign_in_account), Toast.LENGTH_LONG).show()
+        })
+    }
+
+    /**
+     * Observe sending reset password email state
+     * Get int to display state message
+     */
+    private fun observeResetPasswordMail(){
+        loginViewModel.resetPasswordStatus.observe(this, Observer {
+            Toast.makeText(context, getText(it), Toast.LENGTH_LONG).show()
         })
     }
 
@@ -154,6 +172,7 @@ class SignInFragment : Fragment(), View.OnClickListener {
             login -> emailAndPasswordAuth(username.text.toString(), password.text.toString())
             google_login -> googleAuth()
             facebook_login -> facebookAuth()
+            forgot_password -> resetPassword()
             else -> {}
         }
     }
@@ -220,6 +239,36 @@ class SignInFragment : Fragment(), View.OnClickListener {
     fun signInWithCredential(credential: AuthCredential){
         showProgressBar(true) // Show ProgressBAr
         loginViewModel.signInWithCredential(credential)
+    }
+
+    /**
+     * Prompt User to enter email address to reset password
+     * A email with link for reset will send
+     */
+    private fun resetPassword(){
+        //TODO improve display methods and check text typed
+
+        val inputEmail = EditText(context)
+        val params = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.MATCH_PARENT)
+        inputEmail.layoutParams = params
+
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(getString(R.string.reset_password_alert_title))
+            .setView(inputEmail)
+            .setPositiveButton(getString(R.string.reset_password_positive_btn)) {dialog, _ ->
+                if (!inputEmail.text.isNullOrBlank()){
+                    observeResetPasswordMail()
+                    loginViewModel.sendPasswordResetEmail(inputEmail.text.toString())
+                    dialog.dismiss()
+                }
+            }
+            .setNegativeButton(getString(R.string.reset_password_negative_btn)) {dialog, _ ->
+                dialog.dismiss()
+            }
+
+        builder.show()
     }
 
     /**

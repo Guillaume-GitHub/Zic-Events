@@ -42,4 +42,14 @@ class LoginDataSource {
         Log.d(TAG, "Sign In with : ${credential.provider}")
         return auth.signInWithCredential(credential)
     }
+
+    /**
+     * Send email with link to reset user password
+     * @param email is address email
+     * @return Task<Void>
+     */
+    fun sendPasswordResetEmail(email: String): Task<Void> {
+        Log.d(TAG, "Send password reset email to $email")
+        return auth.sendPasswordResetEmail(email)
+    }
 }

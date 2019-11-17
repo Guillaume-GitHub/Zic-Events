@@ -7,10 +7,9 @@ import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.FirebaseError.ERROR_USER_DISABLED
+import com.google.firebase.FirebaseError.ERROR_USER_NOT_FOUND
+import com.google.firebase.auth.*
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -42,6 +41,9 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
     private val profileForm = MutableLiveData<ProfileCreationFormState>()
     val profileFormState: LiveData<ProfileCreationFormState> = profileForm
 
+    private val resetPassword = MutableLiveData<Int>()
+    val resetPasswordStatus: LiveData<Int> = resetPassword
+
     /**
      * Launch Firebase sign in coroutine and get the authentication result as Result<AuthResult>
      * Pass Result to loginUserStateChanged method
@@ -64,6 +66,31 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
         GlobalScope.launch(Dispatchers.Main) {
             val result = loginRepository.createUserWithEmailAndPassword(email, password)
             loginUserStateChanged(result)
+        }
+    }
+
+    /**
+     * Launch send Password Reset Email coroutine and get the result state
+     * @param email is email address
+     */
+    fun sendPasswordResetEmail(email: String){
+        GlobalScope.launch(Dispatchers.Main) {
+            when(val result = loginRepository.sendPasswordEmail(email)){
+                is Result.Success -> resetPassword.value = R.string.send_reset_password_success
+                is Result.Error ->  {
+                    try {
+                        val e = result.exception as FirebaseAuthInvalidUserException
+                        when(e.errorCode){
+                            "ERROR_USER_DISABLED" -> resetPassword.value = R.string.user_disable
+                            else -> resetPassword.value = R.string.send_reset_password_email_error
+                        }
+                    }catch (e: Throwable) {
+                        Log.e(TAG, "",e)
+                        resetPassword.value = R.string.send_reset_password_error
+                    }
+                }
+                is Result.Canceled -> resetPassword.value = R.string.profile_creation_cancel
+            }
         }
     }
 

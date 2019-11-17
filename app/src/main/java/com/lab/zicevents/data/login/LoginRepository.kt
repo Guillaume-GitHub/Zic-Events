@@ -36,6 +36,19 @@ class LoginRepository(private val loginDataSource: LoginDataSource) {
         }
     }
 
+    /**
+     * Await Result of Firebase Task<> sendPasswordResetEmail and return Result<Void>
+     * @param email email address
+     * @return Result<Void>
+     */
+    suspend fun sendPasswordEmail(email: String): Result<Void>{
+        return when(val result = loginDataSource.sendPasswordResetEmail(email).await()){
+            is Result.Success -> Result.Success(result.data)
+            is Result.Error -> Result.Error(result.exception)
+            is Result.Canceled -> Result.Canceled(result.exception)
+        }
+    }
+
 
     /**
      * Task extension to transform Firebase Task<> to Kotlin suspendCoroutine
