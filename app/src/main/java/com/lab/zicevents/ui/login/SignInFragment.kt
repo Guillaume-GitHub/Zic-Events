@@ -143,16 +143,6 @@ class SignInFragment : Fragment(), View.OnClickListener {
     }
 
     /**
-     * Observe sending reset password email state
-     * Get int to display state message
-     */
-    private fun observeResetPasswordMail(){
-        loginViewModel.resetPasswordStatus.observe(this, Observer {
-            Toast.makeText(context, getText(it), Toast.LENGTH_LONG).show()
-        })
-    }
-
-    /**
      * Display CreateProfileFragment with signed user information's
      * @param pseudo username or pseudo of signed user
      * @param email email address of signed user
@@ -172,7 +162,7 @@ class SignInFragment : Fragment(), View.OnClickListener {
             login -> emailAndPasswordAuth(username.text.toString(), password.text.toString())
             google_login -> googleAuth()
             facebook_login -> facebookAuth()
-            forgot_password -> resetPassword()
+            forgot_password -> navigateToResetPassword(null)
             else -> {}
         }
     }
@@ -242,33 +232,12 @@ class SignInFragment : Fragment(), View.OnClickListener {
     }
 
     /**
-     * Prompt User to enter email address to reset password
-     * A email with link for reset will send
+     * Display ResetPasswordFragment
+     * @param email email address of signed user (May be null)
      */
-    private fun resetPassword(){
-        //TODO improve display methods and check text typed
-
-        val inputEmail = EditText(context)
-        val params = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.MATCH_PARENT)
-        inputEmail.layoutParams = params
-
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle(getString(R.string.reset_password_alert_title))
-            .setView(inputEmail)
-            .setPositiveButton(getString(R.string.reset_password_positive_btn)) {dialog, _ ->
-                if (!inputEmail.text.isNullOrBlank()){
-                    observeResetPasswordMail()
-                    loginViewModel.sendPasswordResetEmail(inputEmail.text.toString())
-                    dialog.dismiss()
-                }
-            }
-            .setNegativeButton(getString(R.string.reset_password_negative_btn)) {dialog, _ ->
-                dialog.dismiss()
-            }
-
-        builder.show()
+    private fun navigateToResetPassword(email: String?){
+        val action = SignInFragmentDirections.actionFromSignInToResetPassword(email)
+        findNavController().navigate(action)
     }
 
     /**

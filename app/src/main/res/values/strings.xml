@@ -66,9 +66,10 @@
         <item>{"'id'":3,"'category'":"'Musicien Pro'"}</item>
     </array>
 
-    <!-- ***** ALERT MESSAGES ***** -->
-    <string name="reset_password_alert_title">Mot de passe oublié ?</string>
-    <string name="reset_password_positive_btn">Envoyer</string>
-    <string name="reset_password_negative_btn">Quitter</string>
+    <!-- ***** RESET PASSWORD ***** -->
+    <string name="reset_password_title">Mot de passe oublié ?</string>
+    <string name="reset_password_send">Envoyer</string>
+    <string name="reset_password_message">Entrez votre adresse email, un lien contenant les instructions vous sera envoyé</string>
+    <string name="send_reset_password_link">Envoi en cours</string>
 
 </resources>
