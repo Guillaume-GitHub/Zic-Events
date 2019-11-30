@@ -2,6 +2,8 @@ package com.lab.zicevents.ui.login
 
 import android.app.Dialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -31,11 +33,22 @@ class ResetPasswordFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         configureViewModel()
         observeResetPasswordMail()
+        observeEmailValidation()
 
         // Set click listener
         reset_password_fragment_send_btn.setOnClickListener {
             sendResetEmailLink()
         }
+
+        // Set input email text watcher
+        reset_password_fragment_email.addTextChangedListener(object: TextWatcher{
+            override fun afterTextChanged(text: Editable?) {
+                if (!text.isNullOrBlank())
+                    loginViewModel.addressEmailChanged(text.toString())
+            }
+            override fun beforeTextChanged(text: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(text: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        })
     }
 
     /**
@@ -57,12 +70,27 @@ class ResetPasswordFragment : Fragment() {
     }
 
     /**
+     * Observe email address validation
+     * Get int to display error message
+     */
+    private fun observeEmailValidation(){
+        loginViewModel.emailValidState.observe(this, Observer {
+            if (it != null) {
+                reset_password_fragment_inputLayout_email.error = getString(it) // set error message
+                reset_password_fragment_send_btn.isEnabled = false // disable btn
+            } else {
+                reset_password_fragment_inputLayout_email.error = null // clean error message
+                reset_password_fragment_send_btn.isEnabled = true // enable btn
+            }
+        })
+    }
+
+    /**
      * Send email with link to reset password
      * Display progress dialog
      */
     private fun sendResetEmailLink(){
         showDialog(true)
-        //TODO : Check and valid input email text before send to loginViewModel.sendPasswordResetEmail() method
         loginViewModel.sendPasswordResetEmail(reset_password_fragment_email.text.toString())
     }
 

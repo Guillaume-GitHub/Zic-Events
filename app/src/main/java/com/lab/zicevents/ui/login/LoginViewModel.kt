@@ -44,6 +44,9 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
     private val resetPassword = MutableLiveData<Int>()
     val resetPasswordStatus: LiveData<Int> = resetPassword
 
+    private val emailValid = MutableLiveData<Int?>()
+    val emailValidState: LiveData<Int?> = emailValid
+
     /**
      * Launch Firebase sign in coroutine and get the authentication result as Result<AuthResult>
      * Pass Result to loginUserStateChanged method
@@ -85,7 +88,7 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
                             else -> resetPassword.value = R.string.send_reset_password_email_error
                         }
                     }catch (e: Throwable) {
-                        Log.e(TAG, "",e)
+                        Log.e(TAG, "", result.exception)
                         resetPassword.value = R.string.send_reset_password_error
                     }
                 }
@@ -243,6 +246,17 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
         } else {
             profileForm.value = ProfileCreationFormState(isDataValid = true)
         }
+    }
+
+    /**
+     * Inpput email data validation witch correct formatted email string
+     * @param email string address
+     */
+    fun addressEmailChanged(email: String) {
+        if (!isValidEmail(email))
+            emailValid.value = R.string.invalid_email
+         else
+            emailValid.value = null
     }
 
     /**
