@@ -1,14 +1,11 @@
 package com.lab.zicevents.ui.login
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
-import android.widget.EditText
-import android.widget.LinearLayout
 
 import androidx.fragment.app.Fragment
 import android.widget.Toast
@@ -127,7 +124,7 @@ class SignInFragment : Fragment(), View.OnClickListener {
      * Observe firestore user profile to check if current auth user is save in firestore
      */
     private fun observeFirestoreUserProfile(){
-        loginViewModel.profileUserState.observe(this, Observer {
+        loginViewModel.profileUserData.observe(this, Observer {
             showProgressBar(false)
 
             if (it.firestoreUser != null)

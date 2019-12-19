@@ -72,4 +72,11 @@
     <string name="reset_password_message">Entrez votre adresse email, un lien contenant les instructions vous sera envoyé</string>
     <string name="send_reset_password_link">Envoi en cours</string>
 
+    <!-- ***** PROFILE FRAGMENT ***** -->
+    <string name="error_when_fetch_user">An error occurred when trying to fetch user from firestore </string>
+    <string name="profile_update_user_info">Mettre à jour mes informations</string>
+    <string name="profile_gallery_photo">Ma Gallery Photo</string>
+    <string name="profile_events_log">Journal d\' évenements</string>
+    Journal d' évenements
+
 </resources>

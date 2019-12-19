@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,13 +12,11 @@ import android.widget.AdapterView
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.firebase.auth.FirebaseAuth
 import com.lab.zicevents.MainActivity
 
 import com.lab.zicevents.R
-import com.lab.zicevents.data.model.database.User
 import com.lab.zicevents.data.model.local.UserCategory
 import com.lab.zicevents.utils.adapter.UserCategoryAdapter
 import kotlinx.android.synthetic.main.fragment_create_profile.*
@@ -175,7 +172,7 @@ class CreateProfileFragment : Fragment(), View.OnClickListener, AdapterView.OnIt
      * Start MainActivity if user is not null else display errors
      */
     private fun observeProfileCreationSate(){
-        loginViewModel.profileUserState.observe(this, Observer {
+        loginViewModel.profileUserData.observe(this, Observer {
             val profileState = it
 
             if (profileState.firestoreUser != null){

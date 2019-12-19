@@ -1,14 +1,11 @@
 package com.lab.zicevents.ui.login
 
 import android.content.Context
-import android.provider.MediaStore
 import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.FirebaseError.ERROR_USER_DISABLED
-import com.google.firebase.FirebaseError.ERROR_USER_NOT_FOUND
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.gson.Gson
@@ -21,7 +18,6 @@ import com.lab.zicevents.data.model.database.User
 import com.lab.zicevents.data.model.local.*
 import kotlinx.coroutines.*
 import java.lang.ClassCastException
-import kotlin.contracts.Returns
 
 class LoginViewModel(private val loginRepository: LoginRepository, private val userRepository: UserRepository): ViewModel() {
     
@@ -33,8 +29,8 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
     private val loginUser = MutableLiveData<LoginUserState>()
     val loginUserState: LiveData<LoginUserState> = loginUser
 
-    private val profileUser = MutableLiveData<ProfileUserState>()
-    val profileUserState: LiveData<ProfileUserState> = profileUser
+    private val profileUser = MutableLiveData<ProfileUserData>()
+    val profileUserData: LiveData<ProfileUserData> = profileUser
 
     private var userTypeList: ArrayList<UserCategory>? = null
 
@@ -100,7 +96,7 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
     /**
      * *Coroutine*
      * Get User with uid from Firestore database
-     * observe LoginViewModel.profileUserState to get result
+     * observe LoginViewModel.profileUserData to get result
      * @param uid String that corresponding to user uid
      */
     fun getFirestoreUser(uid: String) {
@@ -113,15 +109,15 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
     /**
      * *Coroutine*
      * Create user profile to Firestore database
-     * observe LoginViewModel.profileUserState to get result
+     * observe LoginViewModel.profileUserData to get result
      * @param user User object who contain user infos
      */
     fun createFirestoreUser(user: User){
         GlobalScope.launch(Dispatchers.Main) {
             when(userRepository.createFirestoreUser(user)){
-                is Result.Success -> profileUser.value = ProfileUserState(firestoreUser = user)
-                is Result.Error -> profileUser.value = ProfileUserState(error = R.string.profile_creation_fail)
-                is Result.Canceled -> profileUser.value = ProfileUserState(error = R.string.profile_creation_cancel)
+                is Result.Success -> profileUser.value = ProfileUserData(firestoreUser = user)
+                is Result.Error -> profileUser.value = ProfileUserData(error = R.string.profile_creation_fail)
+                is Result.Canceled -> profileUser.value = ProfileUserData(error = R.string.profile_creation_cancel)
             }
         }
     }
@@ -220,15 +216,15 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
     private fun userProfileDataChanged(result: Result<DocumentSnapshot>) = when(result) {
         is Result.Success -> {
             val user: User? = result.data.toObject(User::class.java)
-            profileUser.value = ProfileUserState(firestoreUser = user)
+            profileUser.value = ProfileUserData(firestoreUser = user)
         }
         is Result.Error -> {
             Log.w(TAG,"Error when trying to get user from firestore", result.exception)
-            profileUser.value = ProfileUserState(error = R.string.fetching_user_error)
+            profileUser.value = ProfileUserData(error = R.string.fetching_user_error)
         }
         is Result.Canceled ->  {
             Log.w(TAG,"Action canceled", result.exception)
-            profileUser.value = ProfileUserState(error = R.string.fetching_user_canceled)
+            profileUser.value = ProfileUserData(error = R.string.fetching_user_canceled)
         }
     }
 

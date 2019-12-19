@@ -4,16 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.firebase.auth.FirebaseAuth
-import com.lab.zicevents.R
 import com.lab.zicevents.ui.login.LoginViewModel
 import com.lab.zicevents.ui.login.LoginViewModelFactory
-
-import kotlinx.android.synthetic.main.activity_splash_screen.*
 
 class SplashScreenActivity : AppCompatActivity() {
 
@@ -77,7 +73,7 @@ class SplashScreenActivity : AppCompatActivity() {
      * Show different views depending to result
      */
     private fun observeFirestoreUserProfile(){
-        loginViewModel.profileUserState.observe(this, Observer {userProfile ->
+        loginViewModel.profileUserData.observe(this, Observer { userProfile ->
             if (userProfile.firestoreUser != null) startMainActivity()
             else  {
                 auth.currentUser!!.delete() // Delete user auth with no profile

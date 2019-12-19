@@ -31,7 +31,7 @@
 
     <fragment
         android:id="@+id/bottom_navigation_account"
-        android:name="com.lab.zicevents.ui.account.ProfileFragment"
+        android:name="com.lab.zicevents.ui.profile.ProfileFragment"
         android:label="@string/title_account"
         tools:layout="@layout/fragment_profile" />
 </navigation>
