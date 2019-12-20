@@ -3,6 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/colorPrimaryDark" />
     <item android:gravity="center"
-        android:drawable="@drawable/ic_launcher_foreground">
+        android:drawable="@drawable/ic_icon">
     </item>
 </layer-list>
