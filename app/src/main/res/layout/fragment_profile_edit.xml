@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/colorPrimary"
+    android:padding="15dp">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/profile_edit_cover"
+                android:textStyle="bold"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                app:cardCornerRadius="8dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/profile_edit_cover_imageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:background="@color/colorPrimaryLight"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/ic_launcher_background"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/profile_edit_photo"
+                android:textStyle="bold"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="20dp"
+                app:cardCornerRadius="250dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/profile_edit_profile_imageView"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:background="@color/colorPrimaryLight"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/ic_launcher_background"/>
+
+                </androidx.cardview.widget.CardView>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/profile_edit_description"
+                android:textStyle="bold"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/profile_edit_description_inputLayout_editText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/profile_edit_description_hint"
+                style="@style/AppTheme.TextInputLayout.FilledBox"
+                android:layout_marginTop="20dp"
+                app:counterEnabled="true"
+                app:counterMaxLength="150">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/profile_edit_description_input_editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorOnPrimary"
+                    android:drawableEnd="@drawable/ic_edit"
+                    android:drawablePadding="20dp"
+                    tools:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidun consetetur sadipscing elitr"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/profile_edit_location"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/profile_edit_location_inputLayout_editText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/profile_edit_location_hint"
+                style="@style/AppTheme.TextInputLayout.FilledBox"
+                android:layout_marginTop="20dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/profile_edit_location_input_editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorOnPrimary"
+                    android:editable="false"
+                    android:drawableEnd="@drawable/ic_my_location_24px"
+                    android:drawablePadding="20dp"
+                    tools:text="14 Rue de Vesoul, 25000 Besançon"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/profile_edit_style"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"/>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/profile_edit_style_chipGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:chipSpacingHorizontal="10dp">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/profile_edit_style_chip_adding"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_edit_adding_style"
+                    style="@style/Widget.MaterialComponents.Chip.Action"
+                    app:chipIcon="@drawable/ic_add_black_18dp"
+                    app:chipBackgroundColor="@color/colorPrimaryLight"
+                    android:textColor="#AAAAAA" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

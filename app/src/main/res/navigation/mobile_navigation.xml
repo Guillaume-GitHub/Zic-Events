@@ -30,8 +30,20 @@
         tools:layout="@layout/fragment_chat" />
 
     <fragment
-        android:id="@+id/bottom_navigation_account"
+        android:id="@+id/bottom_navigation_profile"
         android:name="com.lab.zicevents.ui.profile.ProfileFragment"
         android:label="@string/title_account"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/from_profile_to_profile_edit"
+            app:destination="@id/bottom_navigation_profile_edit"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/bottom_navigation_profile" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/bottom_navigation_profile_edit"
+        android:name="com.lab.zicevents.ui.profile.ProfileEditFragment"
+        android:label="@string/profile_edit_title"
+        tools:layout="@layout/fragment_profile_edit"/>
 </navigation>

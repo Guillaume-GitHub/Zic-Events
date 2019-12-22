@@ -1,19 +1,23 @@
 package com.lab.zicevents.ui.profile
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.lab.zicevents.R
 import com.lab.zicevents.data.model.database.User
 
 import kotlinx.android.synthetic.main.fragment_profile.*
+
+import android.widget.Toolbar
+import com.lab.zicevents.LoginActivity
+
 
 class ProfileFragment : Fragment() {
 
@@ -28,7 +32,29 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         this.initViewModel()
         getUserProfile(auth.currentUser!!.uid)
+        fragment_profile_edit_info_btn.setOnClickListener {
+            findNavController().navigate(R.id.from_profile_to_profile_edit)
+        }
 
+        fragment_profile_toolbar.inflateMenu(R.menu.profile_menu)
+
+        fragment_profile_toolbar.setOnMenuItemClickListener {
+            onOptionsItemSelected(it)
+        }
+
+
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when (item?.itemId) {
+            R.id.profile_menu_logout -> {
+                auth.signOut()
+                startActivity(Intent(context,LoginActivity::class.java))
+                activity?.finish()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun initViewModel(){
@@ -55,5 +81,4 @@ class ProfileFragment : Fragment() {
         fragment_profile_collapse_toolbar.title = userData.displayName
         fragment_profile_user_description_textView.text = userData.userId
     }
-
 }

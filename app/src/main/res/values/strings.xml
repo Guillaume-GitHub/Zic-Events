@@ -77,6 +77,21 @@
     <string name="profile_update_user_info">Mettre à jour mes informations</string>
     <string name="profile_gallery_photo">Ma Gallery Photo</string>
     <string name="profile_events_log">Journal d\' évenements</string>
-    Journal d' évenements
+
+        <!-- ***** PROFILE FRAGMENT MENU ***** -->
+        <string name="profile_menu_logout">Déconnexion</string>
+        <string name="profile_menu_settings">Paramètres</string>
+        <string name="profile_menu_edit_info">Modifier mon profil</string>
+
+    <!-- ***** EDIT PROFILE FRAGMENT ***** -->
+    <string name="profile_edit_title">Modification du Profil</string>
+    <string name="profile_edit_cover">Ma Couverture</string>
+    <string name="profile_edit_photo">Ma Photo</string>
+    <string name="profile_edit_description">Ma Description</string>
+    <string name="profile_edit_description_hint">Description</string>
+    <string name="profile_edit_location">Mon Adresse</string>
+    <string name="profile_edit_location_hint">Location</string>
+    <string name="profile_edit_style">Mes Styles Musicaux</string>
+    <string name="profile_edit_adding_style">Ajouter</string>
 
 </resources>
