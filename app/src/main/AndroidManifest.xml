@@ -3,6 +3,8 @@
     package="com.lab.zicevents">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission  android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission  android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:icon="@mipmap/ic_launcher"
@@ -46,6 +48,9 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name="com.lab.zicevents.data.service.FetchAddressIntentService"
+            android:exported="false"/>
     </application>
 
 </manifest>

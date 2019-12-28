@@ -28,4 +28,11 @@
         <item name="boxBackgroundColor">@color/colorPrimaryLight</item>
     </style>
 
+    <style name="AppTheme.DatePickerDialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="colorAccent">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="android:colorControlActivated">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/colorOnPrimary</item>
+        <item name="android:textColorSecondary">@color/colorAccent</item>
+    </style>
 </resources>

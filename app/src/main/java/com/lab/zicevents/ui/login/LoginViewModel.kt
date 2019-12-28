@@ -1,6 +1,5 @@
 package com.lab.zicevents.ui.login
 
-import android.content.Context
 import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.LiveData
@@ -8,8 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.lab.zicevents.R
 import com.lab.zicevents.data.login.LoginRepository
 import com.lab.zicevents.data.Result
@@ -20,7 +17,7 @@ import kotlinx.coroutines.*
 import java.lang.ClassCastException
 
 class LoginViewModel(private val loginRepository: LoginRepository, private val userRepository: UserRepository): ViewModel() {
-    
+
     private val TAG = this::class.java.simpleName
 
     private val loginForm = MutableLiveData<LoginFormState>()
@@ -31,8 +28,6 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
 
     private val profileUser = MutableLiveData<ProfileUserData>()
     val profileUserData: LiveData<ProfileUserData> = profileUser
-
-    private var userTypeList: ArrayList<UserCategory>? = null
 
     private val profileForm = MutableLiveData<ProfileCreationFormState>()
     val profileFormState: LiveData<ProfileCreationFormState> = profileForm
@@ -309,28 +304,6 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
             Log.e(TAG, "Error on valid user infos", e)
         }
         return user
-    }
-
-    /**
-     * Return all user category
-     * @param context
-     * @return ArrayList<UserCategory>
-     */
-    fun getUserType(context: Context): ArrayList<UserCategory>{
-        var arrayList = userTypeList
-
-        if (arrayList == null) {
-            val array = context.resources.getTextArray(R.array.user_category)
-            val type = object : TypeToken<UserCategory>(){}.type
-            arrayList = ArrayList()
-
-            for (json in array){
-                val map: UserCategory = Gson().fromJson(json.toString(), type)
-                arrayList.add(map)
-            }
-            userTypeList = arrayList
-        }
-        return arrayList
     }
 }
 

@@ -58,13 +58,6 @@
     <string name="facebook_app_id">572815233259134</string>
     <string name="fb_login_protocol_scheme">fb572815233259134</string>
 
-    <!-- ***** USER CATEGORY JSON(do not change id, add new instead) ***** -->
-    <array name="user_category">
-        <item>{"'id'":0,"'category'":"'Particulier'"}</item>
-        <item>{"'id'":1,"'category'":"'Association'"}</item>
-        <item>{"'id'":2,"'category'":"'Musicien Indé'"}</item>
-        <item>{"'id'":3,"'category'":"'Musicien Pro'"}</item>
-    </array>
 
     <!-- ***** RESET PASSWORD ***** -->
     <string name="reset_password_title">Mot de passe oublié ?</string>
@@ -78,10 +71,20 @@
     <string name="profile_gallery_photo">Ma Gallery Photo</string>
     <string name="profile_events_log">Journal d\' évenements</string>
 
-        <!-- ***** PROFILE FRAGMENT MENU ***** -->
-        <string name="profile_menu_logout">Déconnexion</string>
-        <string name="profile_menu_settings">Paramètres</string>
-        <string name="profile_menu_edit_info">Modifier mon profil</string>
+    <!-- ***** CREATE PROFILE FRAGMENT ***** -->
+    <string name="create_profile_gender">Genre</string>
+    <string name="create_profile_birth_date_hint">Date de naissance</string>
+    <string name="create_profile_phone_hint">Numéro de téléphone</string>
+    <string name="create_profile_location_hint">Localisation</string>
+    <string name="create_profile_pro_box">Je suis un professionnel de la musique</string>
+    <string name="create_profile_man_radio">Homme</string>
+    <string name="create_profile_woman_radio">Femme</string>
+    <string name="create_profile_other_radio">Autre</string>
+
+    <!-- ***** PROFILE FRAGMENT MENU ***** -->
+    <string name="profile_menu_logout">Déconnexion</string>
+    <string name="profile_menu_settings">Paramètres</string>
+    <string name="profile_menu_edit_info">Modifier mon profil</string>
 
     <!-- ***** EDIT PROFILE FRAGMENT ***** -->
     <string name="profile_edit_title">Modification du Profil</string>
@@ -90,8 +93,14 @@
     <string name="profile_edit_description">Ma Description</string>
     <string name="profile_edit_description_hint">Description</string>
     <string name="profile_edit_location">Mon Adresse</string>
-    <string name="profile_edit_location_hint">Location</string>
+    <string name="profile_edit_location_hint">Localisation</string>
     <string name="profile_edit_style">Mes Styles Musicaux</string>
     <string name="profile_edit_adding_style">Ajouter</string>
+
+    <string name="service_not_available">service not available</string>
+    <string name="invalid_lat_long_used">invalid lat long used</string>
+    <string name="no_address_found">no address found</string>
+    <string name="address_found">address found</string>
+
 
 </resources>

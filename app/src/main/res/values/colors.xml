@@ -8,6 +8,7 @@
     <color name="colorAccent">#03DAC6</color>
     <color name="colorOnPrimary">#FFFFFF</color>
     <color name="colorOnSecondary">#000000</color>
+    <color name="shadowColorText">#898989</color>
 
     <color name="shadowBackground">#66000000</color>
 

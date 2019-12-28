@@ -263,8 +263,6 @@
                         tools:listitem="@layout/user_event_recycler_item"
                         tools:itemCount="3"/>
 
-                    <include layout="@layout/user_event_recycler_item"/>
-
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>

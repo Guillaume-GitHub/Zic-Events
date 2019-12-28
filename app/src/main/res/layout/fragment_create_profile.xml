@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/create_profile_container"
@@ -20,77 +21,161 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Bonjour John"
         android:textStyle="bold"
-        android:textSize="28sp"/>
+        android:textSize="28sp"
+        android:maxLines="1" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/create_profile_input_layout_phone"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="26dp"
-        android:layout_marginEnd="24dp"
-        android:selectAllOnFocus="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/create_profile_phone"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="@string/hint_phone_number"
-            android:inputType="phone" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <View
-        android:id="@+id/create_profile_dropdown_anchor"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/create_profile_input_layout_type">
-    </View>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/create_profile_input_layout_type"
-        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="26dp"
-        android:layout_marginEnd="24dp"
-        android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/create_profile_input_layout_phone">
+        app:layout_constraintTop_toBottomOf="@id/create_profile_title"
+        android:layout_marginTop="46dp"
+        android:orientation="vertical"
+        android:focusableInTouchMode="true">
 
-        <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-            android:id="@+id/create_profile_type"
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="@string/hint_user_type"
-            android:textIsSelectable="false"
-            android:editable="false"
-            android:focusable="true"
-            android:clickable="true"
-            android:drawableEnd="@drawable/ic_arrow_drop_down_24px"/>
+            android:layout_height="wrap_content"
+            android:layout_margin="24dp"
+            android:text="@string/create_profile_gender"
+            android:textSize="18sp"
+            android:textColor="@color/shadowColorText"/>
 
-    </com.google.android.material.textfield.TextInputLayout>
+        <RadioGroup
+            android:id="@+id/create_profile_radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/create_profile_next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:layout_margin="24dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:background="@drawable/rounded_corner_background"
-        android:enabled="false"
-        android:text="@string/hint_next"
-        android:textColor="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/create_profile_man_radio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:text="@string/create_profile_man_radio" />
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/create_profile_women_radio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:text="@string/create_profile_woman_radio"/>
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/create_profile_other_radio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:text="@string/create_profile_other_radio" />
+
+        </RadioGroup>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/create_profile_input_layout_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="26dp"
+            android:layout_marginEnd="24dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/create_profile_date"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/create_profile_birth_date_hint"
+                android:inputType="date"
+                android:editable="true"
+                android:longClickable="false"
+                android:drawableEnd="@drawable/ic_date_range_24px" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/create_profile_input_layout_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="26dp"
+            android:layout_marginEnd="24dp">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/create_profile_phone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/create_profile_phone_hint"
+                android:inputType="phone"
+                android:drawableEnd="@drawable/ic_phone_24px"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/create_profile_input_layout_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="26dp"
+            android:layout_marginEnd="24dp">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/create_profile_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/profile_edit_location_hint"
+                    android:inputType="text" />
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/create_profile_location_btn"
+                        android:layout_width="30dp"
+                        android:layout_height="0dp"
+                        android:layout_alignTop="@id/create_profile_location"
+                        android:layout_alignBottom="@id/create_profile_location"
+                        android:layout_alignEnd="@id/create_profile_location"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/ic_my_location_24px" />
+
+                    <ProgressBar
+                        android:id="@+id/create_profile_location_progress"
+                        android:layout_width="30dp"
+                        android:layout_height="0dp"
+                        android:layout_alignTop="@id/create_profile_location"
+                        android:layout_alignBottom="@id/create_profile_location"
+                        android:layout_alignEnd="@id/create_profile_location"
+                        android:indeterminate="true"
+                        android:visibility="gone" />
+
+            </RelativeLayout>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/create_profile_type_checkBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="26dp"
+            android:layout_marginEnd="24dp"
+            android:text="@string/create_profile_pro_box"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/create_profile_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="24dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:background="@drawable/rounded_corner_background"
+            android:enabled="false"
+            android:text="@string/hint_next" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
