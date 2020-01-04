@@ -1,16 +1,12 @@
 package com.lab.zicevents.data.database
 
-import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.lab.zicevents.data.Result
 import com.lab.zicevents.data.model.database.User
-import kotlinx.coroutines.CancellationException
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
+import com.lab.zicevents.utils.base.BaseRepository
 
-class UserRepository(private val userDataSource: UserDataSource) {
+class UserRepository(private val userDataSource: UserDataSource) : BaseRepository(){
 
     /**
      * Create Firestore user and transform Task to Kotlin Coroutine
@@ -18,7 +14,7 @@ class UserRepository(private val userDataSource: UserDataSource) {
      * @return Result<Void>
      */
     suspend fun createFirestoreUser(user: User) : Result<Void>{
-        return when (val result = userDataSource.createFirestoreUser(user).await()){
+        return when (val result = userDataSource.createFirestoreUser(user).awaitTask()){
             is Result.Success -> Result.Success(result.data)
             is Result.Error -> Result.Error(result.exception)
             is Result.Canceled -> Result.Canceled(result.exception)
@@ -31,7 +27,7 @@ class UserRepository(private val userDataSource: UserDataSource) {
      * @return Result<DocumentSnapshot>
      */
     suspend fun getFirestoreUser(uid : String) : Result<DocumentSnapshot>{
-        return when (val result = userDataSource.getFirestoreUser(uid).await()){
+        return when (val result = userDataSource.getFirestoreUser(uid).awaitTask()){
             is Result.Success -> Result.Success(result.data)
             is Result.Error -> Result.Error(result.exception)
             is Result.Canceled -> Result.Canceled(result.exception)
@@ -43,7 +39,7 @@ class UserRepository(private val userDataSource: UserDataSource) {
      * @return Result<QuerySnapshot>
      */
     suspend fun getAllFirestoreUsers() : Result<QuerySnapshot>{
-        return when (val result = userDataSource.getAllFirestoreUsers().await()){
+        return when (val result = userDataSource.getAllFirestoreUsers().awaitTask()){
             is Result.Success -> Result.Success(result.data)
             is Result.Error -> Result.Error(result.exception)
             is Result.Canceled -> Result.Canceled(result.exception)
@@ -57,7 +53,7 @@ class UserRepository(private val userDataSource: UserDataSource) {
      * @return Result<Void>
      */
     suspend fun updateFirestoreUser(uid : String, fields: Map<String, Any>) : Result<Void>{
-        return when (val result = userDataSource.updateFirestoreUser(uid, fields).await()){
+        return when (val result = userDataSource.updateFirestoreUser(uid, fields).awaitTask()){
             is Result.Success -> Result.Success(result.data)
             is Result.Error -> Result.Error(result.exception)
             is Result.Canceled -> Result.Canceled(result.exception)
@@ -70,29 +66,11 @@ class UserRepository(private val userDataSource: UserDataSource) {
      * @return Result<Void>
      */
     suspend fun deleteFirestoreUser(uid : String) : Result<Void>{
-        return when (val result = userDataSource.deleteFirestoreUser(uid).await()){
+        return when (val result = userDataSource.deleteFirestoreUser(uid).awaitTask()){
             is Result.Success -> Result.Success(result.data)
             is Result.Error -> Result.Error(result.exception)
             is Result.Canceled -> Result.Canceled(result.exception)
         }
     }
 
-    /**
-     * Task extension to transform Firebase Task<> to Kotlin suspendCoroutine
-     */
-    suspend fun <T> Task<T>.await(): Result<T> = suspendCoroutine { continuation ->
-        addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val e = exception
-                if (e == null) {
-                    if (isCanceled) continuation.resumeWithException(CancellationException("Task $this was cancelled normally."))
-                    else continuation.resume(Result.Success(result as T))
-                } else {
-                    continuation.resume(Result.Error(e))
-                }
-            } else{
-                continuation.resume(Result.Error(exception!!))
-            }
-        }
-    }
 }

@@ -7,13 +7,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.type.LatLng
 import com.lab.zicevents.R
 import com.lab.zicevents.data.login.LoginRepository
 import com.lab.zicevents.data.Result
+import com.lab.zicevents.data.api.geocoding.GeocodingRepository
 import com.lab.zicevents.data.database.UserRepository
 import com.lab.zicevents.data.model.database.User
 import com.lab.zicevents.data.model.local.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.consumesAll
 import java.lang.ClassCastException
 
 class LoginViewModel(private val loginRepository: LoginRepository, private val userRepository: UserRepository): ViewModel() {
@@ -224,16 +227,13 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
     }
 
     /**
-     * From data validation witch correct formatted phone and user category
+     * From data validation witch correct formatted phone
      * Change profileForm LiveData value
      * @param phoneNumber phone input text
-     * @param category userCategory id
      */
-    fun creationProfileDataChanged(phoneNumber: String? = null, category: UserCategory?){
+    fun creationProfileDataChanged(phoneNumber: String? = null){
         if (!isPhoneNumberValid(phoneNumber)) {
             profileForm.value = ProfileCreationFormState(phoneNumberError = R.string.invalid_phone_number)
-        } else if (category == null) {
-            profileForm.value = ProfileCreationFormState(userTypeError = R.string.invalid_user_category)
         } else {
             profileForm.value = ProfileCreationFormState(isDataValid = true)
         }
@@ -293,12 +293,12 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
      * @return User? object containing user infos or null if data are invalid or missing
      */
     fun validUserInfo(firebaseUser: FirebaseUser?,
-                      displayName: String?, phoneNumber: String?, userCategory: UserCategory?): User? {
+                      displayName: String?, phoneNumber: String?): User? {
         var user: User? = null
         val username = displayName ?: firebaseUser?.displayName
 
         try {
-            user = User(firebaseUser!!.uid, username!! ,firebaseUser.photoUrl?.path, phoneNumber, userCategory?.id!!)
+            user = User(firebaseUser!!.uid, username!! ,firebaseUser.photoUrl?.path, phoneNumber)
 
         } catch (e: NullPointerException){
             Log.e(TAG, "Error on valid user infos", e)
