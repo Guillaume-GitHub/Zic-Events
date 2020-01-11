@@ -195,15 +195,20 @@ class LoginViewModel(val loginRepository: LoginRepository,
      * @param email email input text
      * @param password password input text
      */
-    fun signUpFormDataChanged(email: String, password: String){
-        if (!isValidEmail(email)) {
-            loginForm.value =
-                LoginFormState(emailError = R.string.invalid_email)
-        } else if (!isPasswordValid(password)) {
-            loginForm.value =
-                LoginFormState(passwordError = R.string.invalid_password)
-        } else {
-            loginForm.value = LoginFormState(isDataValid = true)
+    fun signUpFormDataChanged(email: String?, password: String?, confirmPassword: String? ){
+
+        Log.d("Email =", email.toString())
+        Log.d("password =", password.toString())
+        Log.d("confirm =", confirmPassword.toString())
+        when (true){
+            !isValidEmail(email) ->
+                loginForm.value = LoginFormState(emailError = R.string.invalid_email)
+            !isPasswordValid(password) ->
+                loginForm.value = LoginFormState(passwordError = R.string.invalid_password)
+            !password.equals(confirmPassword) ->
+                loginForm.value = LoginFormState(confirmPassword = R.string.invalid_password_confirmation)
+            else ->
+                loginForm.value = LoginFormState(isDataValid = true)
         }
     }
 
@@ -281,17 +286,16 @@ class LoginViewModel(val loginRepository: LoginRepository,
      * @param email input email text
      * @return Boolean that indicate if e-mail is valid or not
      */
-    private fun isValidEmail(email: String): Boolean {
-        return when (true){
-            email.contains("@") -> Patterns.EMAIL_ADDRESS.matcher(email).matches()
-            else -> email.isBlank()
-        }
+    private fun isValidEmail(email: String?): Boolean {
+        return if (email.isNullOrBlank()) false
+        else email.matches(Regex("^([0-9a-zA-Z]([\\+\\-\\_\\.][0-9a-zA-Z]+)*)+@(([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]*\\.)+[a-zA-Z0-9]{2,17})\$"))
     }
 
     /**
      * Valid user first and last name
      * @param name input name text
      * @return Boolean that indicate if name is correctly formatted
+     *
      */
     private fun isUsernameValid(name: String?): Boolean {
         return if (name.isNullOrBlank()) false
@@ -308,9 +312,10 @@ class LoginViewModel(val loginRepository: LoginRepository,
      * @param password input password text
      * @return Boolean that indicate if password is valid or not
      */
-    private fun isPasswordValid(password: String): Boolean{
+    private fun isPasswordValid(password: String?): Boolean{
         //TODO: Split regex to trigger specific error
-        return password.matches(Regex("^.*(?=.{8,})(?=..*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_]).*$"))
+        return if (password.isNullOrBlank()) false
+        else return password.matches(Regex("^.*(?=.{8,})(?=..*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_]).*$"))
     }
 
     /**

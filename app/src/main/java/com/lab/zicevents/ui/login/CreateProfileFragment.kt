@@ -308,7 +308,7 @@ class CreateProfileFragment : Fragment(), View.OnClickListener, View.OnFocusChan
             val messageTextView: TextView = rootView.findViewById(R.id.custom_progress_dialog_message)
 
             dialog.window?.setBackgroundDrawableResource(android.R.color.transparent) // hide window
-            messageTextView.text = getString(R.string.create_profile_dialog_message) // set message
+            messageTextView.text = getString(R.string.update_profile_dialog_message) // set message
             dialog.setContentView(rootView) // add custom view
             dialog.setCancelable(false)
             dialog.show()

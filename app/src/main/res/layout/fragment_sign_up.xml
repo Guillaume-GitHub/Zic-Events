@@ -22,7 +22,7 @@
         android:textSize="28sp"/>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/sign_up_fragment_input_layout_username"
+        android:id="@+id/sign_up_fragment_input_layout_email"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -32,27 +32,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/sign_up_fragment_username"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="@string/hint_username"
-            android:inputType="textEmailAddress" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/sign_up_fragment_input_layout_email"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
-        android:selectAllOnFocus="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sign_up_fragment_input_layout_username">
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/sign_up_fragment_email"
@@ -68,7 +47,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
@@ -85,6 +64,28 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/sign_up_fragment_input_layout_password_confirmation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:selectAllOnFocus="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sign_up_fragment_input_layout_password">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/sign_up_fragment_password_confirmation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/hint_confirm_password"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"  />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/sign_up_fragment_login"
         android:layout_width="match_parent"
@@ -95,13 +96,13 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:background="@drawable/rounded_corner_background"
+        android:backgroundTint="@color/button_color_state"
         android:enabled="false"
         android:text="@string/create_account"
-        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sign_up_fragment_input_layout_password"
+        app:layout_constraintTop_toBottomOf="@+id/sign_up_fragment_input_layout_password_confirmation"
         app:layout_constraintVertical_bias="0.2" />
 
     <ProgressBar

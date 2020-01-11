@@ -7,11 +7,11 @@
     <string name="hint_next">Suivant</string>
 
     <!-- ***** LOGIN ***** -->
-    <string name="hint_password">Mot de passe</string>
-    <string name="hint_email">Adresse e-mail</string>
+    <string name="hint_password">Votre mot de passe</string>
+    <string name="hint_email">Votre Adresse e-mail</string>
+    <string name="hint_confirm_password">Confirmer votre mot de passe</string>
     <string name="hint_sign_in">Se connecter</string>
     <string name="hint_sign_up">S\' inscrire</string>
-    <string name="hint_user_type">Type d\' utilisateur</string>
     <string name="hint_phone_number">Numéro de téléphone</string>
     <string name="hint_username">Nom d\' utilisateur</string>
     <string name="forgot_password_text">Mode de passe oublié ?</string>
@@ -22,9 +22,9 @@
     <string name="create_account">Créer mon compte</string>
 
     <!-- ***** LOGIN ERROR MESSAGES ***** -->
-    <string name="invalid_username">Nom d\' utilisateur invalide</string>
     <string name="invalid_email">Addresse email invalide</string>
     <string name="invalid_password">Mode de passe invalide</string>
+    <string name="invalid_password_confirmation">Correpondance de mot de passe invalide</string>
     <string name="sign_in_fail">Echec de l\'authentification</string>
     <string name="sign_in_canceled">Authentification annulée</string>
     <string name="email_already_used">Cette adresse est déjà utilisée</string>
@@ -41,6 +41,7 @@
     <string name="invalid_pseudo">le pseudo ne peut</string>
     <string name="invalid_gender">Sélectionnez un genre</string>
     <string name="profile_creation_fail">Erreur lors de la création du profil</string>
+    <string name="profile_creation_unreadable_email">Adresse email introuvable</string>
     <string name="profile_creation_cancel">Création du profil annulée</string>
     <string name="incomplete_profile_info">Profil incomplet</string>
     <string name="send_reset_password_success">Un email de réinitialisation a été envoyé</string>
@@ -65,7 +66,6 @@
     <string name="facebook_app_id">572815233259134</string>
     <string name="fb_login_protocol_scheme">fb572815233259134</string>
 
-
     <!-- ***** RESET PASSWORD ***** -->
     <string name="reset_password_title">Mot de passe oublié ?</string>
     <string name="reset_password_send">Envoyer</string>
@@ -89,6 +89,7 @@
     <string name="create_profile_create_account">Finaliser mon Inscription</string>
     <string name="create_profile_title_message">Compléter votre profil pour finaliser votre incription</string>
     <string name="create_profile_dialog_message">Création du profil</string>
+    <string name="update_profile_dialog_message">Mise à jour du profil</string>
 
     <!-- ***** PROFILE FRAGMENT MENU ***** -->
     <string name="profile_menu_logout">Déconnexion</string>

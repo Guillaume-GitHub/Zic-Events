@@ -68,7 +68,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:scaleType="centerCrop"
-                                    android:background="@color/colorPrimaryLight" />
+                                    android:background="@drawable/profile_default_background" />
 
                             </androidx.cardview.widget.CardView>
 
