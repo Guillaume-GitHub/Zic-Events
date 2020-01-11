@@ -23,6 +23,7 @@ import com.google.firebase.auth.*
 import com.lab.zicevents.MainActivity
 
 import com.lab.zicevents.R
+import com.lab.zicevents.data.model.database.user.User
 import kotlinx.android.synthetic.main.fragment_sign_in.*
 
 /**
@@ -108,10 +109,10 @@ class SignInFragment : Fragment(), View.OnClickListener {
      */
     private fun observeSignInResult(){
         loginViewModel.loginUserState.observe(this, Observer {result ->
-            val user = result.user
-            if (user != null) { // Check if username and email are not null
-                currentUser = user
-                loginViewModel.getFirestoreUser(user.uid)
+            val firebaseUser = result.user
+            if (firebaseUser != null) { // Check if username and email are not null
+                currentUser = firebaseUser
+                loginViewModel.getFirestoreUser(firebaseUser.uid)
             } else {
                 showProgressBar(false) // Hide ProgressBAr
                 val error = result.error
@@ -124,18 +125,21 @@ class SignInFragment : Fragment(), View.OnClickListener {
      * Observe firestore user profile to check if current auth user is save in firestore
      */
     private fun observeFirestoreUserProfile(){
-        loginViewModel.profileUserData.observe(this, Observer {
+        loginViewModel.dataResult.observe(this, Observer {
             showProgressBar(false)
+            val userProfile = it
 
-            if (it.firestoreUser != null)
-                startMainActivity() // User is already create in firestore -> Start main activity
-            else if (it.error != null) // Display error message
-                Toast.makeText(context, getText(it.error), Toast.LENGTH_LONG).show()
-            else  //Create user profile in firestore if possible
-               if (currentUser.displayName != null && currentUser.email != null)
-                   navigateToProfileCreationFragment(currentUser.displayName!!,currentUser.email!!,currentUser.phoneNumber)
-               else
-                   Toast.makeText(context, getText(R.string.incomplete_sign_in_account), Toast.LENGTH_LONG).show()
+            if (userProfile.data is User?){
+                when {
+                    // Case User is already create in firestore -> Start main activity
+                    userProfile.data != null -> startMainActivity()
+                    // Case : User is present in auth but not in Firestore -> Navigate to profile creation fragment
+                    currentUser.email != null -> navigateToProfileCreationFragment(currentUser.displayName,currentUser.email!!,currentUser.phoneNumber)
+                    // Case profile fetching failed -> Display error message
+                    userProfile.error != null -> Toast.makeText(context, getText(userProfile.error), Toast.LENGTH_LONG).show()
+                    else -> Toast.makeText(context, getText(R.string.incomplete_sign_in_account), Toast.LENGTH_LONG).show()
+                }
+            }
         })
     }
 
@@ -145,7 +149,7 @@ class SignInFragment : Fragment(), View.OnClickListener {
      * @param email email address of signed user
      * @param phoneNumber phone number of user
      */
-    private fun navigateToProfileCreationFragment(displayName: String, email: String, phoneNumber: String?){
+    private fun navigateToProfileCreationFragment(displayName: String?, email: String, phoneNumber: String?){
         val action = SignInFragmentDirections.actionFromSignInToCreateProfile(displayName,email,phoneNumber)
         findNavController().navigate(action)
     }

@@ -8,8 +8,9 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.lab.zicevents.R
 import com.lab.zicevents.data.Result
 import com.lab.zicevents.data.database.UserRepository
-import com.lab.zicevents.data.model.database.User
-import com.lab.zicevents.data.model.local.ProfileUserData
+import com.lab.zicevents.data.model.database.user.User
+import com.lab.zicevents.data.model.local.DataResult
+import com.lab.zicevents.data.model.local.InsertProfileState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -18,8 +19,8 @@ class ProfileViewModel(private val userRepository: UserRepository) : ViewModel()
 
     private val TAG = this::class.java.simpleName
 
-    private val userProfile = MutableLiveData<ProfileUserData>()
-    val userProfileData: LiveData<ProfileUserData> = userProfile
+    private val userProfile = MutableLiveData<DataResult>()
+    val profileData: LiveData<DataResult> = userProfile
 
     /**
      * *Coroutine*
@@ -42,15 +43,15 @@ class ProfileViewModel(private val userRepository: UserRepository) : ViewModel()
     private fun userProfileDataChanged(result: Result<DocumentSnapshot>) = when(result) {
         is Result.Success -> {
             val user: User? = result.data.toObject(User::class.java)
-            userProfile.value = ProfileUserData(firestoreUser = user)
+            userProfile.value = DataResult(data = user)
         }
         is Result.Error -> {
             Log.w(TAG,"Error when trying to get user from firestore", result.exception)
-            userProfile.value = ProfileUserData(error = R.string.fetching_user_error)
+            userProfile.value = DataResult(error = R.string.fetching_user_error)
         }
         is Result.Canceled ->  {
             Log.w(TAG,"Action canceled", result.exception)
-            userProfile.value = ProfileUserData(error = R.string.fetching_user_canceled)
+            userProfile.value = DataResult(error = R.string.fetching_user_canceled)
         }
     }
 

@@ -17,11 +17,10 @@
     </style>
 
     <!-- Hide text in when collapsing toolbar layout are in expanded mode -->
-        <style name="AppTheme.CollapsingToolbarLayoutExpandedTextStyle" parent="AppTheme">
-            <item name="android:textColor">@android:color/transparent</item>
-            <item name="android:textSize">0sp</item>
-        </style>
-
+    <style name="AppTheme.CollapsingToolbarLayoutExpandedTextStyle" parent="AppTheme">
+        <item name="android:textColor">@android:color/transparent</item>
+        <item name="android:textSize">0sp</item>
+    </style>
 
     <!-- Style of TextInputLayout.FilledBox -->
     <style name="AppTheme.TextInputLayout.FilledBox" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">

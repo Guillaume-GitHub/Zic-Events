@@ -1,12 +1,10 @@
 package com.lab.zicevents.ui.login
 
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
-import android.location.Geocoder
-import android.location.Location
 import android.os.Bundle
-import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -16,39 +14,37 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.DatePicker
+import android.widget.RadioGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.lab.zicevents.MainActivity
 
 import com.lab.zicevents.R
-import com.lab.zicevents.data.model.local.UserCategory
-import com.lab.zicevents.data.service.AddressResultReceiver
-import com.lab.zicevents.data.service.FetchAddressIntentService
 import kotlinx.android.synthetic.main.fragment_create_profile.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 /**
  * Creation profile [Fragment]
  */
-class CreateProfileFragment : Fragment(), View.OnClickListener, View.OnFocusChangeListener, DatePickerDialog.OnDateSetListener {
+class CreateProfileFragment : Fragment(), View.OnClickListener, View.OnFocusChangeListener,
+    DatePickerDialog.OnDateSetListener,RadioGroup.OnCheckedChangeListener{
 
     private val args: CreateProfileFragmentArgs by navArgs()
     private val auth = FirebaseAuth.getInstance()
-    private lateinit var loginViewModel: LoginViewModel
-    private lateinit var pseudo: String
-    private lateinit var email: String
-    private var phone: String? = null
     private val calendar = Calendar.getInstance()
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var lastKnownLocation: Location? = null
-    private var resultReceiver: AddressResultReceiver = AddressResultReceiver(Handler())
+    private var progressDialog: Dialog? = null
+    private lateinit var loginViewModel: LoginViewModel
+    private lateinit var email: String
+    private var username: String? = null
+    private var gender: String? = null
+    private var phone: String? = null
+    private var birthDate: Date? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -58,30 +54,49 @@ class CreateProfileFragment : Fragment(), View.OnClickListener, View.OnFocusChan
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         getArgs()
-
         configureViewModel()
-        configClickableViews()
-        configFocusableViews()
-
-        bindViews()
-
+        setRadioButtonTags()
+        create_profile_next.setOnClickListener(this)
+        create_profile_date.onFocusChangeListener = this
+        create_profile_radioGroup.setOnCheckedChangeListener(this)
         observeDataFormState()
         observeProfileCreationSate()
+        bindViews()
 
         // Set TextWatcher to input phone Number
         create_profile_phone.addTextChangedListener(object : TextWatcher{
             override fun afterTextChanged(text: Editable?) {
-                phone = text.toString()
-                loginViewModel.creationProfileDataChanged(phoneNumber = phone, category = UserCategory(null,null))
+                if (text != null) {
+                    phone = text.toString()
+                    loginViewModel.creationProfileDataChanged(phoneNumber = phone, gender = gender, username = username)
+                }
             }
             override fun beforeTextChanged(text: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(text: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         })
 
-        // Get google Location services
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context!!)
+        // Set TextWatcher to input username
+        create_profile_username.addTextChangedListener(object :TextWatcher {
+            override fun afterTextChanged(text: Editable?) {
+                if (text != null) {
+                    username = text.toString()
+                    loginViewModel.creationProfileDataChanged(username = username, gender = gender, phoneNumber = phone)
+                }
+            }
+            override fun beforeTextChanged(text: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(text: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        })
+
+    }
+
+    /**
+     * Get args passed to bundle
+     */
+    private fun getArgs(){
+        username = args.username
+        email = args.email
+        phone = args.phoneNumber
     }
 
     /**
@@ -90,55 +105,52 @@ class CreateProfileFragment : Fragment(), View.OnClickListener, View.OnFocusChan
     override fun onClick(view: View?) {
         when(view?.id){
             R.id.create_profile_next -> createUserProfile()
-            R.id.create_profile_location_btn -> fetchAddress()
             else -> {}
         }
     }
 
     /**
-     * Trigger Focus on views
+     * Trigger Focus change on views
      */
     override fun onFocusChange(view: View?, isFocused: Boolean) {
         when(view?.id){
-            R.id.create_profile_date -> {
-                if(isFocused) {
+            R.id.create_profile_date ->
+                if (isFocused) {
                     hideSoftKeyboard(view)
                     showDatePicker()
                 }
-            }
+            else -> {}
         }
     }
 
     /**
-     * Get Date selected from DatePicker  and display it into date input
-     * @param view correspond to DatePicker
-     * @param year is int corresponding to year of date picked
-     * @param month is int corresponding to month of date picked
-     * @param day is int corresponding to day of date picked
+     * Set tags to Radio Buttons
      */
-    override fun onDateSet(view: DatePicker?, year: Int, month: Int, day: Int) {
-        calendar.set(Calendar.YEAR, year)
-        calendar.set(Calendar.MONTH, month)
-        calendar.set(Calendar.DAY_OF_MONTH, day)
-
-        val formatter = SimpleDateFormat("d MMMM yyyy", Locale.FRENCH)
-        create_profile_date.setText(formatter.format(calendar.time))
+    private fun setRadioButtonTags(){
+        create_profile_gender_male_radio.tag = getString(R.string.gender_male_value)
+        create_profile_gender_female_radio.tag = getString(R.string.gender_female_value)
+        create_profile_gender_other_radio.tag = getString(R.string.gender_other_value)
     }
 
     /**
-     * Get args passed to bundle
+     * Get Checked radio in radio group
      */
-    private fun getArgs(){
-        pseudo = args.pseudo
-        email = args.email
-        phone = args.phoneNumber
+    override fun onCheckedChanged(radioGroup: RadioGroup?, radioId: Int) {
+        if (radioGroup != null && radioGroup.id == create_profile_radioGroup.id) {
+           when(radioId){
+               create_profile_gender_female_radio.id -> gender = create_profile_gender_female_radio.tag.toString()
+               create_profile_gender_male_radio.id -> gender = create_profile_gender_male_radio.tag.toString()
+               create_profile_gender_other_radio.id -> gender = create_profile_gender_other_radio.tag.toString()
+           }
+            loginViewModel.creationProfileDataChanged(gender = gender, username = username, phoneNumber = phone)
+        }
     }
 
     /**
      * Bind views
      */
     private fun bindViews(){
-        displayTitle(pseudo)
+        displayUsername()
         displayPhoneNumber(phone)
     }
 
@@ -149,39 +161,16 @@ class CreateProfileFragment : Fragment(), View.OnClickListener, View.OnFocusChan
         loginViewModel = ViewModelProviders.of(this, LoginViewModelFactory()).get(LoginViewModel::class.java)
     }
 
-    /**
-     *  Set OnClickListener on clickable Views
-     */
-    private fun configClickableViews(){
-        create_profile_next.setOnClickListener(this)
-        create_profile_location_btn.setOnClickListener(this)
-    }
 
     /**
-     *  Set OnFocusChangeListener on focusable Views
+     * Try to get pseudo from auth user
+     * display it to input username
+     * set value to username var
      */
-    private fun configFocusableViews(){
-        create_profile_date.onFocusChangeListener = this
-    }
-
-    /**
-     *  Hide soft Keyboard and clean focus on view
-     *  @param view is view currently focus
-     */
-    private fun hideSoftKeyboard(view: View?){
-        view?.clearFocus()
-        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-        imm?.hideSoftInputFromWindow(view?.windowToken, 0)
-    }
-
-    /**
-     * Display pseudo or username passed to bundle in title
-     * @param pseudo is username or pseudo of user
-     */
-    private fun displayTitle(pseudo: String) {
-        create_profile_title.apply {
-            val text =  getString(R.string.welcome) + " $pseudo"
-            this.text = text
+    private fun displayUsername() {
+        create_profile_username.apply {
+            username = FirebaseAuth.getInstance().currentUser?.displayName
+            if (username != null) setText(username.toString())
         }
     }
 
@@ -196,39 +185,56 @@ class CreateProfileFragment : Fragment(), View.OnClickListener, View.OnFocusChan
     }
 
     /**
-     * Show a DatePickerDialog
+     * Create user object according to form values
      */
-    private fun showDatePicker(){
-       DatePickerDialog(context!!, R.style.AppTheme_DatePickerDialog ,this,
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH))
-           .show()
+    private fun createUserProfile(){
+        val user = loginViewModel.validUserInfo(auth.currentUser, username)
+        val privateUserInfo = loginViewModel.validPrivateUserInfo(auth.currentUser,gender ,phone, birthDate)
+
+        if (user != null && privateUserInfo != null)  {
+            loginViewModel.createFirestoreUser(user)
+            showDialog(true)
+        }
+        else
+            Toast.makeText(context,getText(R.string.incomplete_profile_info),Toast.LENGTH_LONG).show()
     }
 
     /**
-     * Display replace location drawable by progress bar in Location input text and vice versa
+     * Observe profile creation to firestore
+     * Start MainActivity if user is not null else display errors
      */
-    private fun showProgressGeolocation(isVisible: Boolean){
-        if (isVisible){
-            create_profile_location_btn.visibility = View.GONE
-            create_profile_location_progress.visibility = View.VISIBLE
+    private fun observeProfileCreationSate() {
+        loginViewModel.insertProfileState.observe(this, Observer {
+            val profileState = it
 
-        } else {
-            create_profile_location_btn.visibility = View.VISIBLE
-            create_profile_location_progress.visibility = View.GONE
-        }
-    }
+            when {
+                // Case User profile are created but not private info
+                profileState.isUserCreated && !profileState.isPrivateInfoCreated -> {
 
+                    val privateUserInfo = loginViewModel.validPrivateUserInfo(auth.currentUser,gender ,phone, birthDate)
+                    val userId = auth.uid
 
-    private fun createUserProfile(){
-        val user = loginViewModel.validUserInfo(auth.currentUser, pseudo,phone,
-            UserCategory(0,"default")
-        )
-        if (user != null)
-            loginViewModel.createFirestoreUser(user)
-        else
-            Toast.makeText(context,getText(R.string.incomplete_profile_info),Toast.LENGTH_LONG).show()
+                    if (privateUserInfo != null && userId != null)
+                        loginViewModel.createPrivateUserInfo(userId, privateUserInfo)
+                    else  {
+                        Log.d(this.javaClass.name,"Error Before send private user info")
+                        showDialog(false)
+                    }
+                }
+                // Case user profile + private info created
+                profileState.isUserCreated && profileState.isPrivateInfoCreated -> {
+                    showDialog(false)
+                    startActivity(Intent(context,MainActivity::class.java))
+                    activity?.finish()
+                }
+                // Case error
+                profileState.error != null -> {
+                    showDialog(false)
+                    Toast.makeText(context, getString(profileState.error),Toast.LENGTH_SHORT).show()
+                }
+                else ->{ }
+            }
+        })
     }
 
     /**
@@ -241,61 +247,76 @@ class CreateProfileFragment : Fragment(), View.OnClickListener, View.OnFocusChan
 
             create_profile_next.isEnabled = dataState.isDataValid
 
+            if (dataState.genderError != null) create_profile_gender_error.text = getString(dataState.genderError)
+            else create_profile_gender_error.text = null
+
+            if (dataState.usernameError != null) create_profile_input_layout_username.error = getString(dataState.usernameError)
+            else create_profile_input_layout_username.error = null
+
             if (dataState.phoneNumberError != null) create_profile_input_layout_phone.error = getString(dataState.phoneNumberError)
             else create_profile_input_layout_phone.error = null
 
-           // if (dataState.userTypeError != null) create_profile_input_layout_type.error = getString(dataState.userTypeError)
-           // else create_profile_input_layout_type.error = null
         })
     }
 
     /**
-     * Observe profile creation to firestore
-     * Start MainActivity if user is not null else display errors
+     * Hide soft keyboard
+     * @param view is view focused
      */
-    private fun observeProfileCreationSate(){
-        loginViewModel.profileUserData.observe(this, Observer {
-            val profileState = it
-
-            if (profileState.firestoreUser != null){
-                startActivity(Intent(context,MainActivity::class.java))
-                activity?.finish()
-
-            } else if (profileState.error != null) {
-                Toast.makeText(context, getString(profileState.error),Toast.LENGTH_SHORT).show()
-            }
-        })
+    private fun hideSoftKeyboard(view: View?){
+        view?.clearFocus()
+        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.hideSoftInputFromWindow(view?.windowToken,0)
     }
 
     /**
-     * Start FetchAddressService to get address corresponding to device position
+     * Configure and Show Date Picker
      */
-    private fun startIntentService() {
-        val intent = Intent(context, FetchAddressIntentService::class.java).apply {
-            putExtra(FetchAddressIntentService.Constants.RECEIVER, resultReceiver)
-            putExtra(FetchAddressIntentService.Constants.LOCATION_DATA_EXTRA, lastKnownLocation)
-        }
-        context!!.startService(intent)
+    private fun showDatePicker(){
+       val dialog = DatePickerDialog(context!!,R.style.AppTheme_DatePickerDialog,this,
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH))
+        dialog.datePicker.maxDate = Calendar.getInstance().timeInMillis
+        dialog.show()
     }
 
     /**
-     * Get Device location
+     * Get selected date from DatePickerDialog and display value in input date
      */
-    private fun fetchAddress() {
-        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-            lastKnownLocation = location
+    override fun onDateSet(datePicker: DatePicker?, year: Int, month: Int, day: Int) {
+        calendar.set(Calendar.YEAR, year)
+        calendar.set(Calendar.MONTH, month)
+        calendar.set(Calendar.DAY_OF_MONTH, day)
 
-            if (lastKnownLocation == null) return@addOnSuccessListener
+        birthDate = calendar.time
 
-            if (!Geocoder.isPresent()) {
-                Toast.makeText(context, "Geocoder not available", Toast.LENGTH_LONG).show()
-                return@addOnSuccessListener
-            }
-
-            startIntentService()
-        }
+        // Format date String before display
+        val dateFormat = SimpleDateFormat.getDateInstance()
+        create_profile_date.setText(dateFormat.format(calendar.time))
     }
 
+    /**
+     * Display custom dialog with progress bar
+     * @param display
+     */
+    private fun showDialog(display: Boolean){
+        if (display){
+            val dialog = Dialog(context!!)
+            progressDialog = dialog
+            val rootView = LayoutInflater.from(context).inflate(R.layout.custom_progress_dialog, null)
+            val messageTextView: TextView = rootView.findViewById(R.id.custom_progress_dialog_message)
+
+            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent) // hide window
+            messageTextView.text = getString(R.string.create_profile_dialog_message) // set message
+            dialog.setContentView(rootView) // add custom view
+            dialog.setCancelable(false)
+            dialog.show()
+
+        } else {
+            this.progressDialog?.dismiss()
+        }
+    }
 
 }
 

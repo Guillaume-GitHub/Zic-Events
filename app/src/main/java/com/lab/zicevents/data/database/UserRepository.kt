@@ -3,7 +3,8 @@ package com.lab.zicevents.data.database
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.lab.zicevents.data.Result
-import com.lab.zicevents.data.model.database.User
+import com.lab.zicevents.data.model.database.user.PrivateUserInfo
+import com.lab.zicevents.data.model.database.user.User
 import com.lab.zicevents.utils.base.BaseRepository
 
 class UserRepository(private val userDataSource: UserDataSource) : BaseRepository(){
@@ -15,6 +16,20 @@ class UserRepository(private val userDataSource: UserDataSource) : BaseRepositor
      */
     suspend fun createFirestoreUser(user: User) : Result<Void>{
         return when (val result = userDataSource.createFirestoreUser(user).awaitTask()){
+            is Result.Success -> Result.Success(result.data)
+            is Result.Error -> Result.Error(result.exception)
+            is Result.Canceled -> Result.Canceled(result.exception)
+        }
+    }
+
+    /**
+     * Create private user info and transform Task to Kotlin Coroutine
+     * @param userId id of authenticated user
+     * @param privateInfo object who contain private user info
+     * @return Result<Void>
+     */
+    suspend fun createPrivateUserInfo(userId: String, privateInfo: PrivateUserInfo) : Result<Void>{
+        return when (val result = userDataSource.createPrivateUserInfo(userId, privateInfo).awaitTask()){
             is Result.Success -> Result.Success(result.data)
             is Result.Error -> Result.Error(result.exception)
             is Result.Canceled -> Result.Canceled(result.exception)

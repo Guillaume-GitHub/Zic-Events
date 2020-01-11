@@ -7,19 +7,20 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.type.LatLng
 import com.lab.zicevents.R
 import com.lab.zicevents.data.login.LoginRepository
 import com.lab.zicevents.data.Result
-import com.lab.zicevents.data.api.geocoding.GeocodingRepository
 import com.lab.zicevents.data.database.UserRepository
-import com.lab.zicevents.data.model.database.User
+import com.lab.zicevents.data.model.database.user.PrivateUserInfo
+import com.lab.zicevents.data.model.database.user.User
 import com.lab.zicevents.data.model.local.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.consumesAll
 import java.lang.ClassCastException
+import java.util.*
+import kotlin.collections.ArrayList
 
-class LoginViewModel(private val loginRepository: LoginRepository, private val userRepository: UserRepository): ViewModel() {
+class LoginViewModel(val loginRepository: LoginRepository,
+                     private val userRepository: UserRepository): ViewModel() {
 
     private val TAG = this::class.java.simpleName
 
@@ -29,11 +30,14 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
     private val loginUser = MutableLiveData<LoginUserState>()
     val loginUserState: LiveData<LoginUserState> = loginUser
 
-    private val profileUser = MutableLiveData<ProfileUserData>()
-    val profileUserData: LiveData<ProfileUserData> = profileUser
+    private val profileUser = MutableLiveData<InsertProfileState>()
+    val insertProfileState: LiveData<InsertProfileState> = profileUser
 
-    private val profileForm = MutableLiveData<ProfileCreationFormState>()
-    val profileFormState: LiveData<ProfileCreationFormState> = profileForm
+    private val profileForm = MutableLiveData<ProfileFormState>()
+    val profileFormState: LiveData<ProfileFormState> = profileForm
+
+    private val data = MutableLiveData<DataResult>()
+    val dataResult: LiveData<DataResult> = data
 
     private val resetPassword = MutableLiveData<Int>()
     val resetPasswordStatus: LiveData<Int> = resetPassword
@@ -113,9 +117,24 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
     fun createFirestoreUser(user: User){
         GlobalScope.launch(Dispatchers.Main) {
             when(userRepository.createFirestoreUser(user)){
-                is Result.Success -> profileUser.value = ProfileUserData(firestoreUser = user)
-                is Result.Error -> profileUser.value = ProfileUserData(error = R.string.profile_creation_fail)
-                is Result.Canceled -> profileUser.value = ProfileUserData(error = R.string.profile_creation_cancel)
+                is Result.Success -> profileUser.value = InsertProfileState(isUserCreated = true)
+                is Result.Error -> profileUser.value = InsertProfileState(error = R.string.profile_creation_fail)
+                is Result.Canceled -> profileUser.value = InsertProfileState(error = R.string.profile_creation_cancel)
+            }
+        }
+    }
+
+    /**
+     * Create private user info in user profile
+     * set result to livaData
+     * @param user User object who contain user infos
+     */
+    fun createPrivateUserInfo(userId: String, privateInfo: PrivateUserInfo){
+        GlobalScope.launch(Dispatchers.Main) {
+            when(userRepository.createPrivateUserInfo(userId, privateInfo)){
+                is Result.Success -> profileUser.value = InsertProfileState(isUserCreated = true, isPrivateInfoCreated = true)
+                is Result.Error -> profileUser.value = InsertProfileState(error = R.string.profile_creation_fail)
+                is Result.Canceled -> profileUser.value = InsertProfileState(error = R.string.profile_creation_cancel)
             }
         }
     }
@@ -214,15 +233,15 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
     private fun userProfileDataChanged(result: Result<DocumentSnapshot>) = when(result) {
         is Result.Success -> {
             val user: User? = result.data.toObject(User::class.java)
-            profileUser.value = ProfileUserData(firestoreUser = user)
+            data.value = DataResult(data = user)
         }
         is Result.Error -> {
             Log.w(TAG,"Error when trying to get user from firestore", result.exception)
-            profileUser.value = ProfileUserData(error = R.string.fetching_user_error)
+            data.value = DataResult(error = R.string.fetching_user_error)
         }
         is Result.Canceled ->  {
             Log.w(TAG,"Action canceled", result.exception)
-            profileUser.value = ProfileUserData(error = R.string.fetching_user_canceled)
+            data.value = DataResult(error = R.string.fetching_user_canceled)
         }
     }
 
@@ -231,12 +250,19 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
      * Change profileForm LiveData value
      * @param phoneNumber phone input text
      */
-    fun creationProfileDataChanged(phoneNumber: String? = null){
-        if (!isPhoneNumberValid(phoneNumber)) {
-            profileForm.value = ProfileCreationFormState(phoneNumberError = R.string.invalid_phone_number)
-        } else {
-            profileForm.value = ProfileCreationFormState(isDataValid = true)
-        }
+    fun creationProfileDataChanged(gender: String?, username: String?, phoneNumber: String?) {
+
+        if (!isGenderValid(gender))
+            profileForm.value = ProfileFormState(genderError = R.string.invalid_gender)
+
+        else if (!isUsernameValid(username))
+            profileForm.value = ProfileFormState(usernameError = R.string.invalid_username_char)
+
+        else if (!isPhoneNumberValid(phoneNumber))
+            profileForm.value = ProfileFormState(phoneNumberError = R.string.invalid_phone_number)
+
+        else
+            profileForm.value = ProfileFormState(isDataValid = true)
     }
 
     /**
@@ -255,10 +281,25 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
      * @param email input email text
      * @return Boolean that indicate if e-mail is valid or not
      */
-    private fun isValidEmail(email: String): Boolean{
+    private fun isValidEmail(email: String): Boolean {
         return when (true){
             email.contains("@") -> Patterns.EMAIL_ADDRESS.matcher(email).matches()
             else -> email.isBlank()
+        }
+    }
+
+    /**
+     * Valid user first and last name
+     * @param name input name text
+     * @return Boolean that indicate if name is correctly formatted
+     */
+    private fun isUsernameValid(name: String?): Boolean {
+        return if (name.isNullOrBlank()) false
+        else {
+            if (name.length < 3 || name.length >100)
+                return false
+            else
+                name.matches(Regex("^\\w+( \\w+)*\$")) // Only Alphanumeric
         }
     }
 
@@ -285,6 +326,16 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
     }
 
     /**
+     * Valid selected gender
+     * @param gender is radio gender tag
+     * @return Boolean that indicate if phone number is correctly formatted
+     */
+    private fun isGenderValid(gender: String?): Boolean {
+        return !gender.isNullOrBlank()
+        //TODO : Check gender string matches to gender values
+    }
+
+    /**
      * Verify User profile information and return user object
      * @param firebaseUser FirebaseUser?
      * @param displayName String? : displaying username
@@ -292,18 +343,68 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val u
      * @param userCategory UserCategory? : category of user
      * @return User? object containing user infos or null if data are invalid or missing
      */
-    fun validUserInfo(firebaseUser: FirebaseUser?,
-                      displayName: String?, phoneNumber: String?): User? {
-        var user: User? = null
-        val username = displayName ?: firebaseUser?.displayName
+    fun validUserInfo(firebaseUser: FirebaseUser?, username: String?): User? {
 
-        try {
-            user = User(firebaseUser!!.uid, username!! ,firebaseUser.photoUrl?.path, phoneNumber)
+        if (firebaseUser != null){
+            var user: User? = null
 
-        } catch (e: NullPointerException){
-            Log.e(TAG, "Error on valid user infos", e)
+            try {
+                user = User(
+                    userId = firebaseUser.uid,
+                    displayName = username!!,
+                    description = null,
+                    pseudo = generatePseudo(username),
+                    photoURL = firebaseUser.photoUrl?.path,
+                    gallery = ArrayList<String?>(),
+                    musicStyle = ArrayList<String?>()
+                )
+            } catch (e: NullPointerException){
+                Log.e(TAG, "Cannot create User object : ", e)
+            }
+            return user
         }
-        return user
+        return null
+    }
+
+    /**
+     * Verify private user information and return PrivateUserInfo object
+     * @param firebaseUser is auth user information
+     * @param gender is gender of user
+     * @param phoneNumber is user phone number
+     * @param birthDate is birthDate of user
+     * @return PrivateUserInfo or null. PrivateUserInfo contain private user info like email, phone, etc
+     */
+    fun validPrivateUserInfo(firebaseUser: FirebaseUser?,gender: String?,
+                             phoneNumber: String?, birthDate: Date?): PrivateUserInfo? {
+
+        if (firebaseUser != null){
+            var privateUserInfo: PrivateUserInfo? = null
+
+            try {
+                privateUserInfo = PrivateUserInfo(
+                    gender = gender!!,
+                    email = firebaseUser.email!!,
+                    phoneNumber = phoneNumber,
+                    birthDate = birthDate
+                )
+            } catch (e: NullPointerException){
+                Log.e(TAG, "Cannot create PrivateUserInfo object : ", e)
+            }
+            return privateUserInfo
+        }
+        return null
+    }
+
+    /**
+     * Generate pseudo basing on username values
+     * Format pseudo for corresponding to standard pseudo format
+     * example : #Random_Pseudo, #RanDomPseuDo3453 etc ...
+     */
+    private fun generatePseudo(username: String): String {
+        var str = username.replace(Regex("[^a-zA-Z0-9_ ]"), "")
+        str = str.replace(" ", "_")
+        str = "#$str"
+        return str
     }
 }
 

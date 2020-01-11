@@ -53,8 +53,9 @@
         android:name="com.lab.zicevents.ui.login.CreateProfileFragment"
         tools:layout= "@layout/fragment_create_profile">
         <argument
-            android:name="pseudo"
-            app:argType="string" />
+            android:name="username"
+            app:argType="string"
+            app:nullable="true" />
         <argument
             android:name="email"
             app:argType="string" />

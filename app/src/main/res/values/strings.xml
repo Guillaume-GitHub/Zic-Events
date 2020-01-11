@@ -36,8 +36,10 @@
     <string name="incomplete_sign_in_account">Impossible d\' utiliser ce compte</string>
     <string name="fetching_user_error">Erreur lors de la récupération du profil</string>
     <string name="fetching_user_canceled">Action annulée</string>
-    <string name="invalid_phone_number">Numéro invalide</string>
-    <string name="invalid_user_category">Vous devez choisir une catégorie</string>
+    <string name="invalid_phone_number">Numéro de téléphone invalide</string>
+    <string name="invalid_username_char">Votre nom d\'utilisateur doit comprendre au moins 3 lettres sans caratères spéciaux</string>
+    <string name="invalid_pseudo">le pseudo ne peut</string>
+    <string name="invalid_gender">Sélectionnez un genre</string>
     <string name="profile_creation_fail">Erreur lors de la création du profil</string>
     <string name="profile_creation_cancel">Création du profil annulée</string>
     <string name="incomplete_profile_info">Profil incomplet</string>
@@ -78,14 +80,15 @@
 
     <!-- ***** CREATE PROFILE FRAGMENT ***** -->
     <string name="create_profile_gender">Genre</string>
-    <string name="create_profile_birth_date_hint">Date de naissance</string>
-    <string name="create_profile_phone_hint">Numéro de téléphone</string>
-    <string name="create_profile_location_hint">Localisation</string>
-    <string name="create_profile_man_radio">Homme</string>
-    <string name="create_profile_woman_radio">Femme</string>
-    <string name="create_profile_other_radio">Autre</string>
+    <string name="create_profile_username">Prénom &amp; Nom</string>
+    <string name="create_profile_birthDate">Date de naissance</string>
+    <string name="create_profile_phone">Numéro de téléphone</string>
+    <string name="create_profile_gender_male_radio">Homme</string>
+    <string name="create_profile_gender_female_radio">Femme</string>
+    <string name="create_profile_gender_other_radio">Autre</string>
     <string name="create_profile_create_account">Finaliser mon Inscription</string>
-
+    <string name="create_profile_title_message">Compléter votre profil pour finaliser votre incription</string>
+    <string name="create_profile_dialog_message">Création du profil</string>
 
     <!-- ***** PROFILE FRAGMENT MENU ***** -->
     <string name="profile_menu_logout">Déconnexion</string>
@@ -102,5 +105,10 @@
     <string name="profile_edit_location_hint">Localisation</string>
     <string name="profile_edit_style">Mes Styles Musicaux</string>
     <string name="profile_edit_adding_style">Ajouter</string>
+
+    <!-- ***** LOCAL DATA ***** -->
+    <string name="gender_male_value" translatable="false">male</string>
+    <string name="gender_female_value" translatable="false">female</string>
+    <string name="gender_other_value" translatable="false">other</string>
 
 </resources>

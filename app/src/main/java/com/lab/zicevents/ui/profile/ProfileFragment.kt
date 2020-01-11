@@ -11,11 +11,10 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.lab.zicevents.R
-import com.lab.zicevents.data.model.database.User
+import com.lab.zicevents.data.model.database.user.User
 
 import kotlinx.android.synthetic.main.fragment_profile.*
 
-import android.widget.Toolbar
 import com.lab.zicevents.LoginActivity
 
 
@@ -67,18 +66,20 @@ class ProfileFragment : Fragment() {
     }
 
     private fun observeUserProfileData(){
-        profileViewModel.userProfileData.observe(this, Observer {
+        profileViewModel.profileData.observe(this, Observer {
             val userData = it
-            when {
-                userData.firestoreUser != null -> bindView(userData.firestoreUser)
-                userData.error != null -> Toast.makeText(context,getString(userData.error),Toast.LENGTH_LONG).show() // TODO : Display Error profile Fragment
-                else -> Log.w(this.javaClass.simpleName,getString(R.string.error_when_fetch_user))
+            if (userData.data is User?){
+                when {
+                    userData.data != null -> bindView(userData.data)
+                    userData.error != null -> Toast.makeText(context,getString(userData.error),Toast.LENGTH_LONG).show() // TODO : Display Error profile Fragment
+                    else -> Log.w(this.javaClass.simpleName,getString(R.string.error_when_fetch_user))
+                }
             }
         })
     }
-    private fun bindView(userData: User){
-        fragment_profile_user_name_textView.text = userData.displayName
-        fragment_profile_collapse_toolbar.title = userData.displayName
-        fragment_profile_user_description_textView.text = userData.userId
+    private fun bindView(user: User){
+        fragment_profile_user_name_textView.text = user.displayName
+        fragment_profile_collapse_toolbar.title = user.displayName
+        fragment_profile_user_description_textView.text = user.userId
     }
 }

@@ -98,6 +98,7 @@ class ResetPasswordFragment : Fragment() {
      * Display custom dialog with progress bar
      * @param display
      */
+    // TODO : Optimize with generic class
     private fun showDialog(display: Boolean){
         if (display){
             val dialog = Dialog(context!!)

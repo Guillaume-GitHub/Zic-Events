@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.firebase.auth.FirebaseAuth
+import com.lab.zicevents.data.model.database.user.User
 import com.lab.zicevents.ui.login.LoginViewModel
 import com.lab.zicevents.ui.login.LoginViewModelFactory
 
@@ -73,11 +74,12 @@ class SplashScreenActivity : AppCompatActivity() {
      * Show different views depending to result
      */
     private fun observeFirestoreUserProfile(){
-        loginViewModel.profileUserData.observe(this, Observer { userProfile ->
-            if (userProfile.firestoreUser != null) startMainActivity()
+        loginViewModel.dataResult.observe(this, Observer {
+            val userProfile = it
+            if (userProfile.data is User? && userProfile.data != null)
+                startMainActivity()
             else  {
                 auth.currentUser!!.delete() // Delete user auth with no profile
-                Toast.makeText(this, "User signed in with no profile into database", Toast.LENGTH_LONG).show()
                 startLoginActivity()
             }
         })
