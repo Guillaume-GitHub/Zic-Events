@@ -15,17 +15,18 @@ data class User(
     var pseudo: String,
     var description: String? = null,
     var photoURL: String? = null,
-    var gallery: ArrayList<String?>,
-    var musicStyle: ArrayList<String?>) {
+    var gallery: ArrayList<String>? = null,
+    var musicStyle: ArrayList<String>? = null)  {
 
     // Empty constructor *Required to deserialize datas fetched from firestore
-    constructor(): this(
+    constructor(): this (
         null,
         "",
         "",
         "",
         null,
         null,
-        ArrayList(),
-        ArrayList())
+        null,
+        null
+    )
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    android:id="@+id/event_item_root"
+    android:id="@+id/publication_item_root"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -15,7 +15,7 @@
         android:layout_height="wrap_content">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/event_item_user_image_container"
+            android:id="@+id/publication_user_image_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
@@ -23,26 +23,27 @@
             app:cardCornerRadius="250dp">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/event_item_user_imageView"
+                android:id="@+id/publication_user_image"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:background="@color/colorPrimaryLight" />
+                android:background="@drawable/profile_default_background" />
 
         </androidx.cardview.widget.CardView>
 
         <RelativeLayout
-            android:id="@+id/event_item_header"
+            android:id="@+id/publication_name_date_container"
             android:layout_width="0dp"
             android:layout_height="60dp"
-            android:layout_toEndOf="@id/event_item_user_image_container"
-            app:layout_constraintStart_toEndOf="@id/event_item_user_image_container"
-            app:layout_constraintEnd_toStartOf="@id/event_item_option_btn"
+            android:layout_toEndOf="@id/publication_user_image_container"
+            app:layout_constraintStart_toEndOf="@id/publication_user_image_container"
+            app:layout_constraintEnd_toStartOf="@id/publication_option_btn"
             app:layout_constraintTop_toTopOf="parent"
             android:gravity="center">
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/event_item_username"
+                android:id="@+id/publication_username"
                 android:layout_width="match_parent"
+                android:gravity="center_vertical"
                 android:layout_height="25dp"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
@@ -51,19 +52,20 @@
                 android:textStyle="bold"/>
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/event_item_dateTime"
+                android:id="@+id/publication_dateTime"
                 android:layout_width="match_parent"
+                android:gravity="center_vertical"
                 android:layout_height="25dp"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:maxLines="1"
                 tools:text="17 Janv 2019 . 7:45"
-                android:layout_below="@id/event_item_username"/>
+                android:layout_below="@id/publication_username"/>
 
         </RelativeLayout>
 
         <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/event_item_option_btn"
+            android:id="@+id/publication_option_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_more_horiz_24dp"
@@ -72,37 +74,33 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/event_item_post_text"
+            android:id="@+id/publication_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_margin="10dp"
             android:maxLength="150"
-            app:layout_constraintStart_toEndOf="@id/event_item_user_image_container"
-            app:layout_constraintTop_toBottomOf="@id/event_item_header"
+            app:layout_constraintStart_toEndOf="@id/publication_user_image_container"
+            app:layout_constraintTop_toBottomOf="@id/publication_name_date_container"
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
 sed diam nonumy eirmod tempor invidunt Lorem ipsu, consetetur sadipscing elitr, consetetursr "/>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/event_item_post_imageView_container"
+            android:id="@+id/publication_image_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/event_item_user_image_container"
-            app:layout_constraintTop_toBottomOf="@id/event_item_post_text"
+            app:layout_constraintStart_toEndOf="@id/publication_user_image_container"
+            app:layout_constraintTop_toBottomOf="@id/publication_message"
             app:layout_constraintBottom_toBottomOf="parent"
             app:cardCornerRadius="8dp">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/event_item_post_imageView"
+                android:id="@+id/publication_image"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:background="@color/colorPrimaryLight"
-                android:src="@drawable/ic_launcher_background"
                 android:scaleType="centerCrop"/>
 
         </androidx.cardview.widget.CardView>

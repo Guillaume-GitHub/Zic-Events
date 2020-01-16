@@ -1,4 +1,4 @@
-package com.lab.zicevents.data.database
+package com.lab.zicevents.data.database.user
 
 import android.util.Log
 import com.google.android.gms.tasks.Task

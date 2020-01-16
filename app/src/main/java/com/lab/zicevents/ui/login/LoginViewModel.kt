@@ -1,7 +1,6 @@
 package com.lab.zicevents.ui.login
 
 import android.util.Log
-import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,17 +9,17 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.lab.zicevents.R
 import com.lab.zicevents.data.login.LoginRepository
 import com.lab.zicevents.data.Result
-import com.lab.zicevents.data.database.UserRepository
+import com.lab.zicevents.data.database.user.UserRepository
 import com.lab.zicevents.data.model.database.user.PrivateUserInfo
 import com.lab.zicevents.data.model.database.user.User
 import com.lab.zicevents.data.model.local.*
 import kotlinx.coroutines.*
 import java.lang.ClassCastException
 import java.util.*
-import kotlin.collections.ArrayList
 
 class LoginViewModel(val loginRepository: LoginRepository,
-                     private val userRepository: UserRepository): ViewModel() {
+                     private val userRepository: UserRepository
+): ViewModel() {
 
     private val TAG = this::class.java.simpleName
 
@@ -359,9 +358,7 @@ class LoginViewModel(val loginRepository: LoginRepository,
                     displayName = username!!,
                     description = null,
                     pseudo = generatePseudo(username),
-                    photoURL = firebaseUser.photoUrl?.path,
-                    gallery = ArrayList<String?>(),
-                    musicStyle = ArrayList<String?>()
+                    photoURL = firebaseUser.photoUrl?.path
                 )
             } catch (e: NullPointerException){
                 Log.e(TAG, "Cannot create User object : ", e)
@@ -412,6 +409,3 @@ class LoginViewModel(val loginRepository: LoginRepository,
         return str
     }
 }
-
-
-

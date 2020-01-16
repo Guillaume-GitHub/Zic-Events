@@ -106,16 +106,26 @@
                     </RelativeLayout>
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/fragment_profile_user_name_textView"
+                        android:id="@+id/fragment_profile_username"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"
-                        android:layout_margin="15dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp"
                         android:gravity="center"
                         tools:text="Guillaume Bague"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:layout_below="@id/fragment_profile_user_top_container"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/fragment_fragment_profile_pseudo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/shadowColorText"
+                        android:gravity="center"
+                        tools:text="#guillaume_bague"
+                        android:layout_below="@id/fragment_profile_username"/>
 
                 </RelativeLayout>
 
@@ -135,7 +145,6 @@
             android:id="@+id/fragment_profile_scrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="?attr/actionBarSize"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -151,10 +160,13 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     android:background="@color/colorPrimary"
                     android:orientation="vertical"
-                    android:padding="15dp">
+                    android:paddingBottom="5dp"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:paddingTop="15dp">
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/fragment_profile_user_description_textView"
+                        android:id="@+id/fragment_profile_user_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -166,24 +178,30 @@
                         android:textAlignment="center"/>
 
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/fragment_profile_registration_date"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         android:drawableStart="@drawable/ic_date_range_24px"
                         android:drawablePadding="20dp"
                         tools:text="Membre depuis le 15 Septembre 2019"
                         android:layout_marginBottom="10dp"/>
 
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/fragment_profile_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         android:drawableStart="@drawable/ic_my_location_24px"
                         android:drawablePadding="20dp"
                         tools:text="Ville de Besançon, 25000"
                         android:layout_marginBottom="10dp"/>
 
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/fragment_profile_followers"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         android:drawableStart="@drawable/ic_people_alt_24px"
                         android:drawablePadding="20dp"
                         tools:text="17 Abonnements "
@@ -193,20 +211,19 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:background="@color/colorPrimaryLight"
-                        android:layout_marginStart="100dp"
-                        android:layout_marginBottom="10dp"
+                        android:layout_marginBottom="5dp"
                         android:layout_marginTop="10dp"/>
 
-                    <androidx.appcompat.widget.AppCompatButton
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/fragment_profile_edit_info_btn"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
+                        android:layout_height="wrap_content"
                         android:textAllCaps="false"
-                        android:background="@android:color/transparent"
                         android:text="@string/profile_update_user_info"
                         android:textAlignment="textStart"
                         android:drawablePadding="20dp"
-                        android:drawableStart="@drawable/ic_more_horiz_24dp" />
+                        app:backgroundTint="@color/colorPrimaryLight"
+                        app:icon="@drawable/ic_more_horiz_24dp" />
 
                 </LinearLayout>
 
@@ -234,7 +251,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         tools:listitem="@layout/picture_gallery_recycler_item"
-                        tools:itemCount="2"/>
+                        tools:itemCount="1"/>
 
                 </LinearLayout>
 
@@ -253,15 +270,15 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp"
                         android:padding="10dp"
-                        android:text="@string/profile_events_log"
+                        android:text="@string/profile_last_publications"
                         android:textStyle="bold" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/fragment_profile_user_events_recyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        tools:listitem="@layout/user_event_recycler_item"
-                        tools:itemCount="3"/>
+                        tools:listitem="@layout/publication_recycler_item"
+                        tools:itemCount="1"/>
 
                 </LinearLayout>
 

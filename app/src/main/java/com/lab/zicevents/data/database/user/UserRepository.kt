@@ -1,8 +1,9 @@
-package com.lab.zicevents.data.database
+package com.lab.zicevents.data.database.user
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.lab.zicevents.data.Result
+import com.lab.zicevents.data.database.user.UserDataSource
 import com.lab.zicevents.data.model.database.user.PrivateUserInfo
 import com.lab.zicevents.data.model.database.user.User
 import com.lab.zicevents.utils.base.BaseRepository

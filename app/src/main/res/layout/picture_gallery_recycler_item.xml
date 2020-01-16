@@ -10,10 +10,10 @@
     app:cardElevation="5dp">
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/picture_gallery_imageView_item"
-        android:layout_width="100dp"
+        android:id="@+id/picture_gallery_item"
+        android:layout_width="120dp"
         android:layout_height="100dp"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorPrimaryLight"
         tools:srcCompat="@tools:sample/avatars[2]" />
 
 </androidx.cardview.widget.CardView>

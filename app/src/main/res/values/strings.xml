@@ -48,6 +48,8 @@
     <string name="send_reset_password_email_error">Adrresse email introuvable</string>
     <string name="send_reset_password_error">Erreur lors de l\'envoi du mail</string>
     <string name="send_reset_password_cancel">Demande annulée</string>
+    <string name="fetch_user_publication_error">Erreur lors de la récupération de vos publications</string>
+    <string name="fetch_user_publication_cancel">Récupération de vos publications annulée</string>
 
     <!-- ***** USER LOCATION MESSAGE ***** -->
     <string name="error_fetching_address">Récupération de l\'addresse impossible</string>
@@ -72,12 +74,6 @@
     <string name="reset_password_message">Entrez votre adresse email, un lien contenant les instructions vous sera envoyé</string>
     <string name="send_reset_password_link">Envoi en cours</string>
 
-    <!-- ***** PROFILE FRAGMENT ***** -->
-    <string name="error_when_fetch_user">An error occurred when trying to fetch user from firestore </string>
-    <string name="profile_update_user_info">Mettre à jour mes informations</string>
-    <string name="profile_gallery_photo">Ma Gallery Photo</string>
-    <string name="profile_events_log">Journal d\' évenements</string>
-
     <!-- ***** CREATE PROFILE FRAGMENT ***** -->
     <string name="create_profile_gender">Genre</string>
     <string name="create_profile_username">Prénom &amp; Nom</string>
@@ -90,6 +86,14 @@
     <string name="create_profile_title_message">Compléter votre profil pour finaliser votre incription</string>
     <string name="create_profile_dialog_message">Création du profil</string>
     <string name="update_profile_dialog_message">Mise à jour du profil</string>
+
+    <!-- ***** PROFILE FRAGMENT ***** -->
+    <string name="error_when_fetch_user">Une erreur est survenue lors de la récupération du profil</string>
+    <string name="profile_update_user_info">Mettre à jour mes informations</string>
+    <string name="profile_gallery_photo">Ma Gallery Photo</string>
+    <string name="profile_last_publications">Mes Dernières Publications</string>
+    <string name="profile_description_placeholder">Votre description …</string>
+    <string name="profile_registration_date_placeholder">Membre depuis le </string>
 
     <!-- ***** PROFILE FRAGMENT MENU ***** -->
     <string name="profile_menu_logout">Déconnexion</string>
