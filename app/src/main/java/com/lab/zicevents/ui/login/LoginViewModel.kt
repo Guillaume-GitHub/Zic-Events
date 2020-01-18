@@ -189,7 +189,7 @@ class LoginViewModel(val loginRepository: LoginRepository,
     }
 
     /**
-     * From data validation witch correct formatted email address and complex password
+     * From userProfileResult validation witch correct formatted email address and complex password
      * Change loginForm LiveData value
      * @param email email input text
      * @param password password input text
@@ -212,7 +212,7 @@ class LoginViewModel(val loginRepository: LoginRepository,
     }
 
     /**
-     * From data validation witch correct formatted email address and not blank password
+     * From userProfileResult validation witch correct formatted email address and not blank password
      * Change loginForm LiveData value
      * @param email email input text
      * @param password password input text
@@ -230,7 +230,7 @@ class LoginViewModel(val loginRepository: LoginRepository,
     }
 
     /**
-     * Send result of LoginViewModel.getFirestoreUser to LoginViewModel.profileUserSate Live data
+     * Send result of LoginViewModel.getFirestoreUser to LoginViewModel.profileUserSate Live userProfileResult
      * Observe result with LoginViewModel.profileUserSate
      * @param result Result<DocumentSnapshot> value return by userRepository.getFirestoreUser(uid: String)
      */
@@ -250,7 +250,7 @@ class LoginViewModel(val loginRepository: LoginRepository,
     }
 
     /**
-     * From data validation witch correct formatted phone
+     * From userProfileResult validation witch correct formatted phone
      * Change profileForm LiveData value
      * @param phoneNumber phone input text
      */
@@ -270,7 +270,7 @@ class LoginViewModel(val loginRepository: LoginRepository,
     }
 
     /**
-     * Inpput email data validation witch correct formatted email string
+     * Inpput email userProfileResult validation witch correct formatted email string
      * @param email string address
      */
     fun addressEmailChanged(email: String) {
@@ -345,7 +345,7 @@ class LoginViewModel(val loginRepository: LoginRepository,
      * @param displayName String? : displaying username
      * @param phoneNumber String? : user phone number
      * @param userCategory UserCategory? : category of user
-     * @return User? object containing user infos or null if data are invalid or missing
+     * @return User? object containing user infos or null if userProfileResult are invalid or missing
      */
     fun validUserInfo(firebaseUser: FirebaseUser?, username: String?): User? {
 
@@ -357,8 +357,7 @@ class LoginViewModel(val loginRepository: LoginRepository,
                     userId = firebaseUser.uid,
                     displayName = username!!,
                     description = null,
-                    pseudo = generatePseudo(username),
-                    photoURL = firebaseUser.photoUrl?.path
+                    pseudo = generatePseudo(username)
                 )
             } catch (e: NullPointerException){
                 Log.e(TAG, "Cannot create User object : ", e)

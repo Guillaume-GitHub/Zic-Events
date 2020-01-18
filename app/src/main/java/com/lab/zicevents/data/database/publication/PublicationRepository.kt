@@ -32,44 +32,4 @@ class PublicationRepository(private val publicationDataSource: PublicationDataSo
             is Result.Canceled -> Result.Canceled(result.exception)
         }
     }
-/*
-    /**
-     * Get all Firestore user and transform Task to Kotlin Coroutine
-     * @return Result<QuerySnapshot>
-     */
-    suspend fun getAllFirestoreUsers() : Result<QuerySnapshot>{
-        return when (val result = userDataSource.getAllFirestoreUsers().awaitTask()){
-            is Result.Success -> Result.Success(result.data)
-            is Result.Error -> Result.Error(result.exception)
-            is Result.Canceled -> Result.Canceled(result.exception)
-        }
-    }
-
-    /**
-     * Update Firestore user and transform Task to Kotlin Coroutine
-     * @param uid String that corresponding to user uid
-     * @param fields Map<String, Any> that corresponding to user fields that you want to update
-     * @return Result<Void>
-     */
-    suspend fun updateFirestoreUser(uid : String, fields: Map<String, Any>) : Result<Void>{
-        return when (val result = userDataSource.updateFirestoreUser(uid, fields).awaitTask()){
-            is Result.Success -> Result.Success(result.data)
-            is Result.Error -> Result.Error(result.exception)
-            is Result.Canceled -> Result.Canceled(result.exception)
-        }
-    }
-
-    /**
-     * Delete Firestore user and transform Task to Kotlin Coroutine
-     * @param uid String that corresponding to user uid
-     * @return Result<Void>
-     */
-    suspend fun deleteFirestoreUser(uid : String) : Result<Void>{
-        return when (val result = userDataSource.deleteFirestoreUser(uid).awaitTask()){
-            is Result.Success -> Result.Success(result.data)
-            is Result.Error -> Result.Error(result.exception)
-            is Result.Canceled -> Result.Canceled(result.exception)
-        }
-    }
- */
 }

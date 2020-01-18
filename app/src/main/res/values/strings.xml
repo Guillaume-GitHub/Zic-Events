@@ -1,7 +1,9 @@
 <resources>
 
-    <string name="app_name">Zic Events</string>
+    <string name="app_name" translatable="false">Zic Events</string>
     <string name="welcome">Bienvenue</string>
+    <string name="task_success" translatable="false">success</string>
+    <string name="task_failure" translatable="false">fail</string>
 
     <!-- ***** NAVIGATION ***** -->
     <string name="hint_next">Suivant</string>
@@ -43,6 +45,8 @@
     <string name="profile_creation_fail">Erreur lors de la création du profil</string>
     <string name="profile_creation_unreadable_email">Adresse email introuvable</string>
     <string name="profile_creation_cancel">Création du profil annulée</string>
+    <string name="profile_update_fail">Oups ! Votre profil n\'a pu être mis à jour, réessayer plus tard</string>
+    <string name="profile_update_cancel">Mise à jour  du profil annulée</string>
     <string name="incomplete_profile_info">Profil incomplet</string>
     <string name="send_reset_password_success">Un email de réinitialisation a été envoyé</string>
     <string name="send_reset_password_email_error">Adrresse email introuvable</string>
@@ -50,6 +54,8 @@
     <string name="send_reset_password_cancel">Demande annulée</string>
     <string name="fetch_user_publication_error">Erreur lors de la récupération de vos publications</string>
     <string name="fetch_user_publication_cancel">Récupération de vos publications annulée</string>
+    <string name="store_image_task_error">Une erreur est survenue lors du chargement de l\'image, réessayer plus tard</string>
+    <string name="store_image_task_cancel">Chargement de l\'image interrompu</string>
 
     <!-- ***** USER LOCATION MESSAGE ***** -->
     <string name="error_fetching_address">Récupération de l\'addresse impossible</string>

@@ -64,7 +64,7 @@
                                 android:layout_gravity="center">
 
                                 <androidx.appcompat.widget.AppCompatImageView
-                                    android:id="@+id/fragment_profile_user_imageView"
+                                    android:id="@+id/fragment_profile_user_image"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:scaleType="centerCrop"

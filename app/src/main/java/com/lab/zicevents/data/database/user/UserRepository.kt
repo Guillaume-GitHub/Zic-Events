@@ -65,11 +65,11 @@ class UserRepository(private val userDataSource: UserDataSource) : BaseRepositor
     /**
      * Update Firestore user and transform Task to Kotlin Coroutine
      * @param uid String that corresponding to user uid
-     * @param fields Map<String, Any> that corresponding to user fields that you want to update
+     * @param value is User object corresponding to new user data
      * @return Result<Void>
      */
-    suspend fun updateFirestoreUser(uid : String, fields: Map<String, Any>) : Result<Void>{
-        return when (val result = userDataSource.updateFirestoreUser(uid, fields).awaitTask()){
+    suspend fun updateUserProfile(uid : String, map: Map<String, Any?>) : Result<Void>{
+        return when (val result = userDataSource.updateUserProfile(uid, map).awaitTask()){
             is Result.Success -> Result.Success(result.data)
             is Result.Error -> Result.Error(result.exception)
             is Result.Canceled -> Result.Canceled(result.exception)

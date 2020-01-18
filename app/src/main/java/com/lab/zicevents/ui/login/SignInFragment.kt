@@ -85,7 +85,7 @@ class SignInFragment : Fragment(), View.OnClickListener {
     }
 
     /**
-     * Observe form state and display errors messages if data are not valid
+     * Observe form state and display errors messages if userProfileResult are not valid
      * Set submit button Enable / Disable
      */
     private fun observeFormState(){

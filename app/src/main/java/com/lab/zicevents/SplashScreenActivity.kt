@@ -70,7 +70,7 @@ class SplashScreenActivity : AppCompatActivity() {
     }
 
     /**
-     * Observe result of firestore user data fetching operation
+     * Observe result of firestore user userProfileResult fetching operation
      * Show different views depending to result
      */
     private fun observeFirestoreUserProfile(){

@@ -6,6 +6,8 @@ import com.lab.zicevents.data.database.publication.PublicationDataSource
 import com.lab.zicevents.data.database.publication.PublicationRepository
 import com.lab.zicevents.data.database.user.UserDataSource
 import com.lab.zicevents.data.database.user.UserRepository
+import com.lab.zicevents.data.storage.StorageDataSource
+import com.lab.zicevents.data.storage.StorageRepository
 
 /**
  * ViewModel provider factory instantiate LoginViewModel.
@@ -22,6 +24,9 @@ class ProfileViewModelFactory: ViewModelProvider.Factory {
                 ),
                 publicationRepo = PublicationRepository(
                     publicationDataSource = PublicationDataSource()
+                ),
+                storageRepo = StorageRepository(
+                    storageDataSource = StorageDataSource()
                 )
             ) as T
         }

@@ -2,9 +2,13 @@ package com.lab.zicevents.data.database.user
 
 import android.util.Log
 import com.google.android.gms.tasks.Task
+import com.google.common.base.Splitter
+import com.google.common.collect.MapMaker
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.lab.zicevents.data.model.database.user.PrivateUserInfo
 import com.lab.zicevents.data.model.database.user.User
 
@@ -64,8 +68,8 @@ class UserDataSource {
      * @param fields map<String, Any> corresponding to User fields you want to change
      * @return Task<Void>
      */
-    fun updateFirestoreUser(uid: String, fields: Map<String, Any>) : Task<Void> {
-        return database.collection(USERS_COLLECTION).document(uid).update(fields)
+    fun updateUserProfile(uid : String, map: Map<String, Any?>) : Task<Void> {
+        return database.collection(USERS_COLLECTION).document(uid).update(map)
     }
 
     //****************** DELETE *********************//

@@ -1,6 +1,10 @@
 package com.lab.zicevents.utils.base
 
+import android.util.Log
 import com.google.android.gms.tasks.Task
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
+import com.lab.zicevents.R
 import com.lab.zicevents.data.Result
 import kotlinx.coroutines.CancellationException
 import retrofit2.Call
@@ -14,6 +18,10 @@ import kotlin.coroutines.suspendCoroutine
 @Suppress("UNCHECKED_CAST")
 open class BaseRepository {
 
+    companion object {
+        const val SUCCESS_TASK = R.string.task_success
+        const val FAIL_TASK = R.string.task_failure
+    }
     /**
      * Task extension to transform Firebase Task<> to Kotlin suspendCoroutine and return Result<T>
      */
@@ -22,7 +30,11 @@ open class BaseRepository {
             if (task.isSuccessful) {
                 val e = exception
                 if (e == null) {
-                    if (isCanceled) continuation.resumeWithException(CancellationException("Task $this was cancelled normally."))
+                    if (isCanceled) {
+                        val cancellationError = CancellationException("Task $this was cancelled normally.")
+                        continuation.resumeWithException(cancellationError)
+                        Log.e("Upload Task Canceled ","" ,cancellationError)
+                    }
                     else continuation.resume(Result.Success(result as T))
                 } else {
                     continuation.resume(Result.Error(e))
@@ -50,6 +62,32 @@ open class BaseRepository {
                 continuation.resumeWithException(t)
             }
         })
+    }
+
+    /**
+     * Extension to transform UploadTask to Kotlin suspendCoroutine and return Result<StorageReference>
+     */
+    suspend fun UploadTask.awaitUpload() : Result<StorageReference> = suspendCoroutine { continuation ->
+
+        addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val e = exception
+                if (e == null) {
+                    if (isCanceled) {
+                        val cancellationError = CancellationException("Task $this was cancelled normally.")
+                        continuation.resumeWithException(cancellationError)
+                        Log.e("Upload Task Canceled ","" ,cancellationError)
+                    }
+                    else continuation.resume(Result.Success(result.storage))
+                } else {
+                    continuation.resume(Result.Error(e))
+                    Log.e("Upload Task Error ","" ,e)
+                }
+            } else{
+                continuation.resume(Result.Error(exception!!))
+                Log.e("Upload Task Exception ","" , exception)
+            }
+        }
     }
 
 }
