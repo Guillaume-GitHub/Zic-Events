@@ -23,10 +23,10 @@ class StorageDataSource {
      * @param fileName name of image file
      * @return  UploadTask
      * */
-    fun uploadImageFile(userId: String, drawable: Drawable, fileName: String) : UploadTask {
+    fun uploadImageFile(userId: String, drawable: Drawable, fileName: String, size: Int) : UploadTask {
         val path = "${userId}/${fileName}${IMAGE_EXTENSION}"
         val storageRef = storage.getReference(path)
-        return storageRef.putBytes(ImagePickerHelper.getByteArray(drawable))
+        return storageRef.putBytes(ImagePickerHelper.getByteArray(drawable, size))
     }
 }
 

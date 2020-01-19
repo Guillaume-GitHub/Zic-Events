@@ -14,8 +14,8 @@ class StorageRepository(private val storageDataSource: StorageDataSource) : Base
      * @param fileName name of image file
      * @return  Result<StorageReference>
      * */
-    suspend fun uploadImageFile(userId: String, drawable: Drawable, fileName: String) : Result<StorageReference> {
-        return when (val result = storageDataSource.uploadImageFile(userId, drawable, fileName).awaitUpload()){
+    suspend fun uploadImageFile(userId: String, drawable: Drawable, fileName: String, size: Int) : Result<StorageReference> {
+        return when (val result = storageDataSource.uploadImageFile(userId, drawable, fileName, size).awaitUpload()){
             is Result.Success -> Result.Success(result.data)
             is Result.Error -> Result.Error(result.exception)
             is Result.Canceled -> Result.Canceled(result.exception)

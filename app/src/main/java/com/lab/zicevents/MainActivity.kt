@@ -1,20 +1,20 @@
 package com.lab.zicevents
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import androidx.appcompat.app.ActionBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
+import com.lab.zicevents.utils.OnRequestPermissionsListener
+import com.lab.zicevents.utils.PermissionHelper
+import com.lab.zicevents.utils.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity: BaseActivity() {
+
+    private lateinit var permissionsRequestCallback: OnRequestPermissionsListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         main_toolbar.setupWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        navController.addOnDestinationChangedListener{ controller, destination, arguments ->
+        navController.addOnDestinationChangedListener{ _, destination, _ ->
             when(destination.id) {
                 R.id.bottom_navigation_profile ->
                     if (main_toolbar.isVisible) main_toolbar.visibility = View.GONE
@@ -41,4 +41,30 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun registerRequestPermissionsCallback(
+        onRequestPermissionsListener: OnRequestPermissionsListener) {
+       permissionsRequestCallback = onRequestPermissionsListener
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            PermissionHelper.PERMS_RQ -> {
+                // init result for callback
+                val map = HashMap<String,Int>()
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.isNotEmpty()) {
+                    // Add permission name + status
+                    permissions.forEachIndexed { index, permission  ->
+                        map[permission] = grantResults[index]
+                    }
+                }
+                // Pass result in callback
+                permissionsRequestCallback.onRequestPermissions(map)
+                return
+            }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+
 }

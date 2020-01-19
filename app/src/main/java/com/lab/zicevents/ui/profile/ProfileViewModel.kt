@@ -20,7 +20,6 @@ import com.lab.zicevents.utils.base.BaseRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.lang.Error
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
@@ -119,9 +118,9 @@ class ProfileViewModel(private val userRepo: UserRepository,
      * @param fileName name of image file
      * Result is pass to uploadedImage liveData
      * */
-    fun uploadImageFile(userId: String, drawable: Drawable, fileName: String){
+    fun uploadImageFile(userId: String, drawable: Drawable, fileName: String, size: Int){
         GlobalScope.launch(Dispatchers.Main) {
-            when (val result = storageRepo.uploadImageFile(userId, drawable, fileName)){
+            when (val result = storageRepo.uploadImageFile(userId, drawable, fileName, size)){
                 is Result.Success -> uploadedImage.value = DataResult(data = result.data)
                 is Result.Error ->  uploadedImage.value = DataResult(error = R.string.store_image_task_error)
                 is Result.Canceled ->  uploadedImage.value = DataResult(error = R.string.store_image_task_cancel)

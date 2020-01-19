@@ -1,9 +1,10 @@
 package com.lab.zicevents.ui.profile
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
+import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.lab.zicevents.R
 import com.lab.zicevents.data.model.database.user.User
@@ -27,15 +29,16 @@ import com.lab.zicevents.LoginActivity
 import com.lab.zicevents.data.model.database.publication.Publication
 import com.lab.zicevents.utils.ImagePickerHelper
 import com.lab.zicevents.utils.MarginItemDecoration
+import com.lab.zicevents.utils.OnRequestPermissionsListener
+import com.lab.zicevents.utils.PermissionHelper
 import com.lab.zicevents.utils.adapter.PublicationRecyclerAdapter
 import com.lab.zicevents.utils.adapter.UserMediaRecyclerAdapter
 import com.lab.zicevents.utils.base.BaseRepository
-import java.lang.ref.Reference
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-class ProfileFragment : Fragment() ,View.OnClickListener {
+class ProfileFragment: Fragment() ,View.OnClickListener, OnRequestPermissionsListener {
 
     private lateinit var profileViewModel: ProfileViewModel
     private val auth = FirebaseAuth.getInstance()
@@ -82,7 +85,10 @@ class ProfileFragment : Fragment() ,View.OnClickListener {
             R.id.fragment_profile_edit_info_btn ->
                 findNavController().navigate(R.id.from_profile_to_profile_edit)
             R.id.fragment_profile_change_photo_btn -> {
-              ImagePickerHelper.pickImageFromGallery(this)
+                checkPermissions(arrayOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ))
             }
         }
     }
@@ -200,10 +206,11 @@ class ProfileFragment : Fragment() ,View.OnClickListener {
      * Upload image file to remote Firebase Storage
      * Init result Observer
      * @param drawable drawable to upload
+     * @param
      */
-    private fun uploadImageFile(drawable: Drawable){
+    private fun uploadImageFile(drawable: Drawable, size: Int){
         val imageRef = UUID.randomUUID().toString()
-        profileViewModel.uploadImageFile(auth.currentUser!!.uid, drawable, imageRef)
+        profileViewModel.uploadImageFile(auth.currentUser!!.uid, drawable, imageRef, size)
         observeUploadImageResult()
     }
 
@@ -270,7 +277,7 @@ class ProfileFragment : Fragment() ,View.OnClickListener {
     /**
      * Update ui with new user userProfileResult
      */
-    private fun updateUI(user: User){
+    private fun updateUI(user: User) {
         // Username view
         fragment_profile_username.text = user.displayName
         // Toolbar username view
@@ -280,10 +287,12 @@ class ProfileFragment : Fragment() ,View.OnClickListener {
         // Registration date view
         fragment_profile_registration_date.apply {
             if (user.createdDate != null) {
-                val registrationDate = "${getString(R.string.profile_registration_date_placeholder)} ${profileViewModel.dateFormat.format(user.createdDate)}"
+                val registrationDate =
+                    "${getString(R.string.profile_registration_date_placeholder)} ${profileViewModel.dateFormat.format(
+                        user.createdDate
+                    )}"
                 text = registrationDate
-            }
-            else visibility = View.GONE
+            } else visibility = View.GONE
         }
         // Description view
         fragment_profile_user_description.apply {
@@ -304,6 +313,17 @@ class ProfileFragment : Fragment() ,View.OnClickListener {
             medias.addAll(userMedia) // pass values to medias list
             mediaAdapter.notifyDataSetChanged() // Update recycler view userProfileResult
         }
+
+        if (!user.profileImage.isNullOrBlank()) {
+            val FIVE_MB: Long = 1024*1024 * 5
+            FirebaseStorage.getInstance()
+                .getReferenceFromUrl(user.profileImage!!)
+                .getBytes(FIVE_MB)
+                .addOnSuccessListener {
+                    val bmp = BitmapFactory.decodeByteArray(it, 0, it.size)
+                    fragment_profile_user_image.setImageBitmap(bmp)
+                }
+        }
     }
 
     /**
@@ -320,19 +340,61 @@ class ProfileFragment : Fragment() ,View.OnClickListener {
         }
     }
 
+    /**
+     * Check permissions, is granted start Image Gallery Picker
+     * else Ask these permissions to user
+     * @param permissions Array of permissions to check or ask to user
+     */
+    private fun checkPermissions(permissions: Array<String>){
+        val permsResult = PermissionHelper().checkPermissions(context!!, permissions)
+        permsResult?.forEach {
+            Log.d(this::class.java.simpleName, "$it permission Denied")
+        }
+        // Ask permission to user if permission denied
+        if (!permsResult.isNullOrEmpty()){
+            val activity = activity
+            PermissionHelper().askRequestPermissions(activity, permsResult.toTypedArray(),this)
+        } else {
+            ImagePickerHelper.pickImageFromGallery(this, ImagePickerHelper.PROFILE_IMG_RQ) // Start image picker gallery
+        }
+    }
+
+    /**
+     * Result Callback of Previous asked permission
+     * if all permission was granted, Start image gallery Picker
+     * @param permissionsResult all asked permissions result as Key/Value
+     * Key = Permission name, Value = PackageManager.PERMISSION_DENIED
+     * or PackageManager.PERMISSION_DENIED
+     */
+    override fun onRequestPermissions(permissionsResult: Map<String, Int>) {
+        // Result must no be empty -> permission request canceled
+        if (permissionsResult.isNotEmpty()) {
+            var isAllGranted = true
+            // Check if all permissions is granted
+            permissionsResult.forEach {
+                if (it.value == PackageManager.PERMISSION_DENIED){
+                    isAllGranted = false
+                    Log.d(this::class.java.simpleName, "${it.key} permission was rejected by user")
+                }
+            }
+            // Start image gallery picker
+            if (isAllGranted) ImagePickerHelper.pickImageFromGallery(this, ImagePickerHelper.PROFILE_IMG_RQ)
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK)
             when (requestCode){
-                ImagePickerHelper.IMAGE_PICKER_RQ -> {
-
+                ImagePickerHelper.PROFILE_IMG_RQ -> {
+                    // Get Picked image and upload it if not null
                     val imageUri = data?.data
                     if (imageUri != null){
                         oldImageProfile = fragment_profile_user_image.drawable
                         fragment_profile_user_image.setImageURI(imageUri)
                         fragment_profile_user_image.alpha = 0.2F
-                        uploadImageFile(fragment_profile_user_image.drawable)
+                        uploadImageFile(fragment_profile_user_image.drawable, ImagePickerHelper.PROFILE_SIZE)
                     }
                 }
                 else -> {}
