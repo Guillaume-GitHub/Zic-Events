@@ -1,6 +1,8 @@
 package com.lab.zicevents
 
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.core.view.isVisible
@@ -59,8 +61,16 @@ class MainActivity: BaseActivity() {
                         map[permission] = grantResults[index]
                     }
                 }
+                var isAllGranted = true
+                // Check if all permissions is granted
+                map.forEach {
+                    if (it.value == PackageManager.PERMISSION_DENIED){
+                        isAllGranted = false
+                        Log.d(this::class.java.simpleName, "${it.key} permission was rejected by user")
+                    }
+                }
                 // Pass result in callback
-                permissionsRequestCallback.onRequestPermissions(map)
+                permissionsRequestCallback.onRequestPermissions(isAllGranted, map)
                 return
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)

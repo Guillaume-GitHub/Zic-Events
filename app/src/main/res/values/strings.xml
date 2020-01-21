@@ -117,6 +117,10 @@
     <string name="profile_edit_style">Mes Styles Musicaux</string>
     <string name="profile_edit_adding_style">Ajouter</string>
 
+
+    <!-- ***** PERMISSIONS ***** -->
+    <string name="storage_permission_denied">Vous devez autoriser l\'accès à vos Photos/Vidéo pour utiliser cette fonctionnalité</string>
+
     <!-- ***** LOCAL DATA ***** -->
     <string name="gender_male_value" translatable="false">male</string>
     <string name="gender_female_value" translatable="false">female</string>

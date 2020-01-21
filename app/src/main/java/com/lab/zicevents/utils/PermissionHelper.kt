@@ -6,17 +6,23 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.lab.zicevents.MainActivity
+import java.util.jar.Manifest
 
 class PermissionHelper {
 
     companion object {
         const val PERMS_RQ = 3001
+        // All permission for storage access
+        val STORAGE_PERMISSIONS =
+            arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 
     /**
      * Check if permissions was granted
      * @param context context
      * @param permissions array of permission to check
+     * @return ArrayList of denied permission or null if all granted
      */
     fun checkPermissions(context: Context, permissions: Array<String>): ArrayList<String>? {
         val permResult = HashMap<String,Int>()

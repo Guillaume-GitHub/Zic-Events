@@ -1,6 +1,5 @@
 package com.lab.zicevents.ui.profile
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -38,7 +37,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class ProfileFragment: Fragment() ,View.OnClickListener, OnRequestPermissionsListener {
+class ProfileFragment: Fragment() ,View.OnClickListener {
 
     private lateinit var profileViewModel: ProfileViewModel
     private val auth = FirebaseAuth.getInstance()
@@ -86,12 +85,9 @@ class ProfileFragment: Fragment() ,View.OnClickListener, OnRequestPermissionsLis
         when (view?.id) {
             R.id.fragment_profile_edit_info_btn ->
                 findNavController().navigate(R.id.from_profile_to_profile_edit)
-            R.id.fragment_profile_change_photo_btn -> {
-                checkPermissions(arrayOf(
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ))
-            }
+            R.id.fragment_profile_change_photo_btn ->
+                pickImageFromGallery(ImagePickerHelper.PROFILE_IMG_RQ)
+            else -> {}
         }
     }
 
@@ -140,7 +136,7 @@ class ProfileFragment: Fragment() ,View.OnClickListener, OnRequestPermissionsLis
     }
 
     /**
-     * Observe User profile result fectched from Firestore
+     * Observe User profile result fetched from Firestore
      * Pass new value in updateIU method to display user profile
      * if null or error display error message
      */
@@ -332,44 +328,28 @@ class ProfileFragment: Fragment() ,View.OnClickListener, OnRequestPermissionsLis
     }
 
     /**
-     * Check permissions, is granted start Image Gallery Picker
+     * Check permissions, if is granted start Image Gallery Picker
      * else Ask these permissions to user
-     * @param permissions Array of permissions to check or ask to user
+     * @param requestCode identifier of request
      */
-    private fun checkPermissions(permissions: Array<String>){
-        val permsResult = PermissionHelper().checkPermissions(context!!, permissions)
-        permsResult?.forEach {
-            Log.d(this::class.java.simpleName, "$it permission Denied")
-        }
+    private fun pickImageFromGallery(requestCode: Int){
+        val permsResult = PermissionHelper().checkPermissions(context!!, PermissionHelper.STORAGE_PERMISSIONS)
         // Ask permission to user if permission denied
-        if (!permsResult.isNullOrEmpty()){
-            val activity = activity
-            PermissionHelper().askRequestPermissions(activity, permsResult.toTypedArray(),this)
-        } else {
-            ImagePickerHelper.pickImageFromGallery(this, ImagePickerHelper.PROFILE_IMG_RQ) // Start image picker gallery
-        }
-    }
+        if (permsResult.isNullOrEmpty()){
+            ImagePickerHelper.pickImageFromGallery(this, requestCode) // Start image picker gallery
 
-    /**
-     * Result Callback of Previous asked permission
-     * if all permission was granted, Start image gallery Picker
-     * @param permissionsResult all asked permissions result as Key/Value
-     * Key = Permission name, Value = PackageManager.PERMISSION_DENIED
-     * or PackageManager.PERMISSION_DENIED
-     */
-    override fun onRequestPermissions(permissionsResult: Map<String, Int>) {
-        // Result must no be empty -> permission request canceled
-        if (permissionsResult.isNotEmpty()) {
-            var isAllGranted = true
-            // Check if all permissions is granted
-            permissionsResult.forEach {
-                if (it.value == PackageManager.PERMISSION_DENIED){
-                    isAllGranted = false
-                    Log.d(this::class.java.simpleName, "${it.key} permission was rejected by user")
-                }
-            }
-            // Start image gallery picker
-            if (isAllGranted) ImagePickerHelper.pickImageFromGallery(this, ImagePickerHelper.PROFILE_IMG_RQ)
+        } else { // ASk permissions to user
+            val activity = activity
+            PermissionHelper().askRequestPermissions(activity,
+                PermissionHelper.STORAGE_PERMISSIONS,
+                object: OnRequestPermissionsListener{
+                    override fun onRequestPermissions(isGranted: Boolean, grantResult: Map<String, Int>) {
+                        if (isGranted)  // Start image picker gallery
+                            ImagePickerHelper.pickImageFromGallery(this@ProfileFragment, requestCode)
+                        else
+                            Toast.makeText(context,getString(R.string.storage_permission_denied), Toast.LENGTH_LONG).show()
+                    }
+                })
         }
     }
 
