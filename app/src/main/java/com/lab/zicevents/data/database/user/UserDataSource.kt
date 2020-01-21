@@ -4,9 +4,7 @@ import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.common.base.Splitter
 import com.google.common.collect.MapMaker
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.*
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.lab.zicevents.data.model.database.user.PrivateUserInfo
@@ -18,9 +16,16 @@ import com.lab.zicevents.data.model.database.user.User
 class UserDataSource {
 
     private val TAG = this::class.java.simpleName
+    private val settings = FirebaseFirestoreSettings.Builder()
+        .setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED)
+        .build()
     private val database = FirebaseFirestore.getInstance()
     private val USERS_COLLECTION = "users"
     private val PRIVATE_COLLECTION = "private"
+
+    init {
+        database.firestoreSettings = settings
+    }
 
     //****************** CREATE *********************//
     /**
@@ -50,6 +55,10 @@ class UserDataSource {
     fun getFirestoreUser(uid: String) : Task<DocumentSnapshot> {
         Log.d(TAG, "Get user $uid")
         return database.collection(USERS_COLLECTION).document(uid).get()
+    }
+
+    fun listenUserUpdate(uid: String): DocumentReference{
+        return database.collection(USERS_COLLECTION).document(uid)
     }
 
     /**

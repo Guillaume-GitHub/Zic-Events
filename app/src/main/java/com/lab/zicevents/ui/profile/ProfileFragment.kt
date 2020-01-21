@@ -4,8 +4,8 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -17,9 +17,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import com.lab.zicevents.R
 import com.lab.zicevents.data.model.database.user.User
 
@@ -63,7 +63,9 @@ class ProfileFragment: Fragment() ,View.OnClickListener, OnRequestPermissionsLis
 
         this.initViewModel()
         // Fetch user information
-        getUserProfile(auth.currentUser!!.uid)
+       // getUserProfile(auth.currentUser!!.uid)
+        observeProfileChange()
+        profileViewModel.listenUserUpdate(auth.currentUser!!.uid)
         // Set click listener on views
         fragment_profile_edit_info_btn.setOnClickListener(this)
         fragment_profile_change_photo_btn.setOnClickListener(this)
@@ -138,20 +140,11 @@ class ProfileFragment: Fragment() ,View.OnClickListener, OnRequestPermissionsLis
     }
 
     /**
-     * Fetch user profile from Firesstore
-     * and init Observer
-     */
-    private fun getUserProfile(uid: String){
-        profileViewModel.getFirestoreUser(uid)
-        observeProfileResult()
-    }
-
-    /**
      * Observe User profile result fectched from Firestore
      * Pass new value in updateIU method to display user profile
      * if null or error display error message
      */
-    private fun observeProfileResult(){
+    private fun observeProfileChange(){
         profileViewModel.userProfileResult.observe(this, Observer {
             when {
                 it.data is User -> {
@@ -186,11 +179,11 @@ class ProfileFragment: Fragment() ,View.OnClickListener, OnRequestPermissionsLis
     private fun observePublicationResult(){
         profileViewModel.userPublications.observe(this, Observer {
             val publicationsResult = it
-
             when {
                 publicationsResult.list != null
                         && publicationsResult.list.isNotEmpty() -> {
                     val list = publicationsResult.list
+                    publications.clear()
                     publications.addAll(list)
                     publicationAdapter.notifyDataSetChanged()
                 }
@@ -208,9 +201,9 @@ class ProfileFragment: Fragment() ,View.OnClickListener, OnRequestPermissionsLis
      * @param drawable drawable to upload
      * @param
      */
-    private fun uploadImageFile(drawable: Drawable, size: Int){
+    private fun uploadImageFile(drawable: Drawable){
         val imageRef = UUID.randomUUID().toString()
-        profileViewModel.uploadImageFile(auth.currentUser!!.uid, drawable, imageRef, size)
+        profileViewModel.uploadImageFile(auth.currentUser!!.uid, drawable, imageRef)
         observeUploadImageResult()
     }
 
@@ -222,11 +215,14 @@ class ProfileFragment: Fragment() ,View.OnClickListener, OnRequestPermissionsLis
     private fun observeUploadImageResult(){
         profileViewModel.uploadImageResult.observe(this, Observer {
             when {
-                it.data is StorageReference -> {
-                    updateUserProfile(
-                        auth.currentUser?.uid!!,
-                        mapOf(Pair(User.PROFILE_IMAGE_FIELD, it.data.toString()))
-                    )
+                it.data is Uri? -> {
+                    if (it.data != null){ updateUserProfile(auth.currentUser?.uid!!,
+                        mapOf(Pair(User.PROFILE_IMAGE_FIELD, it.data.toString())))
+                    }else {
+                        restoreOldProfileImage(oldImageProfile)
+                        Toast.makeText(context, getString(R.string.store_image_task_error), Toast.LENGTH_LONG)
+                            .show()
+                    }
                 }
                 it.error != null -> {
                     restoreOldProfileImage(oldImageProfile)
@@ -288,9 +284,7 @@ class ProfileFragment: Fragment() ,View.OnClickListener, OnRequestPermissionsLis
         fragment_profile_registration_date.apply {
             if (user.createdDate != null) {
                 val registrationDate =
-                    "${getString(R.string.profile_registration_date_placeholder)} ${profileViewModel.dateFormat.format(
-                        user.createdDate
-                    )}"
+                    "${getString(R.string.profile_registration_date_placeholder)} ${profileViewModel.dateFormat.format(user.createdDate)}"
                 text = registrationDate
             } else visibility = View.GONE
         }
@@ -309,20 +303,17 @@ class ProfileFragment: Fragment() ,View.OnClickListener, OnRequestPermissionsLis
         }
         // Media Recycler View
         if (user.gallery != null) {
-            val userMedia = user.gallery!!
-            medias.addAll(userMedia) // pass values to medias list
+            medias.clear() // Clear old values
+            medias.addAll(user.gallery!!) // pass values to medias list
             mediaAdapter.notifyDataSetChanged() // Update recycler view userProfileResult
         }
-
+        // Profile Image
         if (!user.profileImage.isNullOrBlank()) {
-            val FIVE_MB: Long = 1024*1024 * 5
-            FirebaseStorage.getInstance()
-                .getReferenceFromUrl(user.profileImage!!)
-                .getBytes(FIVE_MB)
-                .addOnSuccessListener {
-                    val bmp = BitmapFactory.decodeByteArray(it, 0, it.size)
-                    fragment_profile_user_image.setImageBitmap(bmp)
-                }
+            Glide.with(this)
+                .load(user.profileImage)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.color.colorPrimaryLight)
+                .into(fragment_profile_user_image)
         }
     }
 
@@ -394,10 +385,18 @@ class ProfileFragment: Fragment() ,View.OnClickListener, OnRequestPermissionsLis
                         oldImageProfile = fragment_profile_user_image.drawable
                         fragment_profile_user_image.setImageURI(imageUri)
                         fragment_profile_user_image.alpha = 0.2F
-                        uploadImageFile(fragment_profile_user_image.drawable, ImagePickerHelper.PROFILE_SIZE)
+                        uploadImageFile(fragment_profile_user_image.drawable)
                     }
                 }
                 else -> {}
             }
+    }
+
+    /**
+     * remove user realtime updates
+     */
+    override fun onDestroy() {
+        profileViewModel.detachUserUpdateListener()
+        super.onDestroy()
     }
 }

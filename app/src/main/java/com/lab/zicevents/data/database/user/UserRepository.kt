@@ -1,5 +1,6 @@
 package com.lab.zicevents.data.database.user
 
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.lab.zicevents.data.Result
@@ -48,6 +49,10 @@ class UserRepository(private val userDataSource: UserDataSource) : BaseRepositor
             is Result.Error -> Result.Error(result.exception)
             is Result.Canceled -> Result.Canceled(result.exception)
         }
+    }
+
+    fun listenUserUpdate(uid: String): DocumentReference {
+       return userDataSource.listenUserUpdate(uid)
     }
 
     /**

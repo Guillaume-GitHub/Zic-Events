@@ -13,8 +13,7 @@ class ImagePickerHelper {
         const val PROFILE_IMG_RQ = 2000
         const val BACKGROUND_IMG_RQ = 2010
 
-        const val PROFILE_SIZE = 180
-        const val BACKGROUND_SIZE = 851
+        const val MAX_SIZE = 2*1024*1024 // approximately 2MB
 
         /**
          * Launch Gallery Image Picker
@@ -31,22 +30,34 @@ class ImagePickerHelper {
          * @param drawable simple drawable
          * @return ByteArray
          */
-        fun getByteArray(drawable: Drawable, size: Int): ByteArray{
-            val bitmap = (drawable as BitmapDrawable).bitmap
+        fun getByteArray(drawable: Drawable): ByteArray{
+            var bitmap = (drawable as BitmapDrawable).bitmap
 
+            if (bitmap.height >= MAX_SIZE || bitmap.width >= MAX_SIZE)
+                bitmap = resizeBitmap(bitmap)
+
+            val baos = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+            return baos.toByteArray()
+        }
+
+        /**
+         * Resize Image
+         * @param bitmap is bitmap you want to resize
+         * @return resized bitmap
+         */
+        private fun resizeBitmap(bitmap: Bitmap): Bitmap{
             // Get Scale
             val scale: Double =
-                if (bitmap.height >= bitmap.height) (size.toDouble() / bitmap.height.toDouble())
-                else (size.toDouble() / bitmap.width.toDouble())
+                if (bitmap.height >= bitmap.height)
+                    (MAX_SIZE.toDouble() / bitmap.height.toDouble())
+                else
+                    (MAX_SIZE.toDouble() / bitmap.width.toDouble())
 
             // RESIZE IMAGE
             val resizedHeight = (bitmap.height * scale).toInt()
             val resizeWidth = (bitmap.width * scale).toInt()
-            val resizedBitmap = Bitmap.createScaledBitmap(bitmap, resizeWidth, resizedHeight, true)
-
-            val baos = ByteArrayOutputStream()
-            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-            return baos.toByteArray()
+            return Bitmap.createScaledBitmap(bitmap, resizeWidth, resizedHeight, false)
         }
 
     }

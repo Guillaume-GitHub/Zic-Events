@@ -1,7 +1,10 @@
 package com.lab.zicevents.utils.base
 
+import android.net.Uri
 import android.util.Log
 import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import com.lab.zicevents.R
@@ -67,7 +70,7 @@ open class BaseRepository {
     /**
      * Extension to transform UploadTask to Kotlin suspendCoroutine and return Result<StorageReference>
      */
-    suspend fun UploadTask.awaitUpload() : Result<StorageReference> = suspendCoroutine { continuation ->
+    suspend fun UploadTask.awaitUpload() : Result<Uri?> = suspendCoroutine { continuation ->
 
         addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -78,7 +81,15 @@ open class BaseRepository {
                         continuation.resumeWithException(cancellationError)
                         Log.e("Upload Task Canceled ","" ,cancellationError)
                     }
-                    else continuation.resume(Result.Success(result.storage))
+                    else{
+                        result.storage.downloadUrl.addOnCompleteListener {
+                            when {
+                                isSuccessful -> continuation.resume(Result.Success(it.result))
+                                else -> continuation.resume(Result.Error(it.exception!!))
+                            }
+                        }
+
+                    }
                 } else {
                     continuation.resume(Result.Error(e))
                     Log.e("Upload Task Error ","" ,e)
@@ -89,6 +100,5 @@ open class BaseRepository {
             }
         }
     }
-
 }
 

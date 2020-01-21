@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.storage.StorageReference
 import com.lab.zicevents.R
 import com.lab.zicevents.data.Result
@@ -28,6 +29,7 @@ class ProfileViewModel(private val userRepo: UserRepository,
                        private val storageRepo: StorageRepository) : ViewModel() {
 
     private val TAG = this::class.java.simpleName
+    private var userUpdateListener: ListenerRegistration? = null
     val dateFormat: DateFormat = SimpleDateFormat.getDateInstance()
 
     private val profileDataResult = MutableLiveData<DataResult>()
@@ -61,12 +63,12 @@ class ProfileViewModel(private val userRepo: UserRepository,
      * @param result Result<DocumentSnapshot> value return by userRepo.getFirestoreUser(uid: String)
      */
     private fun userProfileDataChanged(result: Result<DocumentSnapshot>) = when(result) {
+
         is Result.Success -> {
-            val user: User? = result.data.toObject(User::class.java)
-            profileDataResult.value = DataResult(data = user)
+            profileDataResult.value = DataResult(data = result.data)
         }
         is Result.Error -> {
-            Log.w(TAG,"Error when trying to get user from firestore", result.exception)
+            Log.w(TAG,"Error when trying to get user info from firestore", result.exception)
             profileDataResult.value = DataResult(error = R.string.fetching_user_error)
         }
         is Result.Canceled ->  {
@@ -74,6 +76,37 @@ class ProfileViewModel(private val userRepo: UserRepository,
             profileDataResult.value = DataResult(error = R.string.fetching_user_canceled)
         }
     }
+
+
+    /**
+     *  Set Realtime update listener to user profile
+     */
+    fun listenUserUpdate(uid: String) {
+        val result = userRepo.listenUserUpdate(uid)
+       userUpdateListener = result.addSnapshotListener{ snapshot, exception ->
+            if (exception != null) {
+                profileDataResult.value = DataResult(error = R.string.fetching_user_error)
+                Log.w(TAG, "Listen failed.", exception)
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                profileDataResult.value = DataResult(data = snapshot.toObject(User::class.java))
+
+            } else {
+                profileDataResult.value = DataResult(error = R.string.fetching_user_error)
+                Log.d(TAG, "Document data: null")
+            }
+        }
+    }
+
+    /**
+     * Remove listener on user profile
+     */
+    fun detachUserUpdateListener(){
+        userUpdateListener?.remove()
+    }
+
     /**
      * Update user profile Map<K,V> value
      * Pass result to LiveDate
@@ -118,9 +151,9 @@ class ProfileViewModel(private val userRepo: UserRepository,
      * @param fileName name of image file
      * Result is pass to uploadedImage liveData
      * */
-    fun uploadImageFile(userId: String, drawable: Drawable, fileName: String, size: Int){
+    fun uploadImageFile(userId: String, drawable: Drawable, fileName: String){
         GlobalScope.launch(Dispatchers.Main) {
-            when (val result = storageRepo.uploadImageFile(userId, drawable, fileName, size)){
+            when (val result = storageRepo.uploadImageFile(userId, drawable, fileName)){
                 is Result.Success -> uploadedImage.value = DataResult(data = result.data)
                 is Result.Error ->  uploadedImage.value = DataResult(error = R.string.store_image_task_error)
                 is Result.Canceled ->  uploadedImage.value = DataResult(error = R.string.store_image_task_cancel)
