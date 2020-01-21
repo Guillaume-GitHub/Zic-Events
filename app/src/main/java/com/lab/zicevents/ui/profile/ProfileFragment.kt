@@ -62,9 +62,9 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
 
         this.initViewModel()
         // Fetch user information
-       // getUserProfile(auth.currentUser!!.uid)
         observeProfileChange()
         profileViewModel.listenUserUpdate(auth.currentUser!!.uid)
+        getUserPublications()
         // Set click listener on views
         fragment_profile_edit_info_btn.setOnClickListener(this)
         fragment_profile_change_photo_btn.setOnClickListener(this)
@@ -119,7 +119,7 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
     private fun publicationRecyclerConfig(){
         publicationRecycler = fragment_profile_user_events_recyclerView
         publicationRecycler.layoutManager = LinearLayoutManager(context)
-        publicationAdapter = PublicationRecyclerAdapter(publications)
+        publicationAdapter = PublicationRecyclerAdapter(context!!, publications)
         publicationRecycler.adapter = publicationAdapter
         publicationRecycler.addItemDecoration(MarginItemDecoration(10))
     }
@@ -130,7 +130,7 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
     private fun mediaRecyclerConfig(){
         mediaRecycler = fragment_profile_gallery_recyclerView
         mediaRecycler.layoutManager = GridLayoutManager(context, 2, GridLayoutManager.HORIZONTAL,false)
-        mediaAdapter = UserMediaRecyclerAdapter(medias)
+        mediaAdapter = UserMediaRecyclerAdapter(context!!, medias)
         mediaRecycler.adapter = mediaAdapter
         mediaRecycler.addItemDecoration(MarginItemDecoration(10))
     }
@@ -146,7 +146,6 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
                 it.data is User -> {
                     currentUser = it.data
                     updateUI(it.data)
-                    getUserPublications()
                 }
                 it.error != null ->
                     Toast.makeText(context,getString(it.error), Toast.LENGTH_LONG).show() // TODO : Display Error profile Fragment
@@ -161,7 +160,7 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
      * Init result Observer
      */
     private fun getUserPublications() {
-        val userId = currentUser?.userId
+        val userId = auth.currentUser?.uid
         if (userId != null) {
             profileViewModel.getUserPublications(userId)
             observePublicationResult()
@@ -176,17 +175,16 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
         profileViewModel.userPublications.observe(this, Observer {
             val publicationsResult = it
             when {
-                publicationsResult.list != null
-                        && publicationsResult.list.isNotEmpty() -> {
+                !publicationsResult.list.isNullOrEmpty() -> {
                     val list = publicationsResult.list
                     publications.clear()
                     publications.addAll(list)
                     publicationAdapter.notifyDataSetChanged()
                 }
                 publicationsResult.error != null ->
-                    Toast.makeText(context,getString(publicationsResult.error), Toast.LENGTH_LONG).show()
-                else ->
-                    Log.w(this.javaClass.simpleName, getString(R.string.fetch_user_publication_error))
+                    Toast.makeText(context, getString(publicationsResult.error), Toast.LENGTH_LONG).show()
+
+                else -> {}
             }
         })
     }

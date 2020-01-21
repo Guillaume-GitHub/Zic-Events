@@ -56,7 +56,7 @@ class ImagePickerHelper {
                     (MAX_SIZE.toDouble() / bitmap.width.toDouble())
                 else
                     (MAX_SIZE.toDouble() / bitmap.height.toDouble())
-            
+
             // RESIZE IMAGE
             val resizedHeight = (bitmap.height * scale).toInt()
             val resizeWidth = (bitmap.width * scale).toInt()

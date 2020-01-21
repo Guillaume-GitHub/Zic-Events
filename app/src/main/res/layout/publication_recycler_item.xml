@@ -26,7 +26,8 @@
                 android:id="@+id/publication_user_image"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:background="@drawable/profile_default_background" />
+                android:background="@drawable/profile_default_background"
+                android:scaleType="centerCrop"/>
 
         </androidx.cardview.widget.CardView>
 

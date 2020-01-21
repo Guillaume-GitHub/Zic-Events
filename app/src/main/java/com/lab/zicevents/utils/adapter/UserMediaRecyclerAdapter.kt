@@ -1,12 +1,16 @@
 package com.lab.zicevents.utils.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.lab.zicevents.R
+import kotlinx.android.synthetic.main.picture_gallery_recycler_item.view.*
 
-class UserMediaRecyclerAdapter(var mediaUrlList: ArrayList<String>)
+class UserMediaRecyclerAdapter(val context: Context, var mediaUrlList: ArrayList<String>)
     : RecyclerView.Adapter<UserMediaRecyclerAdapter.MediaHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaHolder {
@@ -25,9 +29,16 @@ class UserMediaRecyclerAdapter(var mediaUrlList: ArrayList<String>)
 
     inner class MediaHolder(private var view: View): RecyclerView.ViewHolder(view), View.OnClickListener {
 
+        /**
+         * Try to download image via Url and bind image view
+         * @param mediaUrl complete http url
+         */
         fun bindItem(mediaUrl: String){
-            // TODO : Load image in imageView
-            /// view.picture_gallery_item.background // Load Image
+            Glide.with(context)
+                .load(mediaUrl)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .placeholder(R.color.colorPrimaryLight)
+                .into(view.picture_gallery_item)
         }
 
         override fun onClick(v: View?) {
