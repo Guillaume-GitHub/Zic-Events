@@ -1,10 +1,13 @@
 package com.lab.zicevents.ui.profile
 
+import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.android.material.chip.Chip
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.storage.StorageReference
@@ -206,5 +209,22 @@ class ProfileViewModel(private val userRepo: UserRepository,
             }
         }
         return isValid
+    }
+
+    /**
+     * Return formatted Chip view
+     * @param context simple context
+     * @param chipText text of chip
+     * @return Chip view
+     */
+    fun getFormattedChip(context: Context, chipText: String): Chip {
+        val chip = Chip(context)
+        chip.apply {
+            isCheckable = false
+            isSelected = false
+            setChipBackgroundColorResource(R.color.colorAccent)
+            text = chipText
+        }
+        return chip
     }
 }
