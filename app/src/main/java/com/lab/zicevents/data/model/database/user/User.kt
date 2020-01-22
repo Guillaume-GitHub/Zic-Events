@@ -13,6 +13,7 @@ data class User(
     @ServerTimestamp
     val createdDate: Date? = null,
     val userId: String,
+    val docRef: String,
     var displayName: String,
     var pseudo: String,
     var description: String? = null,
@@ -23,6 +24,7 @@ data class User(
     // Empty constructor *Required to deserialize datas fetched from firestore
     constructor(): this (
         null,
+        "",
         "",
         "",
         "",

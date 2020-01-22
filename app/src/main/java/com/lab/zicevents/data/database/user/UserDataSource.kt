@@ -20,8 +20,12 @@ class UserDataSource {
         .setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED)
         .build()
     private val database = FirebaseFirestore.getInstance()
-    private val USERS_COLLECTION = "users"
-    private val PRIVATE_COLLECTION = "private"
+
+    companion object {
+        const val USERS_COLLECTION = "users"
+        const val PRIVATE_COLLECTION = "private"
+    }
+
 
     init {
         database.firestoreSettings = settings

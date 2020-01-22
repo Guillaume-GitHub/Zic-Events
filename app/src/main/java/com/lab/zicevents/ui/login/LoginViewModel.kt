@@ -9,6 +9,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.lab.zicevents.R
 import com.lab.zicevents.data.login.LoginRepository
 import com.lab.zicevents.data.Result
+import com.lab.zicevents.data.database.user.UserDataSource
 import com.lab.zicevents.data.database.user.UserRepository
 import com.lab.zicevents.data.model.database.user.PrivateUserInfo
 import com.lab.zicevents.data.model.database.user.User
@@ -356,6 +357,7 @@ class LoginViewModel(val loginRepository: LoginRepository,
                 user = User(
                     userId = firebaseUser.uid,
                     displayName = username!!,
+                    docRef = "${UserDataSource.USERS_COLLECTION}/${firebaseUser.uid}",
                     description = null,
                     pseudo = generatePseudo(username)
                 )
