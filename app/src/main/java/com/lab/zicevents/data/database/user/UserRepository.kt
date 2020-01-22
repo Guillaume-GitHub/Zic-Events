@@ -4,7 +4,6 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.lab.zicevents.data.Result
-import com.lab.zicevents.data.database.user.UserDataSource
 import com.lab.zicevents.data.model.database.user.PrivateUserInfo
 import com.lab.zicevents.data.model.database.user.User
 import com.lab.zicevents.utils.base.BaseRepository
@@ -51,6 +50,24 @@ class UserRepository(private val userDataSource: UserDataSource) : BaseRepositor
         }
     }
 
+    /**
+     * Get Firestore user from Firestore
+     * @param documentRef String that corresponding to the path of document in database
+     * @return Result<DocumentSnapshot>
+     */
+    suspend fun getUserByReference(documentRef : String) : Result<DocumentSnapshot>{
+        return when (val result = userDataSource.getUserByDocReference(documentRef).awaitTask()){
+            is Result.Success -> Result.Success(result.data)
+            is Result.Error -> Result.Error(result.exception)
+            is Result.Canceled -> Result.Canceled(result.exception)
+        }
+    }
+
+    /**
+     * Get User realtime updates
+     * @param uid string corresponding to user uid
+     * @return DocumentReference
+     */
     fun listenUserUpdate(uid: String): DocumentReference {
        return userDataSource.listenUserUpdate(uid)
     }

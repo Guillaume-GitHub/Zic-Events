@@ -52,31 +52,43 @@ class ProfileViewModel(private val userRepo: UserRepository,
      */
     fun getFirestoreUser(uid: String) {
         GlobalScope.launch(Dispatchers.Main) {
-            val result = userRepo.getFirestoreUser(uid)
-            userProfileDataChanged(result)
+            when (val result = userRepo.getUserByReference(uid)) {
+                is Result.Success -> {
+                    profileDataResult.value = DataResult(data = result.data.toObject(User::class.java))
+                }
+                is Result.Error -> {
+                    Log.w(TAG, "Error when trying to get user info from firestore", result.exception)
+                    profileDataResult.value = DataResult(error = R.string.fetching_user_error)
+                }
+                is Result.Canceled -> {
+                    Log.w(TAG, "Action canceled", result.exception)
+                    profileDataResult.value = DataResult(error = R.string.fetching_user_canceled)
+                }
+            }
         }
     }
 
     /**
-     * Send result of LoginViewModel.getFirestoreUser to LoginViewModel.profileUserSate Live userProfileResult
-     * Observe result with LoginViewModel.profileUserSate
-     * @param result Result<DocumentSnapshot> value return by userRepo.getFirestoreUser(uid: String)
+     * Get User with is document reference in database
+     * @param documentRef String that corresponding to user document path in database
      */
-    private fun userProfileDataChanged(result: Result<DocumentSnapshot>) = when(result) {
-
-        is Result.Success -> {
-            profileDataResult.value = DataResult(data = result.data)
-        }
-        is Result.Error -> {
-            Log.w(TAG,"Error when trying to get user info from firestore", result.exception)
-            profileDataResult.value = DataResult(error = R.string.fetching_user_error)
-        }
-        is Result.Canceled ->  {
-            Log.w(TAG,"Action canceled", result.exception)
-            profileDataResult.value = DataResult(error = R.string.fetching_user_canceled)
+    fun getUserByDocReference(documentRef: String) {
+        GlobalScope.launch(Dispatchers.Main) {
+            when (val result = userRepo.getUserByReference(documentRef)) {
+                is Result.Success -> {
+                    profileDataResult.value = DataResult(data = result.data.toObject(User::class.java))
+                }
+                is Result.Error -> {
+                    Log.w(TAG, "Error when trying to get user info from firestore", result.exception)
+                    profileDataResult.value = DataResult(error = R.string.fetching_user_error)
+                }
+                is Result.Canceled -> {
+                    Log.w(TAG, "Action canceled", result.exception)
+                    profileDataResult.value = DataResult(error = R.string.fetching_user_canceled)
+                }
+            }
         }
     }
-
 
     /**
      *  Set Realtime update listener to user profile

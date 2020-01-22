@@ -61,6 +61,20 @@ class UserDataSource {
         return database.collection(USERS_COLLECTION).document(uid).get()
     }
 
+    /**
+     * Get Firestore user from Firestore
+     * @param documentRef String that corresponding to the path of document in database
+     * @return Task<DocumentSnapshot>
+     */
+    fun getUserByDocReference(documentRef: String) : Task<DocumentSnapshot> {
+        return database.document(documentRef).get()
+    }
+
+    /**
+     * Get User realtime updates
+     * @param uid string corresponding to user uid
+     * @return DocumentReference
+     */
     fun listenUserUpdate(uid: String): DocumentReference{
         return database.collection(USERS_COLLECTION).document(uid)
     }

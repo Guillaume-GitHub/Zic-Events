@@ -45,5 +45,9 @@
         android:id="@+id/bottom_navigation_profile_edit"
         android:name="com.lab.zicevents.ui.profile.ProfileEditFragment"
         android:label="@string/profile_edit_title"
-        tools:layout="@layout/fragment_profile_edit"/>
+        tools:layout="@layout/fragment_profile_edit">
+        <argument
+            android:name="userRef"
+            app:argType="string" />
+    </fragment>
 </navigation>

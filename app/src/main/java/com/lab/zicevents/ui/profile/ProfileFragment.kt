@@ -84,7 +84,7 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.fragment_profile_edit_info_btn ->
-                findNavController().navigate(R.id.from_profile_to_profile_edit)
+                navigateToEditProfileFragment()
             R.id.fragment_profile_change_photo_btn ->
                 pickImageFromGallery(ImagePickerHelper.PROFILE_IMG_RQ)
             else -> {}
@@ -111,6 +111,13 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
      */
     private fun initViewModel(){
        this.profileViewModel = ViewModelProviders.of(this, ProfileViewModelFactory()).get(ProfileViewModel::class.java)
+    }
+
+    private fun navigateToEditProfileFragment(){
+      currentUser?.let {
+          val action = ProfileFragmentDirections.fromProfileToProfileEdit("users/${it.userId}")
+          findNavController().navigate(action)
+        }
     }
 
     /**
@@ -268,6 +275,8 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
      * Update ui with new user userProfileResult
      */
     private fun updateUI(user: User) {
+        // Set current user
+        currentUser = user
         // Username view
         fragment_profile_username.text = user.displayName
         // Toolbar username view
