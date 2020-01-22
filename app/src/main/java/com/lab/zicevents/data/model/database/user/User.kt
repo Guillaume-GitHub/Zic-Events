@@ -18,6 +18,7 @@ data class User(
     var pseudo: String,
     var description: String? = null,
     var profileImage: String? = null,
+    var coverImage: String? = null,
     var gallery: ArrayList<String>? = null,
     var musicStyle: ArrayList<String>? = null)  {
 
@@ -28,6 +29,7 @@ data class User(
         "",
         "",
         "",
+        null,
         null,
         null,
         null,
