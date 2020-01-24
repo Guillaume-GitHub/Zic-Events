@@ -34,4 +34,19 @@
         <item name="android:textColorPrimary">@color/colorOnPrimary</item>
         <item name="android:textColorSecondary">@color/colorAccent</item>
     </style>
+
+    <!-- Style of Full Screen Dialog -->
+    <style name="AppTheme.FullScreenDialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <!-- True to Full Screen without status bar -->
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">false</item>
+        <!-- window background -->
+        <item name="android:windowBackground">@color/colorPrimary</item>
+        <!--Animations when dialog opening -->
+        <item name="android:windowEnterAnimation">@anim/slide_down</item>
+        <item name="android:windowExitAnimation">@anim/slide_up</item>
+    </style>
 </resources>

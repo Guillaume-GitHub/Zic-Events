@@ -47,7 +47,7 @@
         android:label="@string/profile_edit_title"
         tools:layout="@layout/fragment_profile_edit">
         <argument
-            android:name="userRef"
+            android:name="userId"
             app:argType="string" />
     </fragment>
 </navigation>

@@ -10,35 +10,45 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.NavArgs
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.google.android.material.chip.Chip
 import com.lab.zicevents.R
 import com.lab.zicevents.data.model.database.user.User
-import com.lab.zicevents.ui.login.LoginViewModel
+import com.lab.zicevents.utils.base.BaseRepository
 import kotlinx.android.synthetic.main.fragment_profile_edit.*
 
-class ProfileEditFragment : Fragment() {
+class ProfileEditFragment : Fragment(), View.OnClickListener {
     private val args: ProfileEditFragmentArgs by navArgs()
     private lateinit var profileViewModel: ProfileViewModel
-    private lateinit var userRef: String
+    private lateinit var userId: String
+    private var user: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        userRef = args.userRef
+        userId = args.userId
         initViewModel()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_profile_edit, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fetchUserData()
+        listenUserUpdates()
+        observeUpdateProfileResult()
+        observeProfileChange()
+        profile_edit_description.setOnClickListener(this)
+    }
+
+    override fun onClick(view: View?) {
+        when (view?.id) {
+            R.id.profile_edit_description -> showEditDescriptionDialog()
+            else -> {}
+        }
     }
 
     /**
@@ -51,24 +61,47 @@ class ProfileEditFragment : Fragment() {
     /**
      * Fetch user data and init result observer
      */
-    private fun fetchUserData() {
-        profileViewModel.getUserByDocReference(userRef)
-        observeFetchedProfileData()
+    private fun listenUserUpdates() {
+        Log.d(this::class.java.simpleName, "User Update")
+        profileViewModel.listenUserUpdate(userId)
     }
 
     /**
-     * Observe result of fetching user data request
+     * Observe User profile result fetched from Firestore
+     * Pass new value in updateIU method to display user profile
+     * if null or error display error message
      */
-    private fun observeFetchedProfileData() {
+    private fun observeProfileChange(){
         profileViewModel.userProfileResult.observe(this, Observer {
             when {
-                it.data is User ->
-                   updateUI(it.data)
+                it.data is User -> {
+                    Log.d(this::class.java.simpleName, it.data.toString())
+                    user = it.data
+                    updateUI(it.data)
+                }
                 it.error != null ->
-                    // TODO : Display Error profile Fragment
-                    Toast.makeText(context, getString(it.error), Toast.LENGTH_LONG).show()
+                    Toast.makeText(context,getString(it.error), Toast.LENGTH_LONG).show() // TODO : Display Error profile Fragment
                 else ->
                     Log.w(this.javaClass.simpleName, getString(R.string.error_when_fetch_user))
+            }
+        })
+    }
+
+    /**
+     * Observe update profile Result
+     * if profile was correctly updated, show new image in profile imageView
+     * else null or error, display message
+     */
+    private fun observeUpdateProfileResult(){
+        profileViewModel.updateProfileResult.observe(this, Observer {
+            when {
+                it.data is Int ->
+                    if (it.data == BaseRepository.SUCCESS_TASK)
+                        Toast.makeText(context, " Profile mis à jour", Toast.LENGTH_LONG).show() //TODO : replace String
+                it.error != null ->
+                    Toast.makeText(context,getString(it.error), Toast.LENGTH_LONG).show()
+                else ->
+                    Log.w(this.javaClass.simpleName, "Unknown Update Profile Error")
             }
         })
     }
@@ -89,11 +122,13 @@ class ProfileEditFragment : Fragment() {
         // Set Music Styles
         user.musicStyle?.let {
             it.forEach { text ->
-                profile_edit_style_chipGroup.addView(
-                    profileViewModel.getFormattedChip(context!!, text)
-                )
+                profile_edit_style_chipGroup.apply {
+                    //removeAllViews()
+                    addView(profileViewModel.getFormattedChip(context!!, text))
+                }
             }
         }
+        this.user = user
     }
 
     /**
@@ -107,5 +142,21 @@ class ProfileEditFragment : Fragment() {
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .placeholder(R.color.colorPrimaryLight)
             .into(view)
+    }
+
+    /**
+     * Create and Show DescriptionFragmentDialog as dialog
+     */
+    private fun showEditDescriptionDialog(){
+        user?.let {user ->
+            val ft = fragmentManager?.beginTransaction()
+            ft?.let {
+                DescriptionFragmentDialog(
+                    userId =  user.userId,
+                    description = user.description,
+                    viewModel = profileViewModel
+                ).show(ft, "DescriptionFragmentDialog")
+            }
+        }
     }
 }

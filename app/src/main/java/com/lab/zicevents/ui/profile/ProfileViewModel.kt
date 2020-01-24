@@ -227,4 +227,15 @@ class ProfileViewModel(private val userRepo: UserRepository,
         }
         return chip
     }
+
+    /**
+     *
+     */
+    fun isDescriptionValid(description: String?): Boolean{
+        return when {
+            description.isNullOrBlank() -> false
+            description.length in (10..150) -> true
+            else -> false
+        }
+    }
 }

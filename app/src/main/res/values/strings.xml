@@ -115,7 +115,9 @@
     <string name="profile_edit_location">Mon Adresse</string>
     <string name="profile_edit_location_hint">Localisation</string>
     <string name="profile_edit_style">Mes Styles Musicaux</string>
-    <string name="profile_edit_adding_style">Ajouter</string>
+    <string name="profile_edit_adding">Ajouter</string>
+    <string name="profile_edit_dialog_save">Enregister</string>
+    <string name="user_description_error">Votre description doit contenir entre 20 et 150 caractères</string>
 
 
     <!-- ***** PERMISSIONS ***** -->

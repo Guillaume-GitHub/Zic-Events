@@ -57,6 +57,7 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -115,7 +116,7 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
 
     private fun navigateToEditProfileFragment(){
       currentUser?.let {
-          val action = ProfileFragmentDirections.fromProfileToProfileEdit("users/${it.userId}")
+          val action = ProfileFragmentDirections.fromProfileToProfileEdit(it.userId)
           findNavController().navigate(action)
         }
     }
@@ -151,6 +152,7 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
         profileViewModel.userProfileResult.observe(this, Observer {
             when {
                 it.data is User -> {
+                    Log.d(this::class.java.simpleName, it.data.toString())
                     currentUser = it.data
                     updateUI(it.data)
                 }
@@ -379,11 +381,9 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
             }
     }
 
-    /**
-     * remove user realtime updates
-     */
-    override fun onDestroy() {
+    override fun onDestroyView() {
+        super.onDestroyView()
+        super.onDestroyView()
         profileViewModel.detachUserUpdateListener()
-        super.onDestroy()
     }
 }
