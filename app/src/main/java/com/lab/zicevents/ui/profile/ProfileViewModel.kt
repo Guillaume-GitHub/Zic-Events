@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,6 +27,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ProfileViewModel(private val userRepo: UserRepository,
                        private val publicationRepo: PublicationRepository,
@@ -190,9 +193,13 @@ class ProfileViewModel(private val userRepo: UserRepository,
                     isValid = false
                     return@forEach
                 }
-                User.DISPLAY_NAME_FIELD,
-                User.MUSIC_STYLE_FIELD -> if (map[it] !is String) {
+                User.DISPLAY_NAME_FIELD -> if (map[it] !is String) {
                     Log.w(TAG, "'${User.DESCRIPTION_FIELD}' must be not null String")
+                    isValid = false
+                    return@forEach
+                }
+                User.MUSIC_STYLE_FIELD -> if (map[it] !is ArrayList<*>?) {
+                    Log.w(TAG, "'${User.MUSIC_STYLE_FIELD}' must be an ArrayList of String or null")
                     isValid = false
                     return@forEach
                 }
@@ -215,21 +222,31 @@ class ProfileViewModel(private val userRepo: UserRepository,
      * Return formatted Chip view
      * @param context simple context
      * @param chipText text of chip
+     * @param isEditable set true to add close icon to chip
+     * @param clickListener callback to triggered close button click
      * @return Chip view
      */
-    fun getFormattedChip(context: Context, chipText: String): Chip {
+    fun getFormattedChip(context: Context,
+                         chipText: String,
+                         isEditable: Boolean = false ,
+                         clickListener: View.OnClickListener? = null): Chip {
+
         val chip = Chip(context)
         chip.apply {
-            isCheckable = false
-            isSelected = false
+            if (isEditable) closeIcon = context.resources.getDrawable(R.drawable.ic_close_white_24dp)
+            clickListener?.let { chip.setOnCloseIconClickListener(it) }
+            isCloseIconVisible = isEditable
             setChipBackgroundColorResource(R.color.colorAccent)
+            setOnCloseIconClickListener(clickListener)
             text = chipText
         }
         return chip
     }
 
     /**
-     *
+     * Check if user description matches with description length
+     * @param description simple user description
+     * @return true if ok or false
      */
     fun isDescriptionValid(description: String?): Boolean{
         return when {
@@ -237,5 +254,14 @@ class ProfileViewModel(private val userRepo: UserRepository,
             description.length in (10..150) -> true
             else -> false
         }
+    }
+
+    /**
+     * Remove all whitespace in string
+     * @param text you want to transform
+     * @return text without whitespaces
+     */
+    fun formattedMusicStyle(text: String): String {
+        return text.replace(" ","")
     }
 }

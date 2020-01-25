@@ -78,7 +78,7 @@ class DescriptionFragmentDialog(
     override fun setUpToolbar() {
         description_dialog_toolbar.setNavigationIcon(R.drawable.ic_close_white_24dp)
         description_dialog_toolbar.setNavigationOnClickListener {
-            dialog.dismiss()
+            dialog?.dismiss()
         } // cancel operation
     }
 

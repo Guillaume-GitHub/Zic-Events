@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.view.isEmpty
+import androidx.core.view.isNotEmpty
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
@@ -17,6 +19,7 @@ import com.lab.zicevents.R
 import com.lab.zicevents.data.model.database.user.User
 import com.lab.zicevents.utils.base.BaseRepository
 import kotlinx.android.synthetic.main.fragment_profile_edit.*
+import kotlinx.android.synthetic.main.fragment_style_dialog.*
 
 class ProfileEditFragment : Fragment(), View.OnClickListener {
     private val args: ProfileEditFragmentArgs by navArgs()
@@ -42,11 +45,13 @@ class ProfileEditFragment : Fragment(), View.OnClickListener {
         observeUpdateProfileResult()
         observeProfileChange()
         profile_edit_description.setOnClickListener(this)
+        profile_edit_add_style.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.profile_edit_description -> showEditDescriptionDialog()
+            R.id.profile_edit_add_style -> showEditStyleDialog()
             else -> {}
         }
     }
@@ -120,11 +125,16 @@ class ProfileEditFragment : Fragment(), View.OnClickListener {
             profile_edit_description.setText(it)
         }
         // Set Music Styles
-        user.musicStyle?.let {
-            it.forEach { text ->
-                profile_edit_style_chipGroup.apply {
-                    //removeAllViews()
-                    addView(profileViewModel.getFormattedChip(context!!, text))
+        user.musicStyle.apply {
+            // Clean chip group
+            if (profile_edit_style_chipGroup.isNotEmpty())
+                profile_edit_style_chipGroup.removeAllViews()
+            // Add Chip in Chip group
+            if (!this.isNullOrEmpty()){
+                forEach { text ->
+                    profile_edit_style_chipGroup.apply {
+                        addView(profileViewModel.getFormattedChip(context!!, text))
+                    }
                 }
             }
         }
@@ -156,6 +166,22 @@ class ProfileEditFragment : Fragment(), View.OnClickListener {
                     description = user.description,
                     viewModel = profileViewModel
                 ).show(ft, "DescriptionFragmentDialog")
+            }
+        }
+    }
+
+    /**
+     * Create and Show DescriptionFragmentDialog as dialog
+     */
+    private fun showEditStyleDialog(){
+        user?.let {user ->
+            val ft = fragmentManager?.beginTransaction()
+            ft?.let {
+                StyleFragmentDialog(
+                    userId = userId,
+                    viewModel = profileViewModel,
+                    styleList = user.musicStyle
+                ).show(ft, "StyleFragmentDialog")
             }
         }
     }

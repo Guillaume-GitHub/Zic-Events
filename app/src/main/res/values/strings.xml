@@ -118,6 +118,7 @@
     <string name="profile_edit_adding">Ajouter</string>
     <string name="profile_edit_dialog_save">Enregister</string>
     <string name="user_description_error">Votre description doit contenir entre 20 et 150 caractères</string>
+    <string name="profile_edit_style_hint">Style de musique</string>
 
 
     <!-- ***** PERMISSIONS ***** -->
@@ -127,5 +128,29 @@
     <string name="gender_male_value" translatable="false">male</string>
     <string name="gender_female_value" translatable="false">female</string>
     <string name="gender_other_value" translatable="false">other</string>
+
+    <!-- ***** MUSIC GENDER ***** -->
+    <array name="music_gender">
+        <item>Rock</item>
+        <item>Disco</item>
+        <item>Blues</item>
+        <item>Electro</item>
+        <item>Dance</item>
+        <item>Funk</item>
+        <item>Gospel</item>
+        <item>Metal</item>
+        <item>Country</item>
+        <item>Classique</item>
+        <item>Folk</item>
+        <item>Instrumentale</item>
+        <item>Latine</item>
+        <item>Soul</item>
+        <item>Pop</item>
+        <item>Jazz</item>
+        <item>Raggae</item>
+        <item>Rap</item>
+        <item>RnB</item>
+        <item>Dubstep</item>
+    </array>
 
 </resources>
