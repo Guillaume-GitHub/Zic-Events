@@ -2,6 +2,7 @@ package com.lab.zicevents.data.model.database.user
 
 import com.google.firebase.firestore.ServerTimestamp
 import com.google.firebase.storage.StorageReference
+import com.lab.zicevents.data.model.api.geocoding.Address
 import java.lang.ref.Reference
 import java.util.*
 import kotlin.collections.ArrayList
@@ -17,6 +18,7 @@ data class User(
     var displayName: String,
     var pseudo: String,
     var description: String? = null,
+    var address: Address? = null,
     var profileImage: String? = null,
     var coverImage: String? = null,
     var gallery: ArrayList<String>? = null,
@@ -33,6 +35,7 @@ data class User(
         null,
         null,
         null,
+        null,
         null
     )
 
@@ -43,5 +46,6 @@ data class User(
         const val PROFILE_IMAGE_FIELD = "profileImage"
         const val GALLERY_FIELD = "gallery"
         const val MUSIC_STYLE_FIELD = "musicStyle"
+        const val ADDRESS_FIELD = "address"
     }
 }

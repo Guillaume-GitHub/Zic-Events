@@ -2,10 +2,13 @@ package com.lab.zicevents.ui.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.lab.zicevents.data.api.geocoding.GeocodingDataSource
+import com.lab.zicevents.data.api.geocoding.GeocodingRepository
 import com.lab.zicevents.data.database.publication.PublicationDataSource
 import com.lab.zicevents.data.database.publication.PublicationRepository
 import com.lab.zicevents.data.database.user.UserDataSource
 import com.lab.zicevents.data.database.user.UserRepository
+import com.lab.zicevents.data.geolocation.FusedLocationRepository
 import com.lab.zicevents.data.storage.StorageDataSource
 import com.lab.zicevents.data.storage.StorageRepository
 
@@ -27,6 +30,9 @@ class ProfileViewModelFactory: ViewModelProvider.Factory {
                 ),
                 storageRepo = StorageRepository(
                     storageDataSource = StorageDataSource()
+                ),
+                geocodingRepo = GeocodingRepository(
+                    geocodingDataSource = GeocodingDataSource()
                 )
             ) as T
         }

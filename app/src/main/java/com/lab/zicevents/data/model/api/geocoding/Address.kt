@@ -1,10 +1,10 @@
-package com.lab.zicevents.data.model.api.geolocation
+package com.lab.zicevents.data.model.api.geocoding
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 
-data class GeoResults (
+data class Address (
     @SerializedName("address_components")
     @Expose
     var addressComponents: List<AddressComponent>? = null,
@@ -13,5 +13,5 @@ data class GeoResults (
     var formattedAddress: String? = null,
     @SerializedName("geometry")
     @Expose
-    var coordinates: Coordinates? = null
+    var geometry: Geometry? = null
 )

@@ -1,14 +1,15 @@
-package com.lab.zicevents.data.model.api.geolocation
+package com.lab.zicevents.data.model.api.geocoding
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class Northeast (
 
+
+class Southwest {
     @SerializedName("lat")
     @Expose
-    private var lat: Double? = null,
+    var lat: Double? = null
     @SerializedName("lng")
     @Expose
-    private var lng: Double? = null
-)
+    var lng: Double? = null
+}

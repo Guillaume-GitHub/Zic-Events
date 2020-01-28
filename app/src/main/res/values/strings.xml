@@ -57,12 +57,6 @@
     <string name="store_image_task_error">Une erreur est survenue lors du chargement de l\'image, réessayer plus tard</string>
     <string name="store_image_task_cancel">Chargement de l\'image interrompu</string>
 
-    <!-- ***** USER LOCATION MESSAGE ***** -->
-    <string name="error_fetching_address">Récupération de l\'addresse impossible</string>
-    <string name="error_fetching_position">Récupération de la position impossible</string>
-    <string name="operation_canceled">Opération annulée</string>
-
-
     <!-- ***** BOTTOM NAVIGATION ***** -->
     <string name="title_deal">Annonces</string>
     <string name="title_event">Evénements</string>
@@ -119,10 +113,24 @@
     <string name="profile_edit_dialog_save">Enregister</string>
     <string name="user_description_error">Votre description doit contenir entre 20 et 150 caractères</string>
     <string name="profile_edit_style_hint">Style de musique</string>
-
+    <string name="profile_up_to_date">Profil mis à jour</string>
 
     <!-- ***** PERMISSIONS ***** -->
     <string name="storage_permission_denied">Vous devez autoriser l\'accès à vos Photos/Vidéo pour utiliser cette fonctionnalité</string>
+
+    <!-- ***** DEVICE LOCATION ***** -->
+    <string name="device_position_error">Oups ! Impossible de récupérer votre position</string>
+
+    <!-- ***** GEOLOCATION MESSAGE ***** -->
+    <string name="geocoding_address_error">Récupération de l\'addresse impossible</string>
+    <string name="geocoding_position_error">Récupération de la position impossible</string>
+    <string name="operation_canceled">Opération annulée</string>
+    <string name="geocoding_address_no_result">Aucun résultat pour cette adresse, réessayer avec une autre adresse proche</string>
+    <string name="geocoding_empty_text">Merci de renseigner une adresse</string>
+    <string name="geocoding_enough_text">Cette adresse est trop courte, merci de donne un peu plus de précision</string>
+    <string name="alert_valid_address_title">Votre Adresse</string>
+    <string name="alert_valid_address_positive_btn">Valider</string>
+    <string name="alert_valid_address_negative_btn">Annuler</string>
 
     <!-- ***** LOCAL DATA ***** -->
     <string name="gender_male_value" translatable="false">male</string>

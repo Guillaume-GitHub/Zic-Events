@@ -46,12 +46,14 @@ class ProfileEditFragment : Fragment(), View.OnClickListener {
         observeProfileChange()
         profile_edit_description.setOnClickListener(this)
         profile_edit_add_style.setOnClickListener(this)
+        profile_edit_location.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.profile_edit_description -> showEditDescriptionDialog()
             R.id.profile_edit_add_style -> showEditStyleDialog()
+            R.id.profile_edit_location -> showEditLocationDialog()
             else -> {}
         }
     }
@@ -102,7 +104,7 @@ class ProfileEditFragment : Fragment(), View.OnClickListener {
             when {
                 it.data is Int ->
                     if (it.data == BaseRepository.SUCCESS_TASK)
-                        Toast.makeText(context, " Profile mis à jour", Toast.LENGTH_LONG).show() //TODO : replace String
+                        Toast.makeText(context, getString(R.string.profile_up_to_date), Toast.LENGTH_LONG).show()
                 it.error != null ->
                     Toast.makeText(context,getString(it.error), Toast.LENGTH_LONG).show()
                 else ->
@@ -123,6 +125,10 @@ class ProfileEditFragment : Fragment(), View.OnClickListener {
         // Set description
         user.description?.let {
             profile_edit_description.setText(it)
+        }
+        // Set user address
+        user.address?.let {
+            profile_edit_location.setText(it.formattedAddress)
         }
         // Set Music Styles
         user.musicStyle.apply {
@@ -182,6 +188,22 @@ class ProfileEditFragment : Fragment(), View.OnClickListener {
                     viewModel = profileViewModel,
                     styleList = user.musicStyle
                 ).show(ft, "StyleFragmentDialog")
+            }
+        }
+    }
+
+    /**
+     * Create and Show LocationFragmentDialog as dialog
+     */
+    private fun showEditLocationDialog(){
+        user?.let { user ->
+            val ft = fragmentManager?.beginTransaction()
+            ft?.let {
+                LocationFragmentDialog(
+                    userId = user.userId,
+                    viewModel = profileViewModel,
+                    address = user.address
+                ).show(ft, "LocationFragmentDialog")
             }
         }
     }

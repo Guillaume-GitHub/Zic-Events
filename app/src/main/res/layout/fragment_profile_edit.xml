@@ -107,7 +107,9 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/profile_edit_location_hint"
                 style="@style/AppTheme.TextInputLayout.FilledBox"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="20dp"
+                android:clickable="false"
+                android:focusable="false">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/profile_edit_location"
@@ -115,6 +117,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorOnPrimary"
                     android:editable="false"
+                    android:focusable="false"
                     android:drawableEnd="@drawable/ic_my_location_24px"
                     android:drawablePadding="20dp"
                     tools:text="14 Rue de Vesoul, 25000 Besançon"/>

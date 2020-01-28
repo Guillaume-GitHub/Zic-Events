@@ -1,14 +1,14 @@
-package com.lab.zicevents.data.model.api.geolocation
+package com.lab.zicevents.data.model.api.geocoding
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class Coordinates(
+data class Geometry(
 
     @SerializedName("location")
     @Expose
-    private var position: Position? = null,
+    var location: Location? = null,
     @SerializedName("viewport")
     @Expose
-    private var viewport: Viewport? = null
+    var viewport: Viewport? = null
 )

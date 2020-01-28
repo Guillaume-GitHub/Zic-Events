@@ -1,7 +1,6 @@
 package com.lab.zicevents.ui.profile
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.View
@@ -9,13 +8,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.material.chip.Chip
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.storage.StorageReference
 import com.lab.zicevents.R
 import com.lab.zicevents.data.Result
+import com.lab.zicevents.data.api.geocoding.GeocodingRepository
 import com.lab.zicevents.data.database.publication.PublicationRepository
 import com.lab.zicevents.data.database.user.UserRepository
+import com.lab.zicevents.data.model.api.geocoding.Address
 import com.lab.zicevents.data.model.database.publication.Publication
 import com.lab.zicevents.data.model.database.user.User
 import com.lab.zicevents.data.model.local.DataResult
@@ -27,12 +27,13 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
 
 class ProfileViewModel(private val userRepo: UserRepository,
                        private val publicationRepo: PublicationRepository,
-                       private val storageRepo: StorageRepository) : ViewModel() {
+                       private val storageRepo: StorageRepository,
+                       private val geocodingRepo: GeocodingRepository)
+    : ViewModel() {
 
     private val TAG = this::class.java.simpleName
     private var userUpdateListener: ListenerRegistration? = null
@@ -49,6 +50,9 @@ class ProfileViewModel(private val userRepo: UserRepository,
 
     private val updatedProfile = MutableLiveData<DataResult>()
     val updateProfileResult: LiveData<DataResult> = updatedProfile
+
+    private val geocodingAddress = MutableLiveData<DataResult>()
+    val geocodingResult: LiveData<DataResult> = geocodingAddress
 
     /**
      * *Coroutine*
@@ -180,6 +184,28 @@ class ProfileViewModel(private val userRepo: UserRepository,
     }
 
     /**
+     * Get address components like geometry from a non formatted address string
+     * @param address address taped by user
+     * @param key Geocoding api key
+     */
+    fun getGeolocationAddress(address: String, key: String) {
+        GlobalScope.launch(Dispatchers.Main) {
+            when(val result = geocodingRepo.getGeolocationAddress(address, key)){
+                is Result.Success -> {
+                    val adr = result.data.results
+                    if (!adr.isNullOrEmpty()) {
+                        geocodingAddress.value = DataResult(data = adr[0])
+                    }else {
+                        geocodingAddress.value = DataResult(data = null)
+                    }
+                }
+                is Result.Error ->  geocodingAddress.value = DataResult(error = R.string.geocoding_address_error)
+                is Result.Canceled ->  geocodingAddress.value =  DataResult(error = R.string.operation_canceled)
+            }
+        }
+    }
+
+    /**
      * Check if all value in Map<K,V> are correctly formatted
      * @return isValid Boolean
      */
@@ -205,6 +231,11 @@ class ProfileViewModel(private val userRepo: UserRepository,
                 }
                 User.GALLERY_FIELD -> if (map[it] !is StorageReference) {
                     Log.w(TAG, "'${User.DESCRIPTION_FIELD}' must be an instance of StorageReference")
+                    isValid = false
+                    return@forEach
+                }
+                User.ADDRESS_FIELD -> if (map[it] !is Address?) {
+                    Log.w(TAG, "'${User.ADDRESS_FIELD}' must be an instance of Address or null")
                     isValid = false
                     return@forEach
                 }
@@ -251,7 +282,7 @@ class ProfileViewModel(private val userRepo: UserRepository,
     fun isDescriptionValid(description: String?): Boolean{
         return when {
             description.isNullOrBlank() -> false
-            description.length in (10..150) -> true
+            description.length in (20..150) -> true
             else -> false
         }
     }

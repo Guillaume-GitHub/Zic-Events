@@ -6,7 +6,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColor">@color/colorOnPrimary</item>
-        <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
         <item name="colorControlNormal">@color/colorOnPrimary</item>
         <item name="android:windowBackground">@color/colorPrimary</item>
     </style>
@@ -30,7 +29,6 @@
     <style name="AppTheme.DatePickerDialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
         <item name="colorAccent">@android:color/transparent</item>
         <item name="android:windowBackground">@color/colorPrimary</item>
-        <item name="android:colorControlActivated">@color/colorAccent</item>
         <item name="android:textColorPrimary">@color/colorOnPrimary</item>
         <item name="android:textColorSecondary">@color/colorAccent</item>
     </style>

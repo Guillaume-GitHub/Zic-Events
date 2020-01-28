@@ -3,9 +3,6 @@ package com.lab.zicevents.utils.base
 import android.net.Uri
 import android.util.Log
 import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import com.lab.zicevents.R
 import com.lab.zicevents.data.Result
@@ -17,6 +14,11 @@ import kotlin.Exception
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import com.google.gson.Gson
+import org.json.JSONObject
+
+
+
 
 @Suppress("UNCHECKED_CAST")
 open class BaseRepository {
@@ -56,7 +58,7 @@ open class BaseRepository {
             override fun onResponse(call: Call<T>, response: Response<T>) {
 
                 if (response.isSuccessful)
-                    continuation.resume(Result.Success(response.body()!!))
+                    continuation.resume(Result.Success(response.body() as T))
                 else
                     continuation.resumeWithException(Exception(response.message()))
             }
