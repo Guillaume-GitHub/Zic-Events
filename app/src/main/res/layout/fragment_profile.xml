@@ -22,7 +22,7 @@
                 android:id="@+id/fragment_profile_collapse_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 android:background="@color/colorPrimary"
                 app:contentScrim="@color/colorPrimaryDark"
                 app:expandedTitleTextAppearance="@style/AppTheme.CollapsingToolbarLayoutExpandedTextStyle"

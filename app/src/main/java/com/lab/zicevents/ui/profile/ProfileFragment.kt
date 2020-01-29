@@ -301,6 +301,10 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
         // Address view
         fragment_profile_address.apply {
             visibility = View.GONE
+            user.address?.let {
+                text = it.formattedAddress
+                visibility = View.VISIBLE
+            }
         }
         // Followers view
         fragment_profile_followers.apply {
