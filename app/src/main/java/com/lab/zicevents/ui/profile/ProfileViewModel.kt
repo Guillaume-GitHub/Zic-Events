@@ -20,6 +20,7 @@ import com.lab.zicevents.data.model.database.publication.Publication
 import com.lab.zicevents.data.model.database.user.User
 import com.lab.zicevents.data.model.local.DataResult
 import com.lab.zicevents.data.model.local.PublicationListResult
+import com.lab.zicevents.data.model.local.UploadedImageResult
 import com.lab.zicevents.data.storage.StorageRepository
 import com.lab.zicevents.utils.base.BaseRepository
 import kotlinx.coroutines.Dispatchers
@@ -42,8 +43,8 @@ class ProfileViewModel(private val userRepo: UserRepository,
     private val profileDataResult = MutableLiveData<DataResult>()
     val userProfileResult: LiveData<DataResult> = profileDataResult
 
-    private val uploadedImage = MutableLiveData<DataResult>()
-    val uploadImageResult: LiveData<DataResult> = uploadedImage
+    private val uploadedImage = MutableLiveData<UploadedImageResult>()
+    val uploadImageResult: LiveData<UploadedImageResult> = uploadedImage
 
     private val publicationList = MutableLiveData<PublicationListResult>()
     val userPublications: LiveData<PublicationListResult> = publicationList
@@ -171,14 +172,18 @@ class ProfileViewModel(private val userRepo: UserRepository,
      * @param userId String that corresponding to user uid
      * @param drawable image to upload
      * @param fileName name of image file
+     * @param requestId isdentifier of
      * Result is pass to uploadedImage liveData
      * */
-    fun uploadImageFile(userId: String, drawable: Drawable, fileName: String){
+    fun uploadImageFile(userId: String, drawable: Drawable, fileName: String, requestId: Int){
         GlobalScope.launch(Dispatchers.Main) {
             when (val result = storageRepo.uploadImageFile(userId, drawable, fileName)){
-                is Result.Success -> uploadedImage.value = DataResult(data = result.data)
-                is Result.Error ->  uploadedImage.value = DataResult(error = R.string.store_image_task_error)
-                is Result.Canceled ->  uploadedImage.value = DataResult(error = R.string.store_image_task_cancel)
+                is Result.Success -> uploadedImage.value = UploadedImageResult(requestId = requestId
+                    , imageUri = result.data)
+                is Result.Error ->  uploadedImage.value = UploadedImageResult(requestId = requestId
+                    ,error = R.string.store_image_task_error)
+                is Result.Canceled ->  uploadedImage.value = UploadedImageResult(requestId = requestId
+                    ,error = R.string.store_image_task_cancel)
             }
         }
     }
@@ -214,6 +219,7 @@ class ProfileViewModel(private val userRepo: UserRepository,
         map.keys.forEach {
             when (it){
                 User.PROFILE_IMAGE_FIELD,
+                User.COVER_IMAGE_FIELD,
                 User.DESCRIPTION_FIELD -> if (map[it] !is String?) {
                     Log.w(TAG, "'${User.DESCRIPTION_FIELD}' must be null or a String")
                     isValid = false

@@ -44,6 +44,7 @@ data class User(
         const val DISPLAY_NAME_FIELD = "displayName"
         const val DESCRIPTION_FIELD = "description"
         const val PROFILE_IMAGE_FIELD = "profileImage"
+        const val COVER_IMAGE_FIELD = "coverImage"
         const val GALLERY_FIELD = "gallery"
         const val MUSIC_STYLE_FIELD = "musicStyle"
         const val ADDRESS_FIELD = "address"

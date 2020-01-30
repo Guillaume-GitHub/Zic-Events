@@ -34,9 +34,9 @@
                     app:layout_collapseMode="pin">
 
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/fragment_profile_background_imageView"
+                        android:id="@+id/fragment_profile_cover_image"
                         android:layout_width="match_parent"
-                        android:layout_height="200dp"
+                        android:layout_height="300dp"
                         android:background="@drawable/gradient_background"
                         android:scaleType="centerCrop"/>
 
@@ -44,14 +44,14 @@
                         android:id="@+id/fragment_profile_user_top_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="110dp">
+                        android:layout_marginTop="210dp">
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/fragment_profile_user_imageView_container"
                             android:layout_width="180dp"
                             android:layout_height="180dp"
                             app:cardCornerRadius="250dp"
-                            app:cardBackgroundColor="@android:color/white"
+                            app:cardBackgroundColor="@color/colorPrimary"
                             app:cardElevation="0dp"
                             android:layout_alignParentTop="true"
                             android:layout_centerHorizontal="true">
@@ -76,10 +76,10 @@
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/fragment_profile_change_photo_container"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="45dp"
+                            android:layout_height="45dp"
                             app:cardCornerRadius="250dp"
-                            app:cardBackgroundColor="@android:color/white"
+                            app:cardBackgroundColor="@color/colorPrimary"
                             app:cardElevation="0dp"
                             android:layout_alignEnd="@id/fragment_profile_user_imageView_container"
                             android:layout_alignBottom="@id/fragment_profile_user_imageView_container">

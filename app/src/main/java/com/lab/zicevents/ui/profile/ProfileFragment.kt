@@ -2,12 +2,11 @@ package com.lab.zicevents.ui.profile
 
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -42,7 +41,6 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
     private lateinit var profileViewModel: ProfileViewModel
     private val auth = FirebaseAuth.getInstance()
     private var currentUser: User? = null
-    private var oldImageProfile: Drawable? = null
     // RecyclerView
     private lateinit var publicationRecycler: RecyclerView
     private lateinit var mediaRecycler: RecyclerView
@@ -64,11 +62,13 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
         this.initViewModel()
         // Fetch user information
         observeProfileChange()
+        observeUploadImageResult()
         profileViewModel.listenUserUpdate(auth.currentUser!!.uid)
         getUserPublications()
         // Set click listener on views
         fragment_profile_edit_info_btn.setOnClickListener(this)
         fragment_profile_change_photo_btn.setOnClickListener(this)
+        fragment_profile_cover_image.setOnClickListener(this)
         // Set Toolbar menu + menu item click listener
         fragment_profile_toolbar.inflateMenu(R.menu.profile_menu)
         fragment_profile_toolbar.setOnMenuItemClickListener {
@@ -88,6 +88,8 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
                 navigateToEditProfileFragment()
             R.id.fragment_profile_change_photo_btn ->
                 pickImageFromGallery(ImagePickerHelper.PROFILE_IMG_RQ)
+            R.id.fragment_profile_cover_image ->
+                pickImageFromGallery(ImagePickerHelper.COVER_IMG_RQ)
             else -> {}
         }
     }
@@ -153,8 +155,10 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
             when {
                 it.data is User -> {
                     Log.d(this::class.java.simpleName, it.data.toString())
-                    currentUser = it.data
-                    updateUI(it.data)
+                    if (it.data != currentUser) {
+                        currentUser = it.data
+                        updateUI(it.data)
+                    }
                 }
                 it.error != null ->
                     Toast.makeText(context,getString(it.error), Toast.LENGTH_LONG).show() // TODO : Display Error profile Fragment
@@ -204,10 +208,9 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
      * @param drawable drawable to upload
      * @param
      */
-    private fun uploadImageFile(drawable: Drawable){
+    private fun uploadImageFile(drawable: Drawable, requestId: Int){
         val imageRef = UUID.randomUUID().toString()
-        profileViewModel.uploadImageFile(auth.currentUser!!.uid, drawable, imageRef)
-        observeUploadImageResult()
+        profileViewModel.uploadImageFile(auth.currentUser!!.uid, drawable, imageRef,requestId)
     }
 
     /**
@@ -217,24 +220,28 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
      */
     private fun observeUploadImageResult(){
         profileViewModel.uploadImageResult.observe(this, Observer {
-            when {
-                it.data is Uri? -> {
-                    if (it.data != null){ updateUserProfile(auth.currentUser?.uid!!,
-                        mapOf(Pair(User.PROFILE_IMAGE_FIELD, it.data.toString())))
-                    }else {
-                        restoreOldProfileImage(oldImageProfile)
-                        Toast.makeText(context, getString(R.string.store_image_task_error), Toast.LENGTH_LONG)
-                            .show()
-                    }
+            if (it.error != null || it.imageUri == null) {
+                // Display error
+                Toast.makeText(context, getString(R.string.store_image_task_error),
+                    Toast.LENGTH_LONG).show()
+                // Restore old image view state
+                when (it.requestId) {
+                    ImagePickerHelper.COVER_IMG_RQ -> fragment_profile_cover_image.alpha = 1F
+                    ImagePickerHelper.PROFILE_IMG_RQ -> fragment_profile_user_image.alpha = 1F
+                    else -> {}
                 }
-                it.error != null -> {
-                    restoreOldProfileImage(oldImageProfile)
-                    Toast.makeText(context, getString(it.error), Toast.LENGTH_LONG)
-                        .show()
-                }
-                else -> {
-                    restoreOldProfileImage(oldImageProfile)
-                    Log.w(this.javaClass.simpleName, "Unknown Upload image error")
+            } else {
+                // Upload user profile this new image url
+                when (it.requestId) {
+                    ImagePickerHelper.COVER_IMG_RQ ->
+                        updateUserProfile(auth.currentUser!!.uid, mapOf(Pair(User.COVER_IMAGE_FIELD,
+                            it.imageUri.toString())))
+
+                    ImagePickerHelper.PROFILE_IMG_RQ ->
+                        updateUserProfile(auth.currentUser!!.uid, mapOf(Pair(User.PROFILE_IMAGE_FIELD,
+                            it.imageUri.toString()))
+                        )
+                    else -> {}
                 }
             }
         })
@@ -247,38 +254,19 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
      * @param map it's Map<String, Any?> corresponding data to fields and value
      */
     private fun updateUserProfile(docId: String, map: Map<String, Any?>){
-        observeUpdateProfileResult()
         profileViewModel.updateUserProfile(docId, map)
-    }
-
-    /**
-     * Observe update profile Result
-     * if profile was correctly updated, show new image in profile imageView
-     * else null or error, display message
-     */
-    private fun observeUpdateProfileResult(){
-        profileViewModel.updateProfileResult.observe(this, Observer {
-            when {
-                it.data is Int ->
-                    if (it.data == BaseRepository.SUCCESS_TASK) fragment_profile_user_image.alpha = 1F
-                it.error != null -> {
-                    restoreOldProfileImage(oldImageProfile)
-                    Toast.makeText(context,getString(it.error), Toast.LENGTH_LONG).show()
-                }
-                else -> {
-                    restoreOldProfileImage(oldImageProfile)
-                    Log.w(this.javaClass.simpleName, "Unknown Update Profile Error")
-                }
-            }
-        })
+        // set default alpha
+        when {
+            map.containsKey(User.COVER_IMAGE_FIELD) -> fragment_profile_cover_image.alpha = 1F
+            map.containsKey(User.PROFILE_IMAGE_FIELD) -> fragment_profile_user_image.alpha = 1F
+        }
     }
 
     /**
      * Update ui with new user userProfileResult
      */
     private fun updateUI(user: User) {
-        // Set current user
-        currentUser = user
+        Log.d(this::class.java.simpleName, "UPDATE UI")
         // Username view
         fragment_profile_username.text = user.displayName
         // Toolbar username view
@@ -317,27 +305,32 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
             mediaAdapter.notifyDataSetChanged() // Update recycler view userProfileResult
         }
         // Profile Image
-        if (!user.profileImage.isNullOrBlank()) {
-            Glide.with(this)
-                .load(user.profileImage)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.color.colorPrimaryLight)
-                .into(fragment_profile_user_image)
+        fragment_profile_user_image.apply {
+            val url = user.profileImage
+            if (url != null) loadImage(this, url)
+            else setImageResource(android.R.color.transparent)
         }
+        // Cover Image
+        fragment_profile_cover_image.apply {
+            val url = user.coverImage
+            if (url != null) loadImage(this, url)
+            else setImageResource(android.R.color.transparent)
+        }
+        // Set current user
+        currentUser = user
     }
 
     /**
-     * Set user profile image state before change.
-     * default background if last state was null
-     * or last drawable image
-     * @param oldDrawable is the drawable in user image view before a change
+     * Try to download image via Url and bind image view
+     * @param url complete image http url
+     * @param view imageView where to load image
      */
-    private fun restoreOldProfileImage(oldDrawable: Drawable?) {
-        fragment_profile_user_image.apply {
-            if (oldDrawable != null) setImageDrawable(oldDrawable)
-            else setImageResource(android.R.color.transparent)
-            alpha = 1F
-        }
+    private fun loadImage(view: ImageView, url: String){
+        Glide.with(context!!)
+            .load(url)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .placeholder(R.color.colorPrimaryLight)
+            .into(view)
     }
 
     /**
@@ -368,25 +361,35 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        if (resultCode == Activity.RESULT_OK)
-            when (requestCode){
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
                 ImagePickerHelper.PROFILE_IMG_RQ -> {
                     // Get Picked image and upload it if not null
                     val imageUri = data?.data
-                    if (imageUri != null){
-                        oldImageProfile = fragment_profile_user_image.drawable
-                        fragment_profile_user_image.setImageURI(imageUri)
-                        fragment_profile_user_image.alpha = 0.2F
-                        uploadImageFile(fragment_profile_user_image.drawable)
+                    imageUri?.let {
+                        // show and upload profile image from his uri
+                        ImagePickerHelper.getDrawableFromUri(context, it)?.let {drawable ->
+                            fragment_profile_user_image.alpha = 0.2F // make it more transparent
+                            uploadImageFile(drawable, requestCode)
+                        }
+                    }
+                }
+                ImagePickerHelper.COVER_IMG_RQ -> {
+                    // Get Picked image and upload it if not null
+                    val imageUri = data?.data
+                    imageUri?.let { it ->
+                        ImagePickerHelper.getDrawableFromUri(context, it)?.let {drawable ->
+                            fragment_profile_cover_image.alpha = 0.2F // make it more transparent
+                            uploadImageFile(drawable, requestCode)
+                        }
                     }
                 }
                 else -> {}
             }
+        }
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         super.onDestroyView()
         profileViewModel.detachUserUpdateListener()
     }
