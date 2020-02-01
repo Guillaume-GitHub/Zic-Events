@@ -2,19 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/bottom_navigation_deal"
-        android:icon="@drawable/ic_search_black_24px"
-        android:title="@string/title_deal" />
-
-    <item
         android:id="@+id/bottom_navigation_event"
         android:icon="@drawable/ic_calendar_black_24px"
         android:title="@string/title_event" />
 
     <item
-        android:id="@+id/bottom_navigation_deal_management"
+        android:id="@+id/bottom_navigation_search"
+        android:icon="@drawable/ic_search_black_24px"
+        android:title="@string/title_search" />
+
+    <item
+        android:id="@+id/bottom_navigation_publication"
         android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/title_deal_management" />
+        android:title="@string/title_publication" />
 
     <item
         android:id="@+id/bottom_navigation_chat"

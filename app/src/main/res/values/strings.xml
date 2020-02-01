@@ -58,9 +58,9 @@
     <string name="store_image_task_cancel">Chargement de l\'image interrompu</string>
 
     <!-- ***** BOTTOM NAVIGATION ***** -->
-    <string name="title_deal">Annonces</string>
+    <string name="title_search">Recherche</string>
     <string name="title_event">Evénements</string>
-    <string name="title_deal_management">Gestion</string>
+    <string name="title_publication">Publications</string>
     <string name="title_chat">Messages</string>
     <string name="title_account">Profil</string>
 
@@ -131,6 +131,8 @@
     <string name="alert_valid_address_title">Votre Adresse</string>
     <string name="alert_valid_address_positive_btn">Valider</string>
     <string name="alert_valid_address_negative_btn">Annuler</string>
+
+    <string name="search_user_hint">Rechecher une personne …</string>
 
     <!-- ***** LOCAL DATA ***** -->
     <string name="gender_male_value" translatable="false">male</string>

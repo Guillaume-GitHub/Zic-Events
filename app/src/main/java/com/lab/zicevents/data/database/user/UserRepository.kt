@@ -84,6 +84,21 @@ class UserRepository(private val userDataSource: UserDataSource) : BaseRepositor
         }
     }
 
+
+    /**
+     * Search users by her displayName or pseudo
+     * @param query displayName or pseudo filter text
+     * @return Result<QuerySnapshot>
+     */
+  suspend fun searchUsers(query: String): Result<QuerySnapshot>{
+        return when (val result = userDataSource.searchUsers(query).awaitTask()){
+            is Result.Success -> Result.Success(result.data)
+            is Result.Error -> Result.Error(result.exception)
+            is Result.Canceled -> Result.Canceled(result.exception)
+        }
+    }
+
+
     /**
      * Update Firestore user and transform Task to Kotlin Coroutine
      * @param uid String that corresponding to user uid

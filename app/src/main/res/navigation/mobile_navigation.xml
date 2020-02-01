@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/bottom_navigation_deal">
+    app:startDestination="@+id/bottom_navigation_publication">
 
     <fragment
-        android:id="@+id/bottom_navigation_deal"
-        android:name="com.lab.zicevents.ui.deal.DealFragment"
-        android:label="@string/title_deal"
-        tools:layout="@layout/fragment_deal" />
+        android:id="@+id/bottom_navigation_search"
+        android:name="com.lab.zicevents.ui.search.UserSearchFragment"
+        android:label="@string/title_search"
+        tools:layout="@layout/fragment_user_search" />
 
     <fragment
         android:id="@+id/bottom_navigation_event"
@@ -18,10 +18,10 @@
         tools:layout="@layout/fragment_event" />
 
     <fragment
-        android:id="@+id/bottom_navigation_deal_management"
-        android:name="com.lab.zicevents.ui.manager.DealManagerFragment"
-        android:label="@string/title_deal_management"
-        tools:layout="@layout/fragment_deal_manager" />
+        android:id="@+id/bottom_navigation_publication"
+        android:name="com.lab.zicevents.ui.publication.PublicationFragment"
+        android:label="@string/title_publication"
+        tools:layout="@layout/fragment_publication" />
 
     <fragment
         android:id="@+id/bottom_navigation_chat"

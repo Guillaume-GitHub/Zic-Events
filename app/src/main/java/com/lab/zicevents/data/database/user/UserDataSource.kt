@@ -88,6 +88,23 @@ class UserDataSource {
         return database.collection(USERS_COLLECTION).get()
     }
 
+    /**
+     * Search users by her displayName or pseudo
+     * @param query displayName or pseudo filter text
+     * @return Task<QuerySnapshot>
+     */
+    fun searchUsers(query: String): Task<QuerySnapshot>{
+        // Field where search value
+        val filter = if (query.startsWith("#")) User.PSEUDO_FIELD else User.DISPLAY_NAME_FIELD
+        //
+      return database.collection(USERS_COLLECTION)
+          .whereGreaterThanOrEqualTo(filter, query)
+          .whereLessThanOrEqualTo(filter, query+'\uf8ff')
+          .orderBy(filter)
+          .limit(10)
+          .get()
+    }
+
     //****************** UPDATE *********************//
     /**
      * Update specific Firestore user document

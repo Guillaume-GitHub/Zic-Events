@@ -40,6 +40,7 @@ data class User(
     )
 
     companion object {
+        const val PSEUDO_FIELD = "pseudo"
         // Fields Can be updated
         const val DISPLAY_NAME_FIELD = "displayName"
         const val DESCRIPTION_FIELD = "description"
