@@ -18,7 +18,7 @@ class ImagePickerHelper {
         const val PROFILE_IMG_RQ = 2000
         const val COVER_IMG_RQ = 2010
 
-        const val MAX_SIZE = 2*1024 // approximately 2MB
+        const val MAX_SIZE = 512 // approximately 250KB
 
         /**
          * Launch Gallery Image Picker
