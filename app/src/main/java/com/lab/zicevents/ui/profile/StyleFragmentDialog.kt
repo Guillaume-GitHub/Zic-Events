@@ -142,7 +142,7 @@ class StyleFragmentDialog(private val userId: String,
             map[User.MUSIC_STYLE_FIELD] = if (tempStyleList.isEmpty()) null else tempStyleList
             viewModel.updateUserProfile(userId, map)
         }
-        dialog.dismiss()
+        dialog?.dismiss()
     }
 
     override fun onClick(view: View?) {

@@ -94,11 +94,8 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
         }
     }
 
-    /**
-     * Set actions on menu items
-     */
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
             R.id.profile_menu_logout -> {
                 auth.signOut() // log out
                 startActivity(Intent(context,LoginActivity::class.java))
