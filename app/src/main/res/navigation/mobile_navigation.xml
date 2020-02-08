@@ -21,7 +21,18 @@
         android:id="@+id/bottom_navigation_publication"
         android:name="com.lab.zicevents.ui.publication.PublicationFragment"
         android:label="@string/title_publication"
-        tools:layout="@layout/fragment_publication" />
+        tools:layout="@layout/fragment_publication">
+        <action
+            android:id="@+id/action_bottom_navigation_publication_to_emptyPublicationPlaceholder"
+            app:destination="@id/empty_publication_placeholder"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/mobile_navigation"
+            app:popUpToInclusive="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/bottom_navigation_chat"
@@ -38,7 +49,12 @@
             android:id="@+id/from_profile_to_profile_edit"
             app:destination="@id/bottom_navigation_profile_edit"
             app:launchSingleTop="true"
-            app:popUpTo="@+id/bottom_navigation_profile" />
+            app:popUpTo="@+id/bottom_navigation_profile"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -50,4 +66,10 @@
             android:name="userId"
             app:argType="string" />
     </fragment>
+
+    <fragment
+        android:id="@+id/empty_publication_placeholder"
+        android:name="com.lab.zicevents.ui.publication.EmptyPublicationPlaceholder"
+        tools:layout="@layout/empty_publication_placeholder" />
+
 </navigation>

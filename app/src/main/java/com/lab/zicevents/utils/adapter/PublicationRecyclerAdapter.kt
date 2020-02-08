@@ -63,9 +63,8 @@ class PublicationRecyclerAdapter(val context: Context, var publications: ArrayLi
                     else view.publication_image.visibility = View.GONE
                 }
 
-                user.profileImage.apply {
-                    if (!this.isNullOrBlank())
-                        loadImage(view.publication_user_image, user.profileImage!!)
+                user.profileImage?.let {
+                    loadImage(view.publication_user_image, it)
                 }
 
                 view.publication_username.text = user.displayName

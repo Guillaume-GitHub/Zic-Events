@@ -20,4 +20,8 @@ class Publication (
     null,
     "",
         null)
+
+    companion object {
+        const val DATE_FIELD = "createdDate"
+    }
 }

@@ -6,8 +6,11 @@ import android.util.Log
 import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.core.view.isVisible
+import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.lab.zicevents.utils.OnRequestPermissionsListener
 import com.lab.zicevents.utils.PermissionHelper
@@ -22,7 +25,6 @@ class MainActivity: BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
-
         val navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -35,19 +37,32 @@ class MainActivity: BaseActivity() {
                 R.id.bottom_navigation_profile
             )
         )
-
+        // Configure navigation toolbar
         main_toolbar.setupWithNavController(navController, appBarConfiguration)
+        setSupportActionBar(main_toolbar)
+        // Configure Bottom nav view
         navView.setupWithNavController(navController)
+        // Prevent recreation fragment when navigation item is reselect
+        navView.setOnNavigationItemReselectedListener{
+           // On Reselect do nothing....
+        }
 
-        navController.addOnDestinationChangedListener{ _, destination, _ ->
+        navController.addOnDestinationChangedListener{_, destination, _ ->
+            if (!main_toolbar.isVisible) main_toolbar.visibility = View.VISIBLE
+            if (main_fab.isVisible) main_fab.hide()
+
             when(destination.id) {
-                R.id.bottom_navigation_profile ->
-                    if (main_toolbar.isVisible) main_toolbar.visibility = View.GONE
-                else ->  if (!main_toolbar.isVisible) main_toolbar.visibility = View.VISIBLE
+                R.id.bottom_navigation_profile -> main_toolbar.visibility = View.GONE
+                R.id.bottom_navigation_publication -> main_fab.show()
+                R.id.empty_publication_placeholder -> supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                else ->  {}
             }
         }
     }
 
+    //override fun onSupportNavigateUp() = findNavController(R.id.nav_host_fragment).navigateUp()
+
+    // Request permission callback
     override fun registerRequestPermissionsCallback(
         onRequestPermissionsListener: OnRequestPermissionsListener) {
        permissionsRequestCallback = onRequestPermissionsListener

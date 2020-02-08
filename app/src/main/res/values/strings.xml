@@ -115,6 +115,9 @@
     <string name="profile_edit_style_hint">Style de musique</string>
     <string name="profile_up_to_date">Profil mis à jour</string>
 
+    <!-- ***** PUBLICATIONS FRAGMENTS ***** -->
+    <string name="fetching_publication_error">Une erreur est survenue lors de la récupération de vos publications</string>
+
     <!-- ***** PERMISSIONS ***** -->
     <string name="storage_permission_denied">Vous devez autoriser l\'accès à vos Photos/Vidéo pour utiliser cette fonctionnalité</string>
 

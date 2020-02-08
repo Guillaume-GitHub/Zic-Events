@@ -2,8 +2,10 @@ package com.lab.zicevents.data.database.publication
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.lab.zicevents.data.model.database.publication.Publication
+import com.lab.zicevents.data.model.database.user.User
 
 /**
  *  CRUD Firebase Publication collection
@@ -32,6 +34,18 @@ class PublicationDataSource {
      */
     fun getUserPublications(userId: String) : Task<QuerySnapshot> {
         return database.collection(COLLECTION).whereEqualTo(USER_ID_FIELD, userId).get()
+    }
+
+    /**
+     * Get All users subscriptions publications
+     * @param subscriptionList list of user id where request filter
+     * @return Task<DocumentSnapshot>
+     */
+    fun getSubscribedPublications(subscriptionList: List<String>): Task<QuerySnapshot> {
+        return database.collection(COLLECTION)
+            .whereIn(User.ID_FIELD, subscriptionList)
+            .orderBy(Publication.DATE_FIELD, Query.Direction.DESCENDING)
+            .get()
     }
 
     //****************** UPDATE *********************//

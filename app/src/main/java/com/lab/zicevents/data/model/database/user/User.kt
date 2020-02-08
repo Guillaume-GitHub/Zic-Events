@@ -22,7 +22,8 @@ data class User(
     var profileImage: String? = null,
     var coverImage: String? = null,
     var gallery: ArrayList<String>? = null,
-    var musicStyle: ArrayList<String>? = null)  {
+    var musicStyle: ArrayList<String>? = null,
+    var subscriptions: ArrayList<String>? = null)  {
 
     // Empty constructor *Required to deserialize datas fetched from firestore
     constructor(): this (
@@ -36,10 +37,12 @@ data class User(
         null,
         null,
         null,
+        null,
         null
     )
 
     companion object {
+        const val ID_FIELD = "userId"
         const val PSEUDO_FIELD = "pseudo"
         // Fields Can be updated
         const val DISPLAY_NAME_FIELD = "displayName"
