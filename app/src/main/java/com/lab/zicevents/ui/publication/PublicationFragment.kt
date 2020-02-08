@@ -12,14 +12,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.lab.zicevents.MainActivity
 
 import com.lab.zicevents.R
 import com.lab.zicevents.data.model.database.publication.Publication
 import com.lab.zicevents.data.model.database.user.User
+import com.lab.zicevents.utils.OnActivityFabClickListener
 import com.lab.zicevents.utils.adapter.PublicationRecyclerAdapter
 import kotlinx.android.synthetic.main.fragment_publication.*
 
-class PublicationFragment : Fragment() {
+class PublicationFragment : Fragment(), OnActivityFabClickListener {
 
     private lateinit var publicationViewModel: PublicationViewModel
     // RecyclerView
@@ -30,6 +32,7 @@ class PublicationFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initViewModel()
+        (activity as? MainActivity)?.registerFabClickCallback(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -139,5 +142,9 @@ class PublicationFragment : Fragment() {
         val action = PublicationFragmentDirections
             .actionBottomNavigationPublicationToEmptyPublicationPlaceholder()
         findNavController().navigate(action)
+    }
+
+    override fun onFabClick() {
+       // TODO : ADD PUBLICATIONS DIALOG
     }
 }

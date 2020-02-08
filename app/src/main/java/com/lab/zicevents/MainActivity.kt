@@ -6,12 +6,10 @@ import android.util.Log
 import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.core.view.isVisible
-import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.lab.zicevents.utils.OnActivityFabClickListener
 import com.lab.zicevents.utils.OnRequestPermissionsListener
 import com.lab.zicevents.utils.PermissionHelper
 import com.lab.zicevents.utils.base.BaseActivity
@@ -20,6 +18,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity: BaseActivity() {
 
     private lateinit var permissionsRequestCallback: OnRequestPermissionsListener
+    private lateinit var activityFabCallback: OnActivityFabClickListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +57,10 @@ class MainActivity: BaseActivity() {
                 else ->  {}
             }
         }
+
+        main_fab.setOnClickListener {
+            activityFabCallback.onFabClick()
+        }
     }
 
     //override fun onSupportNavigateUp() = findNavController(R.id.nav_host_fragment).navigateUp()
@@ -66,6 +69,10 @@ class MainActivity: BaseActivity() {
     override fun registerRequestPermissionsCallback(
         onRequestPermissionsListener: OnRequestPermissionsListener) {
        permissionsRequestCallback = onRequestPermissionsListener
+    }
+
+    override fun registerFabClickCallback(activityFabClickListener: OnActivityFabClickListener) {
+       activityFabCallback = activityFabClickListener
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
