@@ -117,6 +117,9 @@
 
     <!-- ***** PUBLICATIONS FRAGMENTS ***** -->
     <string name="fetching_publication_error">Une erreur est survenue lors de la récupération de vos publications</string>
+    <string name="post_publication_error">Une erreur est survenue lors de la publication de votre message</string>
+    <string name="empty_publication_message">Vous devez ajouter un message</string>
+    <string name="publication_creation">Création de la publication</string>
 
     <!-- ***** PERMISSIONS ***** -->
     <string name="storage_permission_denied">Vous devez autoriser l\'accès à vos Photos/Vidéo pour utiliser cette fonctionnalité</string>

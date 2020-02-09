@@ -102,7 +102,7 @@ sed diam nonumy eirmod tempor invidunt Lorem ipsu, consetetur sadipscing elitr, 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/publication_image"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="200dp"
                 android:background="@color/colorPrimaryLight"
                 android:scaleType="centerCrop"/>
 

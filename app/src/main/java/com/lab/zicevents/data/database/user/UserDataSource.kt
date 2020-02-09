@@ -105,6 +105,14 @@ class UserDataSource {
           .get()
     }
 
+    /**
+     * Return Document Reference Object
+     * @param documentPath path of document in database or userId
+     */
+    fun getUserDocRef(documentPath: String): DocumentReference{
+        return database.collection(USERS_COLLECTION).document(documentPath)
+    }
+
     //****************** UPDATE *********************//
     /**
      * Update specific Firestore user document

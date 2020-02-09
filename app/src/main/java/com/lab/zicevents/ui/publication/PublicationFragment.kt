@@ -145,6 +145,9 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener {
     }
 
     override fun onFabClick() {
-       // TODO : ADD PUBLICATIONS DIALOG
+        val ft = fragmentManager?.beginTransaction()
+        ft?.let {
+            AddPublicationFragmentDialog(publicationViewModel).show(ft, "AddPublicationDialog")
+        }
     }
 }

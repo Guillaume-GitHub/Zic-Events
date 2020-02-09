@@ -98,6 +98,13 @@ class UserRepository(private val userDataSource: UserDataSource) : BaseRepositor
         }
     }
 
+    /**
+     * Return Document Reference Object
+     * @param documentPath path of document in database or userId
+     */
+    fun getUserDocRef(documentPath: String): DocumentReference{
+        return userDataSource.getUserDocRef(documentPath)
+    }
 
     /**
      * Update Firestore user and transform Task to Kotlin Coroutine

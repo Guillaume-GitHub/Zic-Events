@@ -6,6 +6,8 @@ import com.lab.zicevents.data.database.publication.PublicationDataSource
 import com.lab.zicevents.data.database.publication.PublicationRepository
 import com.lab.zicevents.data.database.user.UserDataSource
 import com.lab.zicevents.data.database.user.UserRepository
+import com.lab.zicevents.data.storage.StorageDataSource
+import com.lab.zicevents.data.storage.StorageRepository
 
 class PublicationViewModelFactory: ViewModelProvider.Factory {
 
@@ -17,6 +19,9 @@ class PublicationViewModelFactory: ViewModelProvider.Factory {
             ),
                 userRepo = UserRepository(
                     userDataSource = UserDataSource()
+                ),
+                storageRepo = StorageRepository(
+                    storageDataSource = StorageDataSource()
                 )
             )
             as T

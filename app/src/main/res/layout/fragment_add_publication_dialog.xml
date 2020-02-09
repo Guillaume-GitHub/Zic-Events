@@ -1,0 +1,141 @@
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/publication_dialog_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/ic_close_white_24dp" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/publication_dialog_toolbar">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="?attr/actionBarSize"
+                android:padding="20dp">
+
+                <LinearLayout
+                    android:id="@+id/user_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="25dp">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        app:cardCornerRadius="250dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/publication_dialog_user_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/colorPrimaryLight"
+                            android:scaleType="centerCrop"/>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/publication_dialog_username"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_gravity="center_vertical"
+                        tools:text="Guillaume BAGUE"/>
+
+                </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/publication_dialog_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/user_container"
+                    android:layout_marginBottom="25dp"
+                    android:background="@android:color/transparent"
+                    android:hint="Exprimez vous !"
+                    android:textSize="24sp"/>
+
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/publication_dialog_image_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    app:cardCornerRadius="16dp"
+                    android:layout_below="@id/publication_dialog_message"
+                    android:visibility="gone">
+
+                    <androidx.coordinatorlayout.widget.CoordinatorLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/publication_dialog_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"/>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:cardCornerRadius="250dp"
+                            android:layout_gravity="end"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="16dp">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/publication_dialog_image_close_btn"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_close_white_24dp"
+                                android:padding="2dp"
+                                android:background="@color/shadowBackground"/>
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </RelativeLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <com.google.android.material.bottomappbar.BottomAppBar
+            android:id="@+id/publication_dialog_bottom_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:backgroundTint="@color/colorPrimaryLight"
+            app:fabAlignmentMode="end"
+            app:contentInsetEnd="50dp" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/publication_dialog_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_send_black_24dp"
+            app:layout_anchor="@id/publication_dialog_bottom_bar"
+            app:rippleColor="@android:color/transparent"
+            android:alpha="0.6"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
