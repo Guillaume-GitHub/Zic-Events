@@ -2,6 +2,7 @@ package com.lab.zicevents.ui.publication
 
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +29,7 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener {
     private lateinit var publicationRecycler: RecyclerView
     private lateinit var publicationAdapter: PublicationRecyclerAdapter
     private var publications = ArrayList<Publication>()
+    private var currentUser : User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,8 +46,14 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener {
         configureRecyclerView()
         observeProfileResult()
         observePublicationsResult()
+        observePublicationCreation()
+        observeNewPublicationsResult()
         getAuthUser()
         fragment_publication_progress.visibility = View.VISIBLE
+
+        fragment_publication_swipeRefresh.setOnRefreshListener {
+            getLastPublications()
+        }
     }
 
     /**
@@ -89,7 +97,10 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener {
     private fun observeProfileResult(){
         publicationViewModel.profileResult.observe(this, Observer {
             when {
-                it.data is User -> getPublications(it.data)
+                it.data is User -> {
+                    currentUser = it.data
+                    getPublications(it.data)
+                }
                 it.error != null -> {
                     Toast.makeText(context,getString(it.error), Toast.LENGTH_LONG).show()
                     displayPlaceholder()
@@ -102,15 +113,19 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener {
      * Fetch publications to database
      * Get all publications of user 's subscriptions
      */
-    private fun getPublications(user: User) {
-        val subscriptions = ArrayList<String>()
-        user.subscriptions?.let {
-            subscriptions.addAll(it)
+    private fun getPublications(user: User?) {
+        if (user != null) {
+            val subscriptions = ArrayList<String>()
+            user.subscriptions?.let {
+                subscriptions.addAll(it)
+            }
+            // Include current user id to subscriptions List to get his own publications
+            subscriptions.add(user.userId)
+            // Fetch publication(s)
+            publicationViewModel.getSubscribedPublications(subscriptions)
         }
-        // Include current user id to subscriptions List to get his own publications
-        subscriptions.add(user.userId)
-        // Fetch publication(s)
-        publicationViewModel.getSubscribedPublications(subscriptions)
+        else
+            displayPlaceholder()
     }
 
     /**
@@ -136,6 +151,48 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener {
     }
 
     /**
+     * Fetch publications to database
+     * Get all publications of user 's subscriptions
+     */
+    private fun getLastPublications() {
+        val user = currentUser
+        if (user != null && publications.isNotEmpty()){
+            // set swipeRefreshLayout to refreshing
+            fragment_publication_swipeRefresh.isRefreshing = true
+            val subscriptions = ArrayList<String>()
+            user.subscriptions?.let { subscriptions.addAll(it) }
+            // Include current user id to subscriptions List to get his own publications
+            subscriptions.add(user.userId)
+            // Fetch publication(s)
+            publicationViewModel.getLastSubscribedPublications(subscriptions, publications[0])
+        }
+        else
+            fragment_publication_swipeRefresh.isRefreshing = false
+    }
+
+    /**
+     * Observe new publications after fetching operation
+     * get and add result to recyclerView or display error message
+     */
+    private fun observeNewPublicationsResult(){
+        publicationViewModel.newPublicationList.observe(this, Observer {
+            fragment_publication_swipeRefresh.isRefreshing = false // set refresh to false
+            when {
+                it.data is ArrayList<*> -> {
+                    val list = it.data.filterIsInstance<Publication>()
+                    if (!list.isNullOrEmpty()){
+                        publications.addAll(0,list)
+                        publicationAdapter.notifyItemInserted(0)
+                    }
+                }
+                it.error != null -> {
+                    Toast.makeText(context, getString(it.error), Toast.LENGTH_LONG).show()
+                }
+            }
+        })
+    }
+
+    /**
      * Show empty result fragment
      */
     private fun displayPlaceholder(){
@@ -149,5 +206,18 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener {
         ft?.let {
             AddPublicationFragmentDialog(publicationViewModel).show(ft, "AddPublicationDialog")
         }
+    }
+
+    /**
+     * Observe publication creation, hide progress dialog and dismiss
+     */
+    private fun observePublicationCreation(){
+        publicationViewModel.publicationCreationSate.observe(this, Observer {
+            when{
+                it.data is Int -> getLastPublications()
+                it.error != null ->
+                    Toast.makeText(context, getText(it.error), Toast.LENGTH_LONG).show()
+            }
+        })
     }
 }

@@ -48,6 +48,20 @@ class PublicationDataSource {
             .get()
     }
 
+    /**
+     * Get All users subscriptions publications after a specific date
+     * @param subscriptionList list of user id where request filter
+     * @param lastVisiblePublication last more recent publication object visible our publication list
+     * @return Task<DocumentSnapshot>
+     */
+    fun getSubscribedPublications(subscriptionList: List<String>, lastVisiblePublication: Publication): Task<QuerySnapshot> {
+        return database.collection(COLLECTION)
+            .whereIn(User.ID_FIELD, subscriptionList)
+            .orderBy(Publication.DATE_FIELD, Query.Direction.DESCENDING)
+            .whereGreaterThan(Publication.DATE_FIELD, lastVisiblePublication.createdDate!!)
+            .get()
+    }
+
     //****************** UPDATE *********************//
     /**
      * Update publication document

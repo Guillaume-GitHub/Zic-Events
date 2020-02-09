@@ -1,6 +1,7 @@
 package com.lab.zicevents.utils.adapter
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +9,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.lab.zicevents.R
 import com.lab.zicevents.data.model.database.publication.Publication
 import com.lab.zicevents.data.model.database.user.User
@@ -57,11 +62,12 @@ class PublicationRecyclerAdapter(val context: Context, var publications: ArrayLi
          */
         private fun updateView(user: User?, publication: Publication) {
             if (user != null) {
-                publication.mediaUrl.apply {
-                    if (!this.isNullOrBlank())
-                        loadImage(view.publication_image, publication.mediaUrl!!)
-                    else view.publication_image.visibility = View.GONE
-                }
+
+                if (!publication.mediaUrl.isNullOrBlank()){
+                    loadImage(view.publication_image, publication.mediaUrl!!)
+                    view.publication_image.visibility = View.VISIBLE
+                }else
+                    view.publication_image.visibility = View.GONE
 
                 user.profileImage?.let {
                     loadImage(view.publication_user_image, it)
@@ -79,11 +85,11 @@ class PublicationRecyclerAdapter(val context: Context, var publications: ArrayLi
          * @param view imageView where to load image
          */
         private fun loadImage(view: ImageView, url: String){
-                Glide.with(context)
-                    .load(url)
-                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    .placeholder(R.color.colorPrimaryLight)
-                    .into(view)
+            Glide.with(context)
+                .load(url)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .placeholder(R.color.colorPrimaryLight)
+                .into(view)
         }
 
         override fun onClick(v: View?) {

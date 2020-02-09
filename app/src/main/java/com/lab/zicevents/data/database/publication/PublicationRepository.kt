@@ -1,10 +1,12 @@
 package com.lab.zicevents.data.database.publication
 
 import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.lab.zicevents.data.model.database.publication.Publication
 import com.lab.zicevents.utils.base.BaseRepository
 import com.lab.zicevents.data.Result
+import com.lab.zicevents.data.model.database.user.User
 
 class PublicationRepository(private val publicationDataSource: PublicationDataSource) : BaseRepository() {
     /**
@@ -45,4 +47,19 @@ class PublicationRepository(private val publicationDataSource: PublicationDataSo
             is Result.Canceled -> Result.Canceled(result.exception)
         }
     }
+
+    /**
+     * Get All users subscriptions publications after a specific date
+     * @param subscriptionList list of user id where request filter
+     * @param lastVisiblePublication last more recent publication object visible our publication list
+     * @return Task<DocumentSnapshot>
+     */
+   suspend fun getSubscribedPublications(subscriptionList: List<String>, lastVisiblePublication: Publication): Result<QuerySnapshot> {
+        return when (val result = publicationDataSource.getSubscribedPublications(subscriptionList,lastVisiblePublication).awaitTask()){
+            is Result.Success -> Result.Success(result.data)
+            is Result.Error -> Result.Error(result.exception)
+            is Result.Canceled -> Result.Canceled(result.exception)
+        }
+    }
+
 }

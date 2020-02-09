@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.lab.zicevents.R
 import com.lab.zicevents.data.database.user.UserRepository
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +33,9 @@ class PublicationViewModel(private val publicationRepo: PublicationRepository,
     private val publications = MutableLiveData<DataResult>()
     val publicationList: LiveData<DataResult> = publications
 
+    private val newPublications = MutableLiveData<DataResult>()
+    val newPublicationList: LiveData<DataResult> = newPublications
+
     private val profile = MutableLiveData<DataResult>()
     val profileResult: LiveData<DataResult> = profile
 
@@ -43,7 +47,8 @@ class PublicationViewModel(private val publicationRepo: PublicationRepository,
 
     /**
      * Fetch publication from database async
-     * Return result as LiveData
+     * @param subscriptionList list of users's id to to filter research
+     * @Return result as LiveData
      */
     fun getSubscribedPublications(subscriptionList: List<String>) {
         GlobalScope.launch(Dispatchers.Main) {
@@ -62,6 +67,36 @@ class PublicationViewModel(private val publicationRepo: PublicationRepository,
                     publications.value = DataResult(error = R.string.fetching_user_canceled)
                 }
             }
+        }
+    }
+
+    /**
+     * Fetch publications after a specific date
+     * @param subscriptionList list of users's id to to filter research
+     * @param lastVisiblePublication most recent visible publication
+     * Return result as LiveData
+     */
+    fun getLastSubscribedPublications(subscriptionList: List<String>, lastVisiblePublication: Publication) {
+        if (lastVisiblePublication.createdDate != null){
+            GlobalScope.launch(Dispatchers.Main) {
+                when (val result = publicationRepo.getSubscribedPublications(subscriptionList, lastVisiblePublication)) {
+                    is Result.Success -> {
+                        val list : ArrayList<Publication> = ArrayList()
+                        list.addAll(result.data.toObjects(Publication::class.java))
+                        newPublications.value = DataResult(data = list)
+                    }
+                    is Result.Error -> {
+                        Log.e(TAG, "Error when trying to get publications", result.exception)
+                        newPublications.value = DataResult(error = R.string.fetching_publication_error)
+                    }
+                    is Result.Canceled -> {
+                        Log.e(TAG, "Action canceled", result.exception)
+                        newPublications.value = DataResult(error = R.string.operation_canceled)
+                    }
+                }
+            }
+        } else{
+            newPublications.value = DataResult(error = R.string.fetching_publication_error)
         }
     }
 
