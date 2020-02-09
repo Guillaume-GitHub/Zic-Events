@@ -19,11 +19,11 @@ import com.lab.zicevents.R
 import com.lab.zicevents.data.model.database.publication.Publication
 import com.lab.zicevents.data.model.database.user.User
 import com.lab.zicevents.utils.OnActivityFabClickListener
+import com.lab.zicevents.utils.OnPublicationClickListener
 import com.lab.zicevents.utils.adapter.PublicationRecyclerAdapter
 import kotlinx.android.synthetic.main.fragment_publication.*
 
-class PublicationFragment : Fragment(), OnActivityFabClickListener {
-
+class PublicationFragment : Fragment(), OnActivityFabClickListener, OnPublicationClickListener {
     private lateinit var publicationViewModel: PublicationViewModel
     // RecyclerView
     private lateinit var publicationRecycler: RecyclerView
@@ -34,6 +34,7 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initViewModel()
+        getAuthUser()
         (activity as? MainActivity)?.registerFabClickCallback(this)
     }
 
@@ -48,7 +49,6 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener {
         observePublicationsResult()
         observePublicationCreation()
         observeNewPublicationsResult()
-        getAuthUser()
         fragment_publication_progress.visibility = View.VISIBLE
 
         fragment_publication_swipeRefresh.setOnRefreshListener {
@@ -71,7 +71,7 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener {
     private fun configureRecyclerView(){
         publicationRecycler = fragment_publication_recyclerView
         publicationRecycler.layoutManager = LinearLayoutManager(context)
-        publicationAdapter = PublicationRecyclerAdapter(context!!, publications)
+        publicationAdapter = PublicationRecyclerAdapter(context!!, publications, this)
         publicationRecycler.adapter = publicationAdapter
         publicationRecycler.addItemDecoration((DividerItemDecoration(context, DividerItemDecoration.VERTICAL)))
     }
@@ -193,6 +193,19 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener {
     }
 
     /**
+     * Observe publication creation, hide progress dialog and dismiss
+     */
+    private fun observePublicationCreation(){
+        publicationViewModel.publicationCreationSate.observe(this, Observer {
+            when{
+                it.data is Int -> getLastPublications()
+                it.error != null ->
+                    Toast.makeText(context, getText(it.error), Toast.LENGTH_LONG).show()
+            }
+        })
+    }
+
+    /**
      * Show empty result fragment
      */
     private fun displayPlaceholder(){
@@ -209,15 +222,17 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener {
     }
 
     /**
-     * Observe publication creation, hide progress dialog and dismiss
+     * Display Publication details fragment
      */
-    private fun observePublicationCreation(){
-        publicationViewModel.publicationCreationSate.observe(this, Observer {
-            when{
-                it.data is Int -> getLastPublications()
-                it.error != null ->
-                    Toast.makeText(context, getText(it.error), Toast.LENGTH_LONG).show()
-            }
-        })
+    override fun onPublicationClick(publication: Publication, publicationOwner: User) {
+        val action = PublicationFragmentDirections.fromPublicationToDetailsPublication(
+            userId = publicationOwner.userId,
+            username = publicationOwner.displayName,
+            pseudo = publicationOwner.pseudo,
+            profileImageUrl = publicationOwner.profileImage,
+            message = publication.message,
+            mediaUrl = publication.mediaUrl)
+
+        findNavController().navigate(action)
     }
 }

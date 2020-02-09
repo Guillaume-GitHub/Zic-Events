@@ -32,6 +32,15 @@
             app:launchSingleTop="true"
             app:popUpTo="@+id/mobile_navigation"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/from_publication_to_details_publication"
+            app:destination="@+id/details_publication_fragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@+id/bottom_navigation_publication"
+            app:popUpToInclusive="false" />
     </fragment>
 
     <fragment
@@ -53,8 +62,7 @@
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"
-            app:popUpToInclusive="true" />
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 
     <fragment
@@ -71,5 +79,32 @@
         android:id="@+id/empty_publication_placeholder"
         android:name="com.lab.zicevents.ui.publication.EmptyPublicationPlaceholder"
         tools:layout="@layout/empty_publication_placeholder" />
+
+    <fragment
+        android:id="@+id/details_publication_fragment"
+        android:name="com.lab.zicevents.ui.publication.DetailsPublicationFragment"
+        android:label="Details"
+        tools:layout="@layout/fragment_details_publication">
+        <argument
+            android:name="profileImageUrl"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="username"
+            app:argType="string" />
+        <argument
+            android:name="pseudo"
+            app:argType="string" />
+        <argument
+            android:name="message"
+            app:argType="string" />
+        <argument
+            android:name="mediaUrl"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="userId"
+            app:argType="string" />
+    </fragment>
 
 </navigation>

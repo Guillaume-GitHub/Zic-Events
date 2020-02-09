@@ -17,11 +17,16 @@ import com.bumptech.glide.request.target.Target
 import com.lab.zicevents.R
 import com.lab.zicevents.data.model.database.publication.Publication
 import com.lab.zicevents.data.model.database.user.User
+import com.lab.zicevents.utils.OnPublicationClickListener
 import kotlinx.android.synthetic.main.picture_gallery_recycler_item.view.*
 import kotlinx.android.synthetic.main.publication_recycler_item.view.*
 import java.text.SimpleDateFormat
 
-class PublicationRecyclerAdapter(val context: Context, var publications: ArrayList<Publication>): RecyclerView.Adapter<PublicationRecyclerAdapter.PublicationHolder>() {
+class PublicationRecyclerAdapter(
+    private val context: Context,
+    var publications: ArrayList<Publication>,
+    private val publicationClickCallback: OnPublicationClickListener? = null
+) : RecyclerView.Adapter<PublicationRecyclerAdapter.PublicationHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PublicationHolder {
         return PublicationHolder(LayoutInflater.from(parent.context)
@@ -39,15 +44,23 @@ class PublicationRecyclerAdapter(val context: Context, var publications: ArrayLi
 
     inner class PublicationHolder(private var view: View): RecyclerView.ViewHolder(view), View.OnClickListener {
 
+        private var user: User? = null
+        private lateinit var publication: Publication
+
         /**
          * Try to get publication user info
          * if successful update publication view
          */
         fun bindView(publication: Publication) {
+            this.publication = publication
+
             publication.user?.get()?.addOnCompleteListener { task ->
                 when {
-                    task.isSuccessful ->
-                        updateView(task.result?.toObject(User::class.java), publication)
+                    task.isSuccessful -> {
+                        this.user = task.result?.toObject(User::class.java)
+                        updateView(this.user, this.publication)
+                    }
+
                     task.exception != null -> Log.w(
                         this::class.java.simpleName,
                         "Get user ref ",
@@ -62,6 +75,7 @@ class PublicationRecyclerAdapter(val context: Context, var publications: ArrayLi
          */
         private fun updateView(user: User?, publication: Publication) {
             if (user != null) {
+                view.setOnClickListener(this)
 
                 if (!publication.mediaUrl.isNullOrBlank()){
                     loadImage(view.publication_image, publication.mediaUrl!!)
@@ -93,7 +107,13 @@ class PublicationRecyclerAdapter(val context: Context, var publications: ArrayLi
         }
 
         override fun onClick(v: View?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            when (v?.id){
+                view.id -> {
+                    user?.let {
+                        publicationClickCallback?.onPublicationClick(publication, it)
+                    }
+                }
+            }
         }
     }
 }

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/publication_item_root"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimary"
+    android:paddingTop="15dp"
+    android:paddingStart="15dp"
+    android:paddingEnd="15dp">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/details_publication_user_image_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:cardCornerRadius="250dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/details_publication_user_image"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/profile_default_background"
+                    android:scaleType="centerCrop"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <RelativeLayout
+                android:id="@+id/details_publication_name_container"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_toEndOf="@id/details_publication_user_image_container"
+                app:layout_constraintStart_toEndOf="@id/details_publication_user_image_container"
+                app:layout_constraintEnd_toStartOf="@id/details_publication_option_btn"
+                app:layout_constraintTop_toTopOf="parent"
+                android:gravity="center">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/details_publication_username"
+                    android:layout_width="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_height="25dp"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:maxLines="1"
+                    tools:text="Guillaume BAGUE"
+                    android:textStyle="bold"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/details_publication_pseudo"
+                    android:layout_width="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_height="25dp"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:maxLines="1"
+                    android:textColor="@color/shadowColorText"
+                    tools:text="#Guillaume_BAGUE"
+                    android:layout_below="@id/details_publication_username"/>
+
+            </RelativeLayout>
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/details_publication_option_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_more_horiz_24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/details_publication_message"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/details_publication_name_container"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:textSize="22sp"
+                tools:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+sed     diam nonumy eirmod tempor invidunt Lorem ipsu, consetetur sadipscing elitr, consetetursr "/>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/details_publication_image_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/details_publication_message"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:cardCornerRadius="8dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/details_publication_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:background="@color/colorPrimaryLight"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>
