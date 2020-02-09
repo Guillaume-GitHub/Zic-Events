@@ -81,12 +81,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:maxLength="150"
             app:layout_constraintStart_toEndOf="@id/publication_user_image_container"
             app:layout_constraintTop_toBottomOf="@id/publication_name_date_container"
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
-sed diam nonumy eirmod tempor invidunt Lorem ipsu, consetetur sadipscing elitr, consetetursr "/>
+sed diam nonumy eirmod tempor invidunt Lorem ipsu, consetetur sadipscing elitr, consetetur,
+consetetur sadipscing elitr, consetetur consetetur sadipscing elitr, consetetur"/>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/publication_image_container"
