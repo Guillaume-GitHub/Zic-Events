@@ -4,10 +4,13 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.core.view.isVisible
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.lab.zicevents.utils.OnActivityFabClickListener
 import com.lab.zicevents.utils.OnRequestPermissionsListener
@@ -19,6 +22,7 @@ class MainActivity: BaseActivity() {
 
     private lateinit var permissionsRequestCallback: OnRequestPermissionsListener
     private lateinit var activityFabCallback: OnActivityFabClickListener
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +31,7 @@ class MainActivity: BaseActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
+        appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.bottom_navigation_event,
                 R.id.bottom_navigation_search,
@@ -36,10 +40,13 @@ class MainActivity: BaseActivity() {
                 R.id.bottom_navigation_profile
             )
         )
-        // Configure navigation toolbar
-        main_toolbar.setupWithNavController(navController, appBarConfiguration)
         // Configure Bottom nav view
         navView.setupWithNavController(navController)
+
+        // Configure navigation toolbar
+        setSupportActionBar(main_toolbar)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+
         // Prevent recreation fragment when navigation item is reselect
         navView.setOnNavigationItemReselectedListener{
            // On Reselect do nothing....
@@ -50,7 +57,7 @@ class MainActivity: BaseActivity() {
             if (main_fab.isVisible) main_fab.hide()
 
             when(destination.id) {
-                R.id.bottom_navigation_profile -> main_toolbar.visibility = View.GONE
+               // R.id.bottom_navigation_profile -> main_toolbar.visibility = View.GONE
                 R.id.bottom_navigation_publication -> main_fab.show()
                 R.id.empty_publication_placeholder -> main_toolbar.navigationIcon = null
                 else ->  {}
@@ -62,7 +69,10 @@ class MainActivity: BaseActivity() {
         }
     }
 
-    //override fun onSupportNavigateUp() = findNavController(R.id.nav_host_fragment).navigateUp()
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
 
     // Request permission callback
     override fun registerRequestPermissionsCallback(
