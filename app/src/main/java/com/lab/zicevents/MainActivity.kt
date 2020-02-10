@@ -38,7 +38,6 @@ class MainActivity: BaseActivity() {
         )
         // Configure navigation toolbar
         main_toolbar.setupWithNavController(navController, appBarConfiguration)
-        setSupportActionBar(main_toolbar)
         // Configure Bottom nav view
         navView.setupWithNavController(navController)
         // Prevent recreation fragment when navigation item is reselect
@@ -53,7 +52,7 @@ class MainActivity: BaseActivity() {
             when(destination.id) {
                 R.id.bottom_navigation_profile -> main_toolbar.visibility = View.GONE
                 R.id.bottom_navigation_publication -> main_fab.show()
-                R.id.empty_publication_placeholder -> supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                R.id.empty_publication_placeholder -> main_toolbar.navigationIcon = null
                 else ->  {}
             }
         }
