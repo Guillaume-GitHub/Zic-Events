@@ -74,6 +74,11 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
         fragment_profile_edit_info_btn.setOnClickListener(this)
         fragment_profile_change_photo_btn.setOnClickListener(this)
         fragment_profile_cover_image.setOnClickListener(this)
+        // Set Toolbar menu + menu item click listener
+        fragment_profile_toolbar.inflateMenu(R.menu.profile_menu)
+        fragment_profile_toolbar.setOnMenuItemClickListener {
+            onOptionsItemSelected(it)
+        }
         // Init RecyclerView
         publicationRecyclerConfig()
         mediaRecyclerConfig()
@@ -272,6 +277,8 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
         Log.d(this::class.java.simpleName, "UPDATE UI")
         // Username view
         fragment_profile_username.text = user.displayName
+        // Toolbar username view
+        fragment_profile_collapse_toolbar.title = user.displayName
         // Pseudo view
         fragment_fragment_profile_pseudo.text = user.pseudo
         // Registration date view
