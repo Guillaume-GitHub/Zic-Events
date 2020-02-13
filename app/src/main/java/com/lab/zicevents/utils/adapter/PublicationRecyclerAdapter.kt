@@ -76,6 +76,7 @@ class PublicationRecyclerAdapter(
         private fun updateView(user: User?, publication: Publication) {
             if (user != null) {
                 view.setOnClickListener(this)
+                view.publication_user_image.setOnClickListener(this)
 
                 if (!publication.mediaUrl.isNullOrBlank()){
                     loadImage(view.publication_image, publication.mediaUrl!!)
@@ -111,6 +112,11 @@ class PublicationRecyclerAdapter(
                 view.id -> {
                     user?.let {
                         publicationClickCallback?.onPublicationClick(publication, it)
+                    }
+                }
+                view.publication_user_image.id -> {
+                    user?.let {
+                        publicationClickCallback?.onImageProfileClick(it.userId)
                     }
                 }
             }

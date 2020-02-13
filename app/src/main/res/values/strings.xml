@@ -95,6 +95,10 @@
     <string name="profile_description_placeholder">Votre description …</string>
     <string name="profile_registration_date_placeholder">Membre depuis le </string>
 
+    <!-- ***** DETAILS USER PROFILE FRAGMENT ***** -->
+    <string name="details_user_photo">Photos</string>
+    <string name="details_user_last_publications">Dernières Publications</string>
+
     <!-- ***** PROFILE FRAGMENT MENU ***** -->
     <string name="profile_menu_logout">Déconnexion</string>
     <string name="profile_menu_settings">Paramètres</string>

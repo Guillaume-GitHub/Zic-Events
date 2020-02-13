@@ -41,6 +41,15 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@+id/bottom_navigation_publication" />
+        <action
+            android:id="@+id/from_publication_to_user_details"
+            app:destination="@id/user_details_fragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@+id/bottom_navigation_publication" />
     </fragment>
 
     <fragment
@@ -102,6 +111,16 @@
             android:name="mediaUrl"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="userId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/user_details_fragment"
+        android:name="com.lab.zicevents.ui.publication.DetailsUserFragment"
+        android:label="@string/title_account"
+        tools:layout="@layout/fragment_details_user">
         <argument
             android:name="userId"
             app:argType="string" />

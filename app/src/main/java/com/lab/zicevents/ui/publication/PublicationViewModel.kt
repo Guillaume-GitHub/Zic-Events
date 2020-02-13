@@ -4,9 +4,12 @@ import android.content.ContentValues.TAG
 import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.util.Log
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.lab.zicevents.R
@@ -19,6 +22,7 @@ import com.lab.zicevents.data.database.publication.PublicationRepository
 import com.lab.zicevents.data.model.database.publication.Publication
 import com.lab.zicevents.data.model.database.user.User
 import com.lab.zicevents.data.model.local.DataResult
+import com.lab.zicevents.data.model.local.PublicationListResult
 import com.lab.zicevents.data.storage.StorageRepository
 import com.lab.zicevents.utils.base.BaseRepository
 import java.util.*
@@ -38,6 +42,9 @@ class PublicationViewModel(private val publicationRepo: PublicationRepository,
 
     private val profile = MutableLiveData<DataResult>()
     val profileResult: LiveData<DataResult> = profile
+
+    private val userPublicationList = MutableLiveData<PublicationListResult>()
+    val userPublications: LiveData<PublicationListResult> = userPublicationList
 
     private val publicationValid = MutableLiveData<Boolean>()
     val publicationValidation: LiveData<Boolean> = publicationValid
@@ -100,6 +107,23 @@ class PublicationViewModel(private val publicationRepo: PublicationRepository,
         }
     }
 
+
+    /**
+     * Get User publications with uid from Firestore database
+     * @param userId String that corresponding to user uid
+     */
+    fun getUserPublications(userId: String) {
+        GlobalScope.launch(Dispatchers.Main) {
+            when(val result = publicationRepo.getUserPublications(userId)){
+                is Result.Success -> {
+                    val publications: List<Publication> = result.data.toObjects(Publication::class.java)
+                    userPublicationList.value = PublicationListResult(list = publications)
+                }
+                is Result.Error ->  userPublicationList.value = PublicationListResult(error = R.string.fetch_user_publication_error)
+                is Result.Canceled ->  userPublicationList.value = PublicationListResult(error = R.string.fetch_user_publication_cancel)
+            }
+        }
+    }
     /**
      * Get User with uid from Firestore database
      * set live data var
@@ -147,7 +171,7 @@ class PublicationViewModel(private val publicationRepo: PublicationRepository,
                     if (result.data != null)
                         createPublication(user,message, result.data.toString())
                     else
-                        addPublication.value  = DataResult(error = R.string.store_image_task_error) //Todo: (suppress uploaded image if exist)
+                        addPublication.value  = DataResult(error = R.string.store_image_task_error)
                 }
                 is Result.Error ->
                     addPublication.value  = DataResult(error = R.string.store_image_task_error)
@@ -169,7 +193,7 @@ class PublicationViewModel(private val publicationRepo: PublicationRepository,
             user == null ->
                 addPublication.value = DataResult(error = R.string.error_when_fetch_user)
             message.isNullOrBlank() ->
-                addPublication.value = DataResult(error = R.string.empty_publication_message) //Todo : Message null
+                addPublication.value = DataResult(error = R.string.empty_publication_message)
             else -> {
                 if (image != null)
                     uploadImageFile(user,image, UUID.randomUUID().toString(), message.toString())
@@ -199,6 +223,14 @@ class PublicationViewModel(private val publicationRepo: PublicationRepository,
                 is Result.Canceled ->  addPublication.value  = DataResult(error = R.string.operation_canceled)
             }
         }
+    }
+
+    /** Display details user profile fragment
+     *
+     */
+    fun navigateToProfile(fragment:Fragment, userId: String){
+        val action = PublicationFragmentDirections.fromPublicationToUserDetails(userId)
+        findNavController(fragment).navigate(action)
     }
 }
 

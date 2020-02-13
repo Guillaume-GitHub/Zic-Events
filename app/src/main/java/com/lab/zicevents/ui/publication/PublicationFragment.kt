@@ -235,4 +235,8 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener, OnPublicatio
 
         findNavController().navigate(action)
     }
+
+    override fun onImageProfileClick(userId: String) {
+        publicationViewModel.navigateToProfile(this,userId)
+    }
 }

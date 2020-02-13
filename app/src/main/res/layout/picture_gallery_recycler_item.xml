@@ -11,8 +11,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/picture_gallery_item"
-        android:layout_width="120dp"
-        android:layout_height="100dp"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
         android:background="@color/colorPrimaryLight"
         tools:srcCompat="@tools:sample/avatars[2]"
         android:scaleType="centerCrop"/>

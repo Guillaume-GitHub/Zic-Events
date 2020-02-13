@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -74,11 +75,6 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
         fragment_profile_edit_info_btn.setOnClickListener(this)
         fragment_profile_change_photo_btn.setOnClickListener(this)
         fragment_profile_cover_image.setOnClickListener(this)
-        // Set Toolbar menu + menu item click listener
-        fragment_profile_toolbar.inflateMenu(R.menu.profile_menu)
-        fragment_profile_toolbar.setOnMenuItemClickListener {
-            onOptionsItemSelected(it)
-        }
         // Init RecyclerView
         publicationRecyclerConfig()
         mediaRecyclerConfig()
@@ -87,7 +83,7 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.profile_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater);
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     /**
@@ -147,10 +143,11 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
     */
     private fun mediaRecyclerConfig(){
         mediaRecycler = fragment_profile_gallery_recyclerView
-        mediaRecycler.layoutManager = GridLayoutManager(context, 2, GridLayoutManager.HORIZONTAL,false)
+        mediaRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false)
         mediaAdapter = UserMediaRecyclerAdapter(context!!, medias)
         mediaRecycler.adapter = mediaAdapter
         mediaRecycler.addItemDecoration(MarginItemDecoration(10))
+        LinearSnapHelper().attachToRecyclerView(mediaRecycler)
     }
 
     /**
@@ -201,6 +198,7 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
                     publications.clear()
                     publications.addAll(list)
                     publicationAdapter.notifyDataSetChanged()
+                    addMediaToGallery(publications)
                 }
                 publicationsResult.error != null ->
                     Toast.makeText(context, getString(publicationsResult.error), Toast.LENGTH_LONG).show()
@@ -277,8 +275,6 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
         Log.d(this::class.java.simpleName, "UPDATE UI")
         // Username view
         fragment_profile_username.text = user.displayName
-        // Toolbar username view
-        fragment_profile_collapse_toolbar.title = user.displayName
         // Pseudo view
         fragment_fragment_profile_pseudo.text = user.pseudo
         // Registration date view
@@ -304,13 +300,8 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
         }
         // Followers view
         fragment_profile_followers.apply {
-            visibility = View.GONE
-        }
-        // Media Recycler View
-        if (user.gallery != null) {
-            medias.clear() // Clear old values
-            medias.addAll(user.gallery!!) // pass values to medias list
-            mediaAdapter.notifyDataSetChanged() // Update recycler view userProfileResult
+            val size: Int? = user.subscriptions?.size
+            text = if (size != null) "$size" else "0"
         }
         // Profile Image
         fragment_profile_user_image.apply {
@@ -326,6 +317,29 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
         }
         // Set current user
         currentUser = user
+    }
+
+    /**
+     * Load user publication media to image gallery
+     * update recycler view
+     * @param publications list of user publication
+     */
+    private fun addMediaToGallery(publications: ArrayList<Publication>){
+        medias.clear() // clean media list
+        // add media from publication
+        publications.forEach { item ->
+            item.mediaUrl?.let{
+                medias.add(it)
+            }
+        }
+        // add media from gallery
+        currentUser?.let {
+            val images = it.gallery
+            if (!images.isNullOrEmpty())
+                medias.addAll(images)
+        }
+        //update adapter
+        mediaAdapter.notifyDataSetChanged()
     }
 
     /**

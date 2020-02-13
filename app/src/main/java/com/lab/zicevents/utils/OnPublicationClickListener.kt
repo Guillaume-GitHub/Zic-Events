@@ -5,4 +5,5 @@ import com.lab.zicevents.data.model.database.user.User
 
 interface OnPublicationClickListener {
     fun onPublicationClick(publication: Publication, publicationOwner: User)
+    fun onImageProfileClick(userId: String)
 }
