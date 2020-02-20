@@ -121,6 +121,12 @@
     <string name="profile_edit_style_hint">Style de musique</string>
     <string name="profile_up_to_date">Profil mis à jour</string>
 
+    <!-- ***** EMPTY PUBLICATION PLACEHOLDER ***** -->
+    <string name="empty_publication_placeholder_title">Aucune publication pour le moment</string>
+    <string name="empty_publication_placeholder_subtitle">Vous trouvez ici, vos publications ainsi que celles des personnes que vous suivez.</string>
+    <string name="empty_publication_placeholder_button">Rechercher des personnes</string>
+
+
     <!-- ***** PUBLICATIONS FRAGMENTS ***** -->
     <string name="fetching_publication_error">Une erreur est survenue lors de la récupération de vos publications</string>
     <string name="post_publication_error">Une erreur est survenue lors de la publication de votre message</string>
@@ -174,8 +180,4 @@
         <item>RnB</item>
         <item>Dubstep</item>
     </array>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
 </resources>
