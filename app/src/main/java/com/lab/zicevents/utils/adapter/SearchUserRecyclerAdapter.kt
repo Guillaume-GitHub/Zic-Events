@@ -9,9 +9,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.lab.zicevents.R
 import com.lab.zicevents.data.model.database.user.User
+import com.lab.zicevents.utils.OnRecyclerItemClickListener
 import kotlinx.android.synthetic.main.search_recycler_item.view.*
 
-class SearchUserRecyclerAdapter(private val context: Context?, var users: ArrayList<User>): RecyclerView.Adapter<SearchUserRecyclerAdapter.UserHolder>() {
+class SearchUserRecyclerAdapter(private val context: Context?,
+                                var users: ArrayList<User>,
+                                var itemClickCallback: OnRecyclerItemClickListener? = null):
+    RecyclerView.Adapter<SearchUserRecyclerAdapter.UserHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserHolder {
         return UserHolder(LayoutInflater.from(parent.context)
@@ -48,7 +52,7 @@ class SearchUserRecyclerAdapter(private val context: Context?, var users: ArrayL
         }
 
         override fun onClick(v: View?) {
-            //
+            itemClickCallback?.onItemClicked(adapterPosition)
         }
     }
 }

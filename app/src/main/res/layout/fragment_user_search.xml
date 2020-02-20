@@ -17,6 +17,21 @@
         android:hint="@string/search_user_hint"
         android:background="@drawable/rounded_corner_colored_border"/>
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/user_search_no_results_textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_margin="20dp"
+        android:text="@string/search_user_no_results"
+        android:textAlignment="center"
+        android:textColor="@color/shadowColorText"
+        android:textSize="18sp"
+        android:visibility="gone"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_recyclerView"
         android:layout_width="match_parent"

@@ -150,7 +150,9 @@
     <string name="alert_valid_address_positive_btn">Valider</string>
     <string name="alert_valid_address_negative_btn">Annuler</string>
 
+    <!-- ****** SEARCH USER FRAGMENT ****** -->
     <string name="search_user_hint">Rechecher une personne …</string>
+    <string name="search_user_no_results">Aucun résultat trouvé …</string>
 
     <!-- ***** LOCAL DATA ***** -->
     <string name="gender_male_value" translatable="false">male</string>

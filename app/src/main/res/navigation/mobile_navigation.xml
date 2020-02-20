@@ -9,7 +9,17 @@
         android:id="@+id/bottom_navigation_search"
         android:name="com.lab.zicevents.ui.search.UserSearchFragment"
         android:label="@string/title_search"
-        tools:layout="@layout/fragment_user_search" />
+        tools:layout="@layout/fragment_user_search" >
+        <action
+            android:id="@+id/from_search_to_user_details"
+            app:destination="@id/user_details_fragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@+id/bottom_navigation_search" />
+    </fragment>
 
     <fragment
         android:id="@+id/bottom_navigation_event"
