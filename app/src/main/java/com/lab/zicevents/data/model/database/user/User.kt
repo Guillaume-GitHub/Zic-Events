@@ -52,5 +52,6 @@ data class User(
         const val GALLERY_FIELD = "gallery"
         const val MUSIC_STYLE_FIELD = "musicStyle"
         const val ADDRESS_FIELD = "address"
+        const val SUBSCRIPTIONS_FIELD = "subscriptions"
     }
 }

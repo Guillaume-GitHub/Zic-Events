@@ -1,13 +1,13 @@
-package com.lab.zicevents
+package com.lab.zicevents.activity
 
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.firebase.auth.FirebaseAuth
+import com.lab.zicevents.R
 import com.lab.zicevents.data.model.database.user.User
 import com.lab.zicevents.ui.login.LoginViewModel
 import com.lab.zicevents.ui.login.LoginViewModelFactory

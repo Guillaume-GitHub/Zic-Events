@@ -21,7 +21,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
 import com.google.firebase.auth.FirebaseAuth
-import com.lab.zicevents.MainActivity
+import com.lab.zicevents.activity.MainActivity
 
 import com.lab.zicevents.R
 import kotlinx.android.synthetic.main.fragment_create_profile.*
@@ -224,7 +224,7 @@ class CreateProfileFragment : Fragment(), View.OnClickListener, View.OnFocusChan
                 // Case user profile + private info created
                 profileState.isUserCreated && profileState.isPrivateInfoCreated -> {
                     showDialog(false)
-                    startActivity(Intent(context,MainActivity::class.java))
+                    startActivity(Intent(context, MainActivity::class.java))
                     activity?.finish()
                 }
                 // Case error

@@ -1,15 +1,19 @@
 package com.lab.zicevents.ui.publication
 
+import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.util.Log
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.lab.zicevents.R
@@ -25,6 +29,7 @@ import com.lab.zicevents.data.model.local.DataResult
 import com.lab.zicevents.data.model.local.PublicationListResult
 import com.lab.zicevents.data.storage.StorageRepository
 import com.lab.zicevents.utils.base.BaseRepository
+import kotlinx.android.synthetic.main.fragment_details_user.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -226,11 +231,28 @@ class PublicationViewModel(private val publicationRepo: PublicationRepository,
     }
 
     /** Display details user profile fragment
-     *
      */
     fun navigateToProfile(fragment:Fragment, userId: String){
         val action = PublicationFragmentDirections.fromPublicationToUserDetails(userId)
         findNavController(fragment).navigate(action)
+    }
+
+    /**
+     * Check if user is already follow by auth User
+     * @param userId id of display user profile
+     * @param authUser authenticate user profile (may be null)
+     * @return boolean or null user auth user is null
+     */
+    fun isAlreadyFollow(userId: String, authUser: User?): Boolean?{
+        return if (authUser != null) {
+            val subscriptions = authUser.subscriptions
+            when {
+                userId == authUser.userId -> null
+                !subscriptions.isNullOrEmpty() && subscriptions.contains(userId) -> true
+                else -> false
+            }
+        } else
+            null
     }
 }
 

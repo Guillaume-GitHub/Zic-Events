@@ -5,8 +5,7 @@ import android.content.pm.PackageManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.lab.zicevents.MainActivity
-import java.util.jar.Manifest
+import com.lab.zicevents.activity.MainActivity
 
 class PermissionHelper {
 

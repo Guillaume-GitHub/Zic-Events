@@ -8,12 +8,10 @@ import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.Toast
-import android.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -25,7 +23,7 @@ import com.lab.zicevents.data.model.database.user.User
 
 import kotlinx.android.synthetic.main.fragment_profile.*
 
-import com.lab.zicevents.LoginActivity
+import com.lab.zicevents.activity.LoginActivity
 import com.lab.zicevents.data.model.database.publication.Publication
 import com.lab.zicevents.utils.ImagePickerHelper
 import com.lab.zicevents.utils.MarginItemDecoration
@@ -33,7 +31,6 @@ import com.lab.zicevents.utils.OnRequestPermissionsListener
 import com.lab.zicevents.utils.PermissionHelper
 import com.lab.zicevents.utils.adapter.PublicationRecyclerAdapter
 import com.lab.zicevents.utils.adapter.UserMediaRecyclerAdapter
-import com.lab.zicevents.utils.base.BaseRepository
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -105,7 +102,7 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
         return when (item.itemId) {
             R.id.profile_menu_logout -> {
                 auth.signOut() // log out
-                startActivity(Intent(context,LoginActivity::class.java))
+                startActivity(Intent(context, LoginActivity::class.java))
                 activity?.finish()
                 true
             }

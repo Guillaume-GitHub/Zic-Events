@@ -98,6 +98,8 @@
     <!-- ***** DETAILS USER PROFILE FRAGMENT ***** -->
     <string name="details_user_photo">Photos</string>
     <string name="details_user_last_publications">Dernières Publications</string>
+    <string name="details_user_follow">Suivre</string>
+    <string name="details_user_unfollow">Ne Plus Suivre</string>
 
     <!-- ***** PROFILE FRAGMENT MENU ***** -->
     <string name="profile_menu_logout">Déconnexion</string>

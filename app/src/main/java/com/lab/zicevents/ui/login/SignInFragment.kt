@@ -20,7 +20,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.*
-import com.lab.zicevents.MainActivity
+import com.lab.zicevents.activity.MainActivity
 
 import com.lab.zicevents.R
 import com.lab.zicevents.data.model.database.user.User
