@@ -12,8 +12,8 @@ class GeocodingRepository(private val geocodingDataSource: GeocodingDataSource):
      * @param address address taped by user
      * @param key Geocoding api key
      */
-    suspend fun getGeolocationAddress(address: String, key: String): Result<Geocoding> {
-        return when (val result = geocodingDataSource.getGeolocationAddress(address, key).awaitCall()){
+    suspend fun getGeolocationAddress(address: String): Result<Geocoding> {
+        return when (val result = geocodingDataSource.getGeolocationAddress(address).awaitCall()){
            is Result.Success -> Result.Success(result.data)
            is Result.Error -> Result.Error(result.exception)
            is Result.Canceled -> Result.Canceled(result.exception)

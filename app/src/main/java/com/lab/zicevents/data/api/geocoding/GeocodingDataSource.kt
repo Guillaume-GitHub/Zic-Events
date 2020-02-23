@@ -8,8 +8,8 @@ class GeocodingDataSource {
 
     private val service = GeocodingApi.create()
 
-    fun getGeolocationFromLatlng(latLng: LatLng, key: String): Call<Geocoding> {
-        return service.fetchGeolocationFromLatLng("${latLng.latitude},${latLng.longitude}", key)
+    fun getGeolocationFromLatlng(latLng: LatLng): Call<Geocoding> {
+        return service.fetchGeolocationFromLatLng("${latLng.latitude},${latLng.longitude}")
     }
 
     /**
@@ -18,7 +18,7 @@ class GeocodingDataSource {
      * @param key Geocoding api key
      * @return retrofit2 Call<Geocoding>
      */
-    fun getGeolocationAddress(address: String, key: String): Call<Geocoding> {
-        return service.fetchGeolocationFromAddress(address, key)
+    fun getGeolocationAddress(address: String): Call<Geocoding> {
+        return service.fetchGeolocationFromAddress(address)
     }
 }

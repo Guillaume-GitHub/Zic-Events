@@ -8,6 +8,10 @@ apply plugin: 'com.google.gms.google-services'
 
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
+def apikeyPropertiesFile = rootProject.file("apiKey.properties")
+def apikeyProperties = new Properties()
+apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -19,6 +23,9 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        // Api key
+        buildConfigField("String", 'SONGKICK_KEY', "\"${apikeyProperties['SONGKICK_KEY']}\"")
+        buildConfigField("String", 'GEOCODING_KEY', "\"${apikeyProperties['GEOCODING_KEY']}\"")
     }
     buildTypes {
         release {

@@ -193,9 +193,9 @@ class ProfileViewModel(private val userRepo: UserRepository,
      * @param address address taped by user
      * @param key Geocoding api key
      */
-    fun getGeolocationAddress(address: String, key: String) {
+    fun getGeolocationAddress(address: String) {
         GlobalScope.launch(Dispatchers.Main) {
-            when(val result = geocodingRepo.getGeolocationAddress(address, key)){
+            when(val result = geocodingRepo.getGeolocationAddress(address)){
                 is Result.Success -> {
                     val adr = result.data.results
                     if (!adr.isNullOrEmpty()) {

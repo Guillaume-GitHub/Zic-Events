@@ -107,8 +107,7 @@ class LocationFragmentDialog(private val userId: String,
 
             else -> {
                 showProgress(true)
-                viewModel.getGeolocationAddress(location_dialog_text.text.toString(),
-                    GeocodingApi.API_KEY)
+                viewModel.getGeolocationAddress(location_dialog_text.text.toString())
                 lastSearch = location_dialog_text.text.toString() // save last search string
             }
         }
@@ -119,7 +118,7 @@ class LocationFragmentDialog(private val userId: String,
      * show result if ok or display error message
      */
     private fun observeGeocodingResult(){
-        viewModel.geocodingResult.observe(this, Observer {
+        viewModel.geocodingResult.observe(viewLifecycleOwner, Observer {
             when {
                 it.data is Address ->
                     displayResult(it.data)

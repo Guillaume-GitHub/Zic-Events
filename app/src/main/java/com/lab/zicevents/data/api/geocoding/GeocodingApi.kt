@@ -12,7 +12,6 @@ class GeocodingApi {
     companion object {
 
         const val BASE_URL = "https://maps.googleapis.com/"
-        const val API_KEY = "AIzaSyDW8lpqYgxNHQWLckmF02yJuAWOlScjWEE"
 
         fun create(): GeocodingApiInterface {
 
