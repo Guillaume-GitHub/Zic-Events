@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_account_48px"
+        android:alpha="0.05"/>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/fragment_artist_search_toolbar_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="10dp"
+        android:layout_marginBottom="10dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/fragment_artist_search_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_arrow_back_24dp"
+            android:background="@color/colorPrimaryLight">
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/fragment_artist_search_searchView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                style="@style/AppTheme.SearchViewStyle"
+                app:iconifiedByDefault="false"
+                app:searchIcon="@null"
+                app:queryHint="@string/artist_search_query_hint"/>
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/fragment_artist_search_no_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fragment_artist_search_toolbar_container"
+        android:text="@string/artist_search_no_result"
+        android:textSize="24sp"
+        android:textColor="@color/shadowColorText"
+        android:layout_margin="10dp" />
+
+    <ProgressBar
+        android:id="@+id/fragment_artist_search_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="gone"
+        android:layout_below="@id/fragment_artist_search_toolbar_container"
+        android:layout_centerHorizontal="true" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fragment_artist_search_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/fragment_artist_search_progress"
+        android:background="@color/colorPrimary"
+        android:visibility="gone" />
+
+</RelativeLayout>

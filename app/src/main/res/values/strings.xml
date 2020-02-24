@@ -154,6 +154,10 @@
     <string name="search_user_hint">Rechecher une personne …</string>
     <string name="search_user_no_results">Aucun résultat trouvé …</string>
 
+    <!-- ****** EVENT FRAGMENTS ******* -->
+    <string name="artist_search_query_hint">Rechercher un Artiste</string>
+    <string name="artist_search_no_result">Aucun resultat pour cette recherche. Essayez avec un autre nom.</string>
+
     <!-- ***** LOCAL DATA ***** -->
     <string name="gender_male_value" translatable="false">male</string>
     <string name="gender_female_value" translatable="false">female</string>

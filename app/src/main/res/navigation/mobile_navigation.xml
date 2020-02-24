@@ -25,7 +25,16 @@
         android:id="@+id/bottom_navigation_event"
         android:name="com.lab.zicevents.ui.event.EventFragment"
         android:label="@string/title_event"
-        tools:layout="@layout/fragment_event" />
+        tools:layout="@layout/fragment_event" >
+        <action
+            android:id="@+id/event_fragment_to_search_dialog"
+            app:destination="@id/search_dialog"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+    </fragment>
 
     <fragment
         android:id="@+id/bottom_navigation_publication"
@@ -135,5 +144,10 @@
             android:name="userId"
             app:argType="string" />
     </fragment>
+
+    <dialog
+        android:id="@+id/search_dialog"
+        android:name="com.lab.zicevents.ui.event.ArtistSearchFragment"
+        />
 
 </navigation>
