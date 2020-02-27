@@ -8,9 +8,14 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.google.type.LatLng
 
 import com.lab.zicevents.R
+import com.lab.zicevents.data.api.songkick.SongkickRepository
 import kotlinx.android.synthetic.main.fragment_event.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class EventFragment : Fragment() {
 
@@ -31,10 +36,16 @@ class EventFragment : Fragment() {
         this.bindView()
     }
 
+    /**
+     * Initialize viewModel
+     */
     private fun initViewModel(){
         this.eventViewModel = ViewModelProviders.of(this).get(EventViewModel::class.java)
     }
 
+    /**
+     * Update Update UI
+     */
     private fun bindView(){
         this.eventViewModel.fragmentName.observe(viewLifecycleOwner, Observer {text ->
             fragment_event_location.text = text

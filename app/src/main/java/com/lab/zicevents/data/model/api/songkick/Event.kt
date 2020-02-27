@@ -2,11 +2,6 @@ package com.lab.zicevents.data.model.api.songkick
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.lab.zicevents.data.api.songkick.Location
-import com.lab.zicevents.data.api.songkick.Performance
-import com.lab.zicevents.data.api.songkick.Start
-import com.lab.zicevents.data.api.songkick.Venue
-import com.lab.zicevents.data.model.api.songkick.End
 
 class Event {
 

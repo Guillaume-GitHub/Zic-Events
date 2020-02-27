@@ -3,10 +3,11 @@ package com.lab.zicevents.data.model.api.songkick
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class State {
 
-    @SerializedName("displayName")
+class Songkick {
+
+    @SerializedName("resultsPage")
     @Expose
-    var displayName: String? = null
+    var resultsPage: ResultsPage? = null
 
 }

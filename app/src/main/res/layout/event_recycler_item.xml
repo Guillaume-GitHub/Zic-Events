@@ -17,6 +17,7 @@
         android:layout_gravity="end"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
+        android:layout_marginEnd="20dp"
         android:textSize="12sp"
         tools:background="@android:color/holo_blue_dark"/>
 

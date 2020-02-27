@@ -2,7 +2,6 @@ package com.lab.zicevents.data.model.api.songkick
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.lab.zicevents.data.api.songkick.Country
 
 class City {
 
