@@ -1,7 +1,6 @@
 package com.lab.zicevents.data.api.songkick
 
 import com.lab.zicevents.BuildConfig
-import com.lab.zicevents.data.model.api.songkick.ArtistResult
 import com.lab.zicevents.data.model.api.songkick.Songkick
 import retrofit2.Call
 import retrofit2.http.GET

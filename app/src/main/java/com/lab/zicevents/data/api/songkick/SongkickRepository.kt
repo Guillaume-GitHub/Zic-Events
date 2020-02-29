@@ -10,6 +10,12 @@ class SongkickRepository: BaseRepository() {
 
     private val service = SongkickApi.create()
 
+    companion object {
+        fun getArtistImageUrl(artistId: Int): String{
+           return "https://images.sk-static.com/images/media/profile_images/artists/$artistId/huge_avatar"
+        }
+    }
+
     //******************************** EVENTS ****************************************
 
     /**
