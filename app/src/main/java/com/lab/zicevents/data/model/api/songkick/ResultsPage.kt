@@ -3,21 +3,21 @@ package com.lab.zicevents.data.model.api.songkick
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class ResultsPage {
+class ResultsPage (
 
     @SerializedName("status")
     @Expose
-    var status: String? = null
+    var status: String,
     @SerializedName("results")
     @Expose
-    var results: Results? = null
+    var results: Results? = null,
     @SerializedName("perPage")
     @Expose
-    var perPage: Int? = null
+    var perPage: Int,
     @SerializedName("page")
     @Expose
-    var page: Int? = null
+    var page: Int,
     @SerializedName("totalEntries")
     @Expose
-    var totalEntries: Int? = null
-}
+    var totalEntries: Int
+)

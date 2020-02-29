@@ -3,43 +3,40 @@ package com.lab.zicevents.data.model.api.songkick
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class Event {
+class Event (
 
-    @SerializedName("id")
     @Expose
-    var id: Int? = null
+    @SerializedName("id")
+    var id: Int,
     @SerializedName("type")
     @Expose
-    var type: String? = null
+    var type: String,
     @SerializedName("uri")
     @Expose
-    var uri: String? = null
+    var uri: String,
     @SerializedName("displayName")
     @Expose
-    var displayName: String? = null
+    var displayName: String,
     @SerializedName("start")
     @Expose
-    var start: Start? = null
+    var start: Start,
     @SerializedName("end")
     @Expose
-    var end: End? = null
+    var end: End? = null,
     @SerializedName("performance")
     @Expose
-    var performance: List<Performance>? = null
+    var performance: List<Performance?>,
     @SerializedName("location")
     @Expose
-    var location: Location? = null
+    var location: Location,
     @SerializedName("venue")
     @Expose
-    var venue: Venue? = null
+    var venue: Venue,
     @SerializedName("status")
     @Expose
-    var status: String? = null
-    @SerializedName("popularity")
-    @Expose
-    var popularity: Double? = null
+    var status: String,
     @SerializedName("ageRestriction")
     @Expose
     var ageRestriction: String? = null
 
-}
+)

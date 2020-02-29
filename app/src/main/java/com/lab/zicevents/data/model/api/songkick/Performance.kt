@@ -3,22 +3,22 @@ package com.lab.zicevents.data.model.api.songkick
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class Performance {
+class Performance (
 
     @SerializedName("artist")
     @Expose
-    var artist: Artist? = null
+    var artist: Artist,
     @SerializedName("id")
     @Expose
-    var id: Int? = null
+    var id: Int,
     @SerializedName("displayName")
     @Expose
-    var displayName: String? = null
+    var displayName: String,
     @SerializedName("billingIndex")
     @Expose
-    var billingIndex: Int? = null
+    var billingIndex: Int,
     @SerializedName("billing")
     @Expose
-    var billing: String? = null
+    var billing: String
 
-}
+)

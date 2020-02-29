@@ -4,10 +4,10 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 
-class Songkick {
+class Songkick (
 
     @SerializedName("resultsPage")
     @Expose
-    var resultsPage: ResultsPage? = null
+    var resultsPage: ResultsPage
 
-}
+)

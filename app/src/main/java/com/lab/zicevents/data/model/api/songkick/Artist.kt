@@ -4,22 +4,22 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.util.*
 
-class Artist {
+class Artist (
 
     @SerializedName("uri")
     @Expose
-    var uri: String? = null
+    var uri: String,
     @SerializedName("displayName")
     @Expose
-    var displayName: String? = null
+    var displayName: String,
     @SerializedName("id")
     @Expose
-    var id: Int? = null
+    var id: Int,
     @SerializedName("identifier")
     @Expose
-    var identifier: List<Any>? = null
+    var identifier: List<Any?>,
     @SerializedName( "onTourUntil")
     @Expose
     var onTourUntil: Date? = null
 
-}
+)
