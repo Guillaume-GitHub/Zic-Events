@@ -10,14 +10,17 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.lab.zicevents.R
 import com.lab.zicevents.data.api.songkick.SongkickApi
 import com.lab.zicevents.data.model.api.songkick.Event
+import com.lab.zicevents.utils.OnRecyclerItemClickListener
 import kotlinx.android.synthetic.main.event_recycler_item.view.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.*
 import kotlin.collections.ArrayList
 
-class EventRecyclerAdapter(var events: ArrayList<Event>) :
+class EventRecyclerAdapter(
+    var events: ArrayList<Event>,
+    var itemClickCallback: OnRecyclerItemClickListener? = null
+) :
     RecyclerView.Adapter<EventRecyclerAdapter.EventViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
@@ -103,10 +106,15 @@ class EventRecyclerAdapter(var events: ArrayList<Event>) :
             }
 
             // Set click listener
-            view.setOnClickListener {}
+            view.setOnClickListener {
+                itemClickCallback?.onItemClicked(adapterPosition)
+            }
         }
     }
 
+    /**
+     * Change string date to Date object
+     */
     private fun getFormattedDate(date: String?): Date? {
         val pattern = "yyyy-MM-dd"
         val dateFormat = SimpleDateFormat(pattern, Locale.US)

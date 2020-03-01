@@ -135,6 +135,7 @@
 
     <!-- ***** PERMISSIONS ***** -->
     <string name="storage_permission_denied">Vous devez autoriser l\'accès à vos Photos/Vidéo pour utiliser cette fonctionnalité</string>
+    <string name="location_permission_denied">Vous devez autoriser l\'accès à votre Position pour utiliser cette fonctionnalité</string>
 
     <!-- ***** DEVICE LOCATION ***** -->
     <string name="device_position_error">Oups ! Impossible de récupérer votre position</string>
@@ -157,6 +158,9 @@
     <!-- ****** EVENT FRAGMENTS ******* -->
     <string name="artist_search_query_hint">Rechercher un Artiste</string>
     <string name="artist_search_no_result">Aucun resultat pour cette recherche. Essayez avec un autre nom.</string>
+    <string name="event_search_no_result">Aucun Concert ou Festival près de cette position. Essayer avec un autre lieu.</string>
+    <string name="event_request_error">Une erreur est survenue lors de la récupération des données</string>
+    <string name="nearby_position_hint">À Proximité</string>
 
     <!-- ***** LOCAL DATA ***** -->
     <string name="gender_male_value" translatable="false">male</string>

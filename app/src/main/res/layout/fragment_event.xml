@@ -24,10 +24,21 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:layout_gravity="center_horizontal"
-                android:text="Voray sur L' Ognon"
+                tools:text="@string/nearby_position_hint"
                 android:layout_margin="40dp"
                 android:textSize="22sp"
                 android:textColor="@color/colorAccent"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/fragment_event_no_result"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="20dp"
+                android:text="@string/event_search_no_result"
+                android:textColor="@color/shadowColorText"
+                android:textSize="24sp"
+                android:visibility="gone"
+                android:textAlignment="center"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/fragment_event_recyclerView"
