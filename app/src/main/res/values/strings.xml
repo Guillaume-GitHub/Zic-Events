@@ -162,6 +162,12 @@
     <string name="event_request_error">Une erreur est survenue lors de la récupération des données</string>
     <string name="nearby_position_hint">À Proximité</string>
 
+    <!-- ****** DETAIL EVENT FRAGMENT ******* -->
+    <string name="detail_event_fragment_title">Détail de l\' évenement</string>
+    <string name="canceled_event_hint">annulé</string>
+    <string name="artist_hint">Artiste</string>
+    <string name="location_hint">Lieu</string>
+
     <!-- ***** LOCAL DATA ***** -->
     <string name="gender_male_value" translatable="false">male</string>
     <string name="gender_female_value" translatable="false">female</string>
@@ -190,4 +196,7 @@
         <item>RnB</item>
         <item>Dubstep</item>
     </array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -8,7 +8,7 @@ class Venue (
 
     @SerializedName("id")
     @Expose
-    var id: Int,
+    var id: Int? = null,
     @SerializedName("displayName")
     @Expose
     var displayName: String,
@@ -17,7 +17,7 @@ class Venue (
     var uri: String? = null,
     @SerializedName("city")
     @Expose
-    var city: City,
+    var city: City? = null,
     @SerializedName("lng")
     @Expose
     var lng: Double? = null,

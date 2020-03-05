@@ -11,8 +11,6 @@ class SongkickApi {
 
     companion object {
 
-        const val ARTIST_IMAGE_URL ="https://images.sk-static.com/images/media/profile_images/artists/"
-
         private const val BASE_URL = "https://api.songkick.com/api/3.0/"
 
         fun create(): SongkickApiInterface {

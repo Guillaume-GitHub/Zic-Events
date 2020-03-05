@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.lab.zicevents.R
 import com.lab.zicevents.data.api.songkick.SongkickApi
+import com.lab.zicevents.data.api.songkick.SongkickRepository
 import com.lab.zicevents.data.model.api.songkick.Event
 import com.lab.zicevents.utils.OnRecyclerItemClickListener
 import kotlinx.android.synthetic.main.event_recycler_item.view.*
@@ -49,7 +50,7 @@ class EventRecyclerAdapter(
             view.event_recycler_artist_image.apply {
                 if (artist != null)
                     Glide.with(context)
-                        .load("${SongkickApi.ARTIST_IMAGE_URL}${artist.id}/huge_avatar")
+                        .load(SongkickRepository.getArtistImageUrl(artist.id))
                         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                         .into(this)
                 else

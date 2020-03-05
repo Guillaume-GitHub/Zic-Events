@@ -4,6 +4,8 @@ import com.google.type.LatLng
 import com.lab.zicevents.utils.base.BaseRepository
 import retrofit2.Call
 import com.lab.zicevents.data.Result
+import com.lab.zicevents.data.model.api.songkick.DetailsEvent
+import com.lab.zicevents.data.model.api.songkick.Event
 import com.lab.zicevents.data.model.api.songkick.Songkick
 
 class SongkickRepository: BaseRepository() {
@@ -42,6 +44,29 @@ class SongkickRepository: BaseRepository() {
         val formattedLoc = "geo:${location.latitude},${location.longitude}"
         return service.getNearbyEvents(location = formattedLoc, page = index)
     }
+
+
+    /**
+     * Fetch Event details
+     * Wait http request result async
+     * @param eventId event id as int
+     */
+    suspend fun getEventDetails(eventId: Int): Result<Event> {
+        return when (val result = fetchEventDetails(eventId).awaitCall()){
+            is Result.Success -> Result.Success(result.data.page.result.event)
+            is Result.Error -> Result.Error(result.exception)
+            is Result.Canceled -> Result.Canceled(result.exception)
+        }
+    }
+
+    /**
+     * Fetch specific event details
+     * @param eventId event id as int
+     */
+    private fun fetchEventDetails(eventId: Int): Call<DetailsEvent> {
+        return service.getEventDetails(eventId)
+    }
+
 
     //******************************** ARTIST ****************************************
 

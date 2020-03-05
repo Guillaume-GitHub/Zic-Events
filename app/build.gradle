@@ -26,6 +26,7 @@ android {
         // Api key
         buildConfigField("String", 'SONGKICK_KEY', "\"${apikeyProperties['SONGKICK_KEY']}\"")
         buildConfigField("String", 'GEOCODING_KEY', "\"${apikeyProperties['GEOCODING_KEY']}\"")
+        buildConfigField("String", 'GOOGLE_KEY', "\"${apikeyProperties['GOOGLE_KEY']}\"")
     }
     buildTypes {
         release {

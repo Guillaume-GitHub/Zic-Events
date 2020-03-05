@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.event.EventDetailFragment"
+    android:background="@color/colorPrimaryDark">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="15dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/fragment_event_detail_image_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                android:layout_marginBottom="15dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/fragment_event_detail_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:background="@color/colorPrimaryLight"
+                    android:scaleType="centerCrop" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/fragment_event_detail_event_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fragment_event_detail_image_container"
+                android:textSize="28sp"
+                android:layout_marginBottom="15dp"
+                tools:text="Semiotics Departement Of Heteronyms"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/fragment_event_detail_event_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:layout_below="@id/fragment_event_detail_event_name"
+                android:textColor="@color/shadowColorText"
+                tools:text="Jeudi 29 Fev. 2020"/>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/fragment_event_detail_status_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fragment_event_detail_event_date"
+                android:layout_marginBottom="15dp"
+                app:cardCornerRadius="6dp"
+                app:cardBackgroundColor="@android:color/holo_red_dark">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="6dp"
+                    android:textAllCaps="true"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:text="@string/canceled_event_hint"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/fragment_event_detail_artist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:layout_below="@id/fragment_event_detail_status_container"
+                android:text="@string/artist_hint"
+                android:textSize="18sp"
+                android:textColor="@color/colorAccent"/>
+
+            <LinearLayout
+                android:id="@+id/fragment_event_detail_artist_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_below="@id/fragment_event_detail_artist"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/fragment_event_detail_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:layout_below="@+id/fragment_event_detail_artist_list"
+                android:text="@string/location_hint"
+                android:textSize="18sp"
+                android:textColor="@color/colorAccent"/>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/fragment_event_detail_location_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fragment_event_detail_location"
+                app:cardBackgroundColor="@color/colorPrimary"
+                app:cardCornerRadius="6dp">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/fragment_event_detail_location_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="15dp"
+                        tools:text="La Rodia"
+                        android:textSize="16sp"/>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/fragment_event_detail_location_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:scaleType="centerCrop"
+                        android:background="@color/colorPrimaryLight"
+                        android:layout_marginBottom="10dp"/>
+
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.cardview.widget.CardView>
+
+        </RelativeLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</FrameLayout>

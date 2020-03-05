@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,25 +14,29 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.type.LatLng
 
 import com.lab.zicevents.R
+import com.lab.zicevents.data.api.songkick.SongkickRepository
+import com.lab.zicevents.data.geolocation.FusedLocationRepository
 import com.lab.zicevents.data.model.api.songkick.Event
 import com.lab.zicevents.utils.OnRecyclerItemClickListener
 import com.lab.zicevents.utils.OnRequestPermissionsListener
 import com.lab.zicevents.utils.PermissionHelper
 import com.lab.zicevents.utils.adapter.EventRecyclerAdapter
-import kotlinx.android.synthetic.main.event_recycler_item.*
 import kotlinx.android.synthetic.main.fragment_event.*
 
-class EventFragment : Fragment(), OnRecyclerItemClickListener {
+class EventFragment : Fragment(), OnRecyclerItemClickListener, OnRequestPermissionsListener {
 
+    private var firstInit = false
     private lateinit var eventViewModel: EventViewModel
     private lateinit var eventsRecycler: RecyclerView
     private lateinit var eventsAdapter: EventRecyclerAdapter
     private var eventsResults = ArrayList<Event>()
+    private var locationText: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         initViewModel()
+        firstInit = true
     }
 
     override fun onCreateView(
@@ -46,12 +51,16 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener {
         super.onViewCreated(view, savedInstanceState)
         configureRecyclerView()
         observeEventsResult()
-        observePositionResult()
-        getGeolocationPermissions()
+
+        if (firstInit) {
+            getLastKnowLocation()
+            firstInit = false
+        } else
+            updatePlaceText(locationText)
 
         fragment_event_swipeRefresh.setOnRefreshListener {
             // get last know position and fetch events
-            eventViewModel.getLastKnowPosition(context)
+            getLastKnowLocation()
         }
 
         // Observe dataset result and show message when empty
@@ -60,7 +69,7 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener {
                 if (eventsAdapter.events.isEmpty()) {
                     fragment_event_recyclerView.visibility = View.GONE
                     fragment_event_no_result.visibility = View.VISIBLE
-                }else{
+                } else {
                     fragment_event_recyclerView.visibility = View.VISIBLE
                     fragment_event_no_result.visibility = View.GONE
                 }
@@ -72,36 +81,23 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener {
      * Initialize viewModel
      */
     private fun initViewModel() {
-        this.eventViewModel = ViewModelProviders.of(this, EventViewModelFactory())
+        this.eventViewModel = ViewModelProviders.of(activity!!, EventViewModelFactory())
             .get(EventViewModel::class.java)
     }
 
-    private fun getGeolocationPermissions() {
+    private fun getLastKnowLocation() {
         val permsResult =
             PermissionHelper().checkPermissions(context!!, PermissionHelper.LOCATION_PERMISSIONS)
         // Ask permission to user if permission denied
         if (permsResult.isNullOrEmpty()) {
+            observePositionOnce()
             eventViewModel.getLastKnowPosition(context) // get Last know device position
-        }
-        else { // ASk permissions to user
+        } else { // ASk permissions to user
             val activity = activity
-            PermissionHelper().askRequestPermissions(activity,
-                PermissionHelper.LOCATION_PERMISSIONS,
-                object : OnRequestPermissionsListener {
-                    override fun onRequestPermissions(
-                        isGranted: Boolean,
-                        grantResult: Map<String, Int>
-                    ) {
-                        if (isGranted)  // Start image picker gallery
-                            eventViewModel.getLastKnowPosition(context) // get Last know device position
-                        else
-                            Toast.makeText(
-                                context,
-                                getString(R.string.location_permission_denied),
-                                Toast.LENGTH_LONG
-                            ).show()
-                    }
-                })
+            PermissionHelper().askRequestPermissions(
+                activity,
+                PermissionHelper.LOCATION_PERMISSIONS, this
+            )
         }
     }
 
@@ -148,7 +144,7 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener {
      * show progress bar
      * @param position LatLng object with latitude and longitude
      */
-    private fun fetchEvents(position: LatLng){
+    private fun fetchEvents(position: LatLng) {
         fragment_event_progress.visibility = View.VISIBLE
         eventViewModel.searchNearbyEvent(position)
     }
@@ -156,7 +152,6 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener {
     /**
      * Observe event result async and update adapter with result
      */
-    //Todo : no result view
     @Suppress("UNCHECKED_CAST")
     private fun observeEventsResult() {
         eventViewModel.observeEventsResult().observe(viewLifecycleOwner, Observer {
@@ -171,11 +166,15 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener {
                         Log.e(this::class.java.simpleName, "", castError)
                     }
                 }
-                it.error != null -> Toast.makeText(
-                    context,
-                    getText(it.error),
-                    Toast.LENGTH_LONG
-                ).show()
+                it.error != null -> {
+                    Toast.makeText(
+                        context,
+                        getText(it.error),
+                        Toast.LENGTH_LONG
+                    ).show()
+                    eventsResults.clear()
+                    eventsAdapter.notifyDataSetChanged()
+                }
             }
         })
     }
@@ -184,15 +183,17 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener {
      * Observe Device position result then fetch event around this position
      * or display error message
      */
-    private fun observePositionResult() {
-        eventViewModel.observePositionResult().observe(viewLifecycleOwner, Observer {
+    private fun observePositionOnce() {//
+        eventViewModel.position.observe(viewLifecycleOwner, Observer {
+            eventViewModel.position.removeObservers(viewLifecycleOwner) // remove observer
             when {
                 it.data is LatLng -> {
                     if (fragment_event_swipeRefresh.isRefreshing)
                         fragment_event_swipeRefresh.isRefreshing = false
 
                     updatePlaceText(getString(R.string.nearby_position_hint))
-                    fetchEvents(it.data)
+                    locationText = getString(R.string.nearby_position_hint)
+                    fetchEvents(it.data) // Fetch nearby events
                 }
                 it.data is LatLng? -> displayErrorMessage(R.string.device_position_error)
                 it.error is Int -> displayErrorMessage(it.error)
@@ -203,24 +204,36 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener {
     /**
      * On item click, show event details fragment
      */
-    //Todo: Event details destination
     override fun onItemClicked(position: Int) {
-        Toast.makeText(
-            context,
-            eventsAdapter.events[position].displayName,
-            Toast.LENGTH_LONG
-        ).show()
+        val event = eventsAdapter.events[position]
+        eventViewModel.select(event)
+        val action = EventFragmentDirections.fromEventToEventDetail(event.id)
+        findNavController().navigate(action)
     }
 
     /**
      * Show Toast message
      * @param message message from in string.xml
      */
-    private fun displayErrorMessage(message: Int){
+    private fun displayErrorMessage(message: Int) {
         Toast.makeText(
             context,
             getText(message),
             Toast.LENGTH_LONG
         ).show()
+    }
+
+    /**
+     * Get request permission result
+     */
+    override fun onRequestPermissions(isGranted: Boolean, grantResult: Map<String, Int>) {
+        if (isGranted)
+            getLastKnowLocation()
+        else
+            Toast.makeText(
+                context,
+                getString(R.string.location_permission_denied),
+                Toast.LENGTH_LONG
+            ).show()
     }
 }

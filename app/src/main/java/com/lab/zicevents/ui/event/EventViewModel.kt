@@ -2,7 +2,6 @@ package com.lab.zicevents.ui.event
 
 import android.content.Context
 import android.location.Location
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,8 +14,11 @@ import com.lab.zicevents.data.model.api.songkick.Event
 import com.lab.zicevents.data.model.local.DataResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class EventViewModel(
     private val songkickRepo: SongkickRepository,
@@ -29,14 +31,22 @@ class EventViewModel(
         return events
     }
 
-    private val position = MutableLiveData<DataResult>()
+    private val selected = MutableLiveData<Event>()
 
-    fun observePositionResult(): LiveData<DataResult> {
-        return position
+    fun select(event: Event) {
+        selected.value = event
     }
 
+    fun getSelectedItem(): LiveData<Event?>{
+        return selected
+    }
+
+    private val _position = MutableLiveData<DataResult>()
+    var position: LiveData<DataResult> =_position
+
+
     /**
-     * Request api event to fetch all event nearby position async
+     * Request api event to fetch all event nearby _position async
      * wait result and return DataResult object with ArrayList of Event object
      * (list must be empty) or error as int string
      * @param position LatLng object with latitude and longitude value
@@ -57,7 +67,7 @@ class EventViewModel(
     }
 
     /**
-     * Request Last know device position async
+     * Request Last know device _position async
      * wait result and return DataResult object with Location? object
      * or error as int string
      * @param context context
@@ -66,15 +76,16 @@ class EventViewModel(
         GlobalScope.launch(Dispatchers.Main) {
             when (val positionResult = locationRepo.getLastKnowLocation(context)) {
                 is Result.Success ->
-                    position.value = DataResult(data = transformLocationToLatlng(positionResult.data))
+                    _position.value = DataResult(data = transformLocationToLatlng(positionResult.data))
                 is Result.Error ->
-                    position.value = DataResult(error = R.string.event_request_error)
+                    _position.value = DataResult(error = R.string.event_request_error)
                 is Result.Canceled ->
-                    position.value = DataResult(error = R.string.operation_canceled)
+                    _position.value = DataResult(error = R.string.operation_canceled)
             }
         }
     }
 
+    
     /**
      * Transform a Location Object to LatLng object (nullable)
      * @return LatLng (nullable)
@@ -88,6 +99,20 @@ class EventViewModel(
             }
             latLng.build()
         } else
+            null
+    }
+
+
+    /**
+     * Change string date to Date object
+     */
+    fun getFormattedDate(date: String?): Date? {
+        val pattern = "yyyy-MM-dd"
+        val dateFormat = SimpleDateFormat(pattern, Locale.US)
+
+        return if (date != null)
+            dateFormat.parse(date)
+        else
             null
     }
 }

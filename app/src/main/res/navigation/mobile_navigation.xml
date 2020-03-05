@@ -34,6 +34,15 @@
             app:launchSingleTop="true"
             app:popEnterAnim="@anim/fragment_close_enter"
             app:popExitAnim="@anim/fragment_close_exit" />
+        <action
+            android:id="@+id/from_event_to_event_detail"
+            app:destination="@id/event_detail_fragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit"
+            app:popUpTo="@+id/bottom_navigation_event" />
     </fragment>
 
     <fragment
@@ -148,6 +157,16 @@
     <dialog
         android:id="@+id/search_dialog"
         android:name="com.lab.zicevents.ui.event.ArtistSearchFragment"
-        />
+        tools:layout="@layout/fragment_artist_search" />
+
+    <fragment
+        android:id="@+id/event_detail_fragment"
+        android:name="com.lab.zicevents.ui.event.EventDetailFragment"
+        android:label="@string/detail_event_fragment_title"
+        tools:layout="@layout/fragment_event_detail" >
+        <argument
+            android:name="eventId"
+            app:argType="integer" />
+    </fragment>
 
 </navigation>
