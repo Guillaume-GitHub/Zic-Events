@@ -13,13 +13,14 @@ interface SongkickApiInterface {
     companion object {
 
         private const val SEARCH_EVENT_ENDPOINT = "events"
+        private const val ARTIST_ENDPOINT = "artists"
         private const val SEARCH_ARTIST_ENDPOINT = "search/artists"
         private const val OUTPUT_FORMAT = "json"
         private const val KEY = BuildConfig.SONGKICK_KEY
     }
 
     /**
-     * Search for upcoming events by location.
+     * Search for upcoming artistEvents by location.
      */
     @GET("$SEARCH_EVENT_ENDPOINT.$OUTPUT_FORMAT?apikey=$KEY")
     fun getNearbyEvents(@Query("location") location: String,
@@ -28,6 +29,7 @@ interface SongkickApiInterface {
     @GET("$SEARCH_EVENT_ENDPOINT/{eventId}.$OUTPUT_FORMAT?apikey=$KEY")
     fun getEventDetails(@Path("eventId") eventId: Int): Call<DetailsEvent>
 
-    @GET("$SEARCH_ARTIST_ENDPOINT.$OUTPUT_FORMAT?apikey=$KEY")
-    fun getArtistByName(@Query("query") artistName: String): Call<Songkick>
+    @GET("$ARTIST_ENDPOINT/{artist_id}/calendar.$OUTPUT_FORMAT?apikey=$KEY")
+    fun getArtistCalendar(@Path("artist_id") artistId: Int,
+                          @Query("page") page: Int): Call<Songkick>
 }

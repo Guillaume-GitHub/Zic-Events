@@ -59,7 +59,7 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener, OnRequestPermissi
             updatePlaceText(locationText)
 
         fragment_event_swipeRefresh.setOnRefreshListener {
-            // get last know position and fetch events
+            // get last know position and fetch artistEvents
             getLastKnowLocation()
         }
 
@@ -140,7 +140,7 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener, OnRequestPermissi
     }
 
     /**
-     * Fetch Nearby events async
+     * Fetch Nearby artistEvents async
      * show progress bar
      * @param position LatLng object with latitude and longitude
      */
@@ -193,7 +193,7 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener, OnRequestPermissi
 
                     updatePlaceText(getString(R.string.nearby_position_hint))
                     locationText = getString(R.string.nearby_position_hint)
-                    fetchEvents(it.data) // Fetch nearby events
+                    fetchEvents(it.data) // Fetch nearby artistEvents
                 }
                 it.data is LatLng? -> displayErrorMessage(R.string.device_position_error)
                 it.error is Int -> displayErrorMessage(it.error)

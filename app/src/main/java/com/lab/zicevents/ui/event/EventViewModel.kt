@@ -10,6 +10,7 @@ import com.lab.zicevents.R
 import com.lab.zicevents.data.Result
 import com.lab.zicevents.data.api.songkick.SongkickRepository
 import com.lab.zicevents.data.geolocation.FusedLocationRepository
+import com.lab.zicevents.data.model.api.songkick.Artist
 import com.lab.zicevents.data.model.api.songkick.Event
 import com.lab.zicevents.data.model.api.songkick.Venue
 import com.lab.zicevents.data.model.local.DataResult
@@ -26,12 +27,21 @@ class EventViewModel(
     private val locationRepo: FusedLocationRepository
 ) : ViewModel() {
 
+    // General Events
     private val events = MutableLiveData<DataResult>()
 
     fun observeEventsResult(): LiveData<DataResult> {
         return events
     }
 
+    // Artist Events
+    private val artistEvents = MutableLiveData<DataResult>()
+
+    fun artistEvents(): LiveData<DataResult> {
+        return artistEvents
+    }
+
+    // Selected event data
     private val selected = MutableLiveData<Event>()
 
     fun select(event: Event) {
@@ -42,6 +52,18 @@ class EventViewModel(
         return selected
     }
 
+    // Selected artist data
+    private val artist = MutableLiveData<Artist>()
+
+    fun selectArtist(artist: Artist) {
+        this.artist.value = artist
+    }
+
+    fun getSelectedArtist(): LiveData<Artist?> {
+        return artist
+    }
+
+    // Device position Data
     private val _position = MutableLiveData<DataResult>()
     var position: LiveData<DataResult> = _position
 
@@ -86,6 +108,27 @@ class EventViewModel(
             }
         }
     }
+
+    /**
+     * Request api event to fetch artist's upcoming artistEvents
+     * @param artistId Id of artist
+     * @param page Index of page result (1 by default)
+     */
+    fun getArtistEvent(artistId: Int, page: Int? = null) {
+        GlobalScope.launch(Dispatchers.Main) {
+            when (val result = songkickRepo.getArtistCalendar(artistId, page)) {
+                is Result.Success -> {
+                    val eventList = result.data.resultsPage.results?.events
+                    if (eventList != null) artistEvents.value = DataResult(data = eventList)
+                    else artistEvents.value = DataResult(data = ArrayList<Event>())
+                }
+                is Result.Error -> DataResult(error = R.string.event_request_error)
+                is Result.Canceled -> DataResult(error = R.string.operation_canceled)
+            }
+        }
+    }
+
+
 
     /**
      * Transform a Location Object to LatLng object (nullable)

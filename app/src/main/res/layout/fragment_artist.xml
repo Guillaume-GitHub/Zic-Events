@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    tools:context=".ui.event.EventDetailFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="15dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/fragment_artist_image_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="25dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/fragment_artist_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:background="@color/colorPrimaryLight"
+                    android:scaleType="centerCrop" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/fragment_artist_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fragment_artist_image_container"
+                android:layout_marginBottom="15dp"
+                android:textSize="28sp"
+                tools:text="Semiotics Departement Of Heteronyms" />
+
+            <View
+                android:id="@+id/viewwwww"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorPrimaryLight"
+                android:layout_below="@id/fragment_artist_name"
+                android:layout_marginBottom="25dp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/fragment_artist_onTour"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/viewwwww"
+                android:layout_marginBottom="15dp"
+                android:textSize="20sp"
+                android:text="@string/artist_fragment_upcoming_event_hint"
+                android:textStyle="bold"
+                android:textColor="@color/colorAccent"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/fragment_artist_recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/fragment_artist_onTour"
+                android:layout_marginTop="15dp"
+                tools:itemCount="2"
+                tools:listitem="@layout/simple_event_item" />
+
+            <ProgressBar
+                android:id="@+id/fragment_artist_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fragment_artist_onTour"
+                android:layout_centerHorizontal="true"
+                android:indeterminate="true"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/fragment_artist_no_result"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/fragment_artist_onTour"
+                android:layout_marginBottom="15dp"
+                android:textSize="18sp"
+                android:textColor="@color/shadowColorText"
+                android:text="@string/artist_fragment_no_result"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</FrameLayout>

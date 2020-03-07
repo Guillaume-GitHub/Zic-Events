@@ -71,12 +71,13 @@ class SongkickRepository: BaseRepository() {
     //******************************** ARTIST ****************************************
 
     /**
-     * Fetch Artist corresponding to user query
+     * Fetch Artist's upcoming artistEvents
      * Wait http request result async
-     * @param artistName Artist name corresponding to user query
+     * @param artistId Artist id
+     * @param page index of page result (1 by default)
      */
-    suspend fun searchArtistByName(artistName: String): Result<Songkick> {
-        return when (val result = getArtistByName(artistName).awaitCall()){
+    suspend fun getArtistCalendar(artistId: Int, page: Int? = null): Result<Songkick> {
+        return when (val result = fetchArtistEvent(artistId, page).awaitCall()){
             is Result.Success -> Result.Success(result.data)
             is Result.Error -> Result.Error(result.exception)
             is Result.Canceled -> Result.Canceled(result.exception)
@@ -86,8 +87,10 @@ class SongkickRepository: BaseRepository() {
     /**
      * Fetch Artist corresponding to query
      * @param artistName artist name query
+     * @param page page result index (default is 1)
      */
-    private fun getArtistByName(artistName: String): Call<Songkick> {
-        return service.getArtistByName(artistName)
+    private fun fetchArtistEvent(artistName: Int, page: Int?): Call<Songkick> {
+        val index = page ?: 1
+        return service.getArtistCalendar(artistName, index)
     }
 }

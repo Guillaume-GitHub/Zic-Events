@@ -167,6 +167,20 @@
         <argument
             android:name="eventId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_event_detail_fragment_to_artist_fragment"
+            app:destination="@id/artist_fragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit"
+            app:popUpTo="@+id/event_detail_fragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/artist_fragment"
+        android:name="com.lab.zicevents.ui.event.ArtistFragment"
+        android:label="ArtistFragment"
+        tools:layout="@layout/fragment_artist"/>
 
 </navigation>

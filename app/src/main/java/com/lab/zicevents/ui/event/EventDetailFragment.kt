@@ -25,6 +25,7 @@ import kotlinx.android.synthetic.main.simple_list_artist_item.view.*
 import java.text.DateFormat
 import android.content.Intent
 import android.net.Uri
+import androidx.navigation.fragment.findNavController
 
 
 //TODO:
@@ -173,7 +174,8 @@ class EventDetailFragment : Fragment() {
         )
         view.simple_list_artist_item_name.text = artist.displayName
         view.setOnClickListener {
-            Toast.makeText(context, artist.displayName, Toast.LENGTH_SHORT).show()
+            eventViewModel.selectArtist(artist)
+            findNavController().navigate(R.id.artist_fragment)
         }
         return view
     }
