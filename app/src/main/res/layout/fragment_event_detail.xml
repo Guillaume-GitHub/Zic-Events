@@ -126,6 +126,16 @@
                         android:background="@color/colorPrimaryLight"
                         android:layout_marginBottom="10dp"/>
 
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/fragment_event_detail_location_route"
+                        android:layout_width="wrap_content"
+                        android:layout_height="45dp"
+                        android:text="@string/route_hint"
+                        app:backgroundTint="@color/colorPrimaryLight"
+                        android:layout_gravity="center"
+                        app:cornerRadius="8dp"
+                        android:paddingStart="50dp"
+                        android:paddingEnd="50dp"/>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 

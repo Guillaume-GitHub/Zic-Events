@@ -117,33 +117,32 @@ class EventDetailFragment : Fragment() {
      * @param venue venue object containing venue's informations
      */
     private fun bindVenue(venue: Venue) {
-        when {
-            venue.lat != null && venue.lng != null -> {
-                fragment_event_detail_location_title.text = venue.displayName
 
-                val view = fragment_event_detail_location_image
-                val url = StaticMap.getUrlStaticMap(
-                    venue.lng!!,
-                    venue.lat!!,
-                    true,
-                    15,
-                    resources.displayMetrics.widthPixels,
-                    view.layoutParams.height
-                )
+        if (venue.lng != null && venue.lat != null) {
+            fragment_event_detail_location_title.text = venue.displayName
 
-                loadImage(fragment_event_detail_location_image, url)
+            val view = fragment_event_detail_location_image
+            val url = StaticMap.getUrlStaticMap(
+                venue.lng!!,
+                venue.lat!!,
+                true,
+                15,
+                resources.displayMetrics.widthPixels,
+                view.layoutParams.height
+            )
+            // Load image
+            loadImage(fragment_event_detail_location_image, url)
 
-                // Start google maps with position
-                fragment_event_detail_location_container.setOnClickListener {
-                    val uri = Uri.parse("geo:${venue.lat},${venue.lng}")
-                    val intent = Intent(Intent.ACTION_VIEW, uri)
-                    startActivity(intent)
-                }
+            // Start google maps with route to event destination
+            fragment_event_detail_location_route.setOnClickListener {
+                val uri = Uri.parse("geo:${venue.lat},${venue.lng}?q=${venue.lat},${venue.lng}")
+                val intent = Intent(Intent.ACTION_VIEW, uri)
+                startActivity(intent)
             }
-            else -> {
-                fragment_event_detail_location.visibility = View.GONE
-                fragment_event_detail_location_container.visibility = View.GONE
-            }
+
+        } else {
+            fragment_event_detail_location.visibility = View.GONE
+            fragment_event_detail_location_container.visibility = View.GONE
         }
     }
 

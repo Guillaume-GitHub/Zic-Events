@@ -167,6 +167,7 @@
     <string name="canceled_event_hint">annulé</string>
     <string name="artist_hint">Artiste</string>
     <string name="location_hint">Lieu</string>
+    <string name="route_hint">Itinéraire</string>
 
     <!-- ***** LOCAL DATA ***** -->
     <string name="gender_male_value" translatable="false">male</string>

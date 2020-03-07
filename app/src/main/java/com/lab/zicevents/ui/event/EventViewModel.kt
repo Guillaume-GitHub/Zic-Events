@@ -11,6 +11,7 @@ import com.lab.zicevents.data.Result
 import com.lab.zicevents.data.api.songkick.SongkickRepository
 import com.lab.zicevents.data.geolocation.FusedLocationRepository
 import com.lab.zicevents.data.model.api.songkick.Event
+import com.lab.zicevents.data.model.api.songkick.Venue
 import com.lab.zicevents.data.model.local.DataResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -37,12 +38,12 @@ class EventViewModel(
         selected.value = event
     }
 
-    fun getSelectedItem(): LiveData<Event?>{
+    fun getSelectedItem(): LiveData<Event?> {
         return selected
     }
 
     private val _position = MutableLiveData<DataResult>()
-    var position: LiveData<DataResult> =_position
+    var position: LiveData<DataResult> = _position
 
 
     /**
@@ -76,7 +77,8 @@ class EventViewModel(
         GlobalScope.launch(Dispatchers.Main) {
             when (val positionResult = locationRepo.getLastKnowLocation(context)) {
                 is Result.Success ->
-                    _position.value = DataResult(data = transformLocationToLatlng(positionResult.data))
+                    _position.value =
+                        DataResult(data = transformLocationToLatlng(positionResult.data))
                 is Result.Error ->
                     _position.value = DataResult(error = R.string.event_request_error)
                 is Result.Canceled ->
@@ -85,7 +87,6 @@ class EventViewModel(
         }
     }
 
-    
     /**
      * Transform a Location Object to LatLng object (nullable)
      * @return LatLng (nullable)
