@@ -98,13 +98,17 @@ class ArtistFragment : Fragment(), OnRecyclerItemClickListener {
     private fun configureRecyclerView() {
         recyclerView = fragment_artist_recyclerView
         recyclerView.layoutManager = LinearLayoutManager(context)
-        eventsAdapter = SimpleEventRecyclerAdapter(eventsResults)
+        eventsAdapter = SimpleEventRecyclerAdapter(eventsResults, this)
         recyclerView.adapter = eventsAdapter
     }
 
+    /**
+     * Show Event details  fragment when item clicked
+     */
     override fun onItemClicked(position: Int) {
-        Toast.makeText(context, eventsAdapter.artistEvents[position].displayName, Toast.LENGTH_SHORT)
-            .show()
+        val event = eventsAdapter.artistEvents[position]
+        eventViewModel.select(event)
+        findNavController().navigate(ArtistFragmentDirections.fromArtistToEvent(event.id))
     }
 
     /**

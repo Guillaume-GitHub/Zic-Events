@@ -172,6 +172,7 @@
             app:destination="@id/artist_fragment"
             app:enterAnim="@anim/fragment_open_enter"
             app:exitAnim="@anim/fragment_open_exit"
+            app:launchSingleTop="true"
             app:popEnterAnim="@anim/fragment_close_enter"
             app:popExitAnim="@anim/fragment_close_exit"
             app:popUpTo="@+id/event_detail_fragment" />
@@ -181,6 +182,16 @@
         android:id="@+id/artist_fragment"
         android:name="com.lab.zicevents.ui.event.ArtistFragment"
         android:label="ArtistFragment"
-        tools:layout="@layout/fragment_artist"/>
+        tools:layout="@layout/fragment_artist">
+        <action
+            android:id="@+id/from_artist_to_event"
+            app:destination="@id/event_detail_fragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit"
+            app:popUpTo="@+id/artist_fragment" />
+    </fragment>
 
 </navigation>
