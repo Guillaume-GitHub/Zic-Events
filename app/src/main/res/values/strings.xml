@@ -173,6 +173,7 @@
     <string name="artist_fragment_upcoming_event_hint">Evénements à venir</string>
     <string name="artist_fragment_null_artist">Impossible d\'afficher les informations de cet Artiste</string>
     <string name="artist_fragment_no_result">Aucune date n\'est encore programmée pour cet Artiste.</string>
+    <string name="artist_request_error">Une erreur est survenue lors de la récupération des données</string>
 
     <!-- ***** LOCAL DATA ***** -->
     <string name="gender_male_value" translatable="false">male</string>

@@ -93,4 +93,19 @@ class SongkickRepository: BaseRepository() {
         val index = page ?: 1
         return service.getArtistCalendar(artistName, index)
     }
+
+
+    /**
+     * Search artist by name
+     * Wait http request result async
+     * @param query user query
+     * @param perPage number of result to return (MAX 50)
+     */
+    suspend fun getArtistByName(query: String, perPage: Int): Result<Songkick> {
+        return when (val result = service.getArtistByName(query, perPage).awaitCall()){
+            is Result.Success -> Result.Success(result.data)
+            is Result.Error -> Result.Error(result.exception)
+            is Result.Canceled -> Result.Canceled(result.exception)
+        }
+    }
 }

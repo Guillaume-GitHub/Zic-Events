@@ -41,6 +41,13 @@ class EventViewModel(
         return artistEvents
     }
 
+    // Artist Events
+    private val artists = MutableLiveData<DataResult>()
+
+    fun artists(): LiveData<DataResult> {
+        return artists
+    }
+
     // Selected event data
     private val selected = MutableLiveData<Event>()
 
@@ -128,7 +135,24 @@ class EventViewModel(
         }
     }
 
-
+    /**
+     * Search artists by user
+     * @param query user query text
+     * @param perPage nb result to return
+     */
+    fun getArtistByName(query: String, perPage: Int) {
+        GlobalScope.launch(Dispatchers.Main) {
+            when (val result = songkickRepo.getArtistByName(query, perPage)) {
+                is Result.Success -> {
+                    val artistList = result.data.resultsPage.results?.artist
+                    if (artistList != null) artists.value = DataResult(data = artistList)
+                    else artists.value = DataResult(data = ArrayList<Event>())
+                }
+                is Result.Error -> DataResult(error = R.string.artist_request_error)
+                is Result.Canceled -> DataResult(error = R.string.operation_canceled)
+            }
+        }
+    }
 
     /**
      * Transform a Location Object to LatLng object (nullable)

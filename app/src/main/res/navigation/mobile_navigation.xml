@@ -28,7 +28,7 @@
         tools:layout="@layout/fragment_event" >
         <action
             android:id="@+id/event_fragment_to_search_dialog"
-            app:destination="@id/search_dialog"
+            app:destination="@id/artist_search_fragment"
             app:enterAnim="@anim/fragment_open_enter"
             app:exitAnim="@anim/fragment_open_exit"
             app:launchSingleTop="true"
@@ -155,7 +155,7 @@
     </fragment>
 
     <dialog
-        android:id="@+id/search_dialog"
+        android:id="@+id/artist_search_fragment"
         android:name="com.lab.zicevents.ui.event.ArtistSearchFragment"
         tools:layout="@layout/fragment_artist_search" />
 

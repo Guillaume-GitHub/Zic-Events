@@ -2,12 +2,13 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+    android:id="@+id/simple_list_artist_item_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardElevation="5dp"
+    android:orientation="vertical"
+    app:cardBackgroundColor="@color/colorPrimary"
     app:cardCornerRadius="8dp"
-    app:cardBackgroundColor="@color/colorPrimary">
+    app:cardElevation="5dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -19,9 +20,9 @@
             android:id="@+id/card"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:cardCornerRadius="250dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:cardCornerRadius="250dp">
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/simple_list_artist_item_image"
@@ -50,9 +51,9 @@
                 android:paddingTop="5dp"
                 android:paddingEnd="15dp"
                 android:paddingBottom="5dp"
-                tools:text="Shaka Ponk"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                android:textSize="16sp" />
+                tools:text="Shaka Ponk" />
         </RelativeLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

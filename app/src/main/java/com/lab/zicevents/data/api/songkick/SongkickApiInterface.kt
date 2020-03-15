@@ -32,4 +32,8 @@ interface SongkickApiInterface {
     @GET("$ARTIST_ENDPOINT/{artist_id}/calendar.$OUTPUT_FORMAT?apikey=$KEY")
     fun getArtistCalendar(@Path("artist_id") artistId: Int,
                           @Query("page") page: Int): Call<Songkick>
+
+    @GET("$SEARCH_ARTIST_ENDPOINT.$OUTPUT_FORMAT?apikey=$KEY")
+    fun getArtistByName(@Query("query") query: String,
+                        @Query("per_page") per_page: Int): Call<Songkick>
 }
