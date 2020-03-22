@@ -1,5 +1,6 @@
 package com.lab.zicevents.ui.publication
 
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.google.firebase.auth.FirebaseAuth
 
 import com.lab.zicevents.R
 import com.lab.zicevents.activity.SharedViewModel
@@ -166,9 +168,6 @@ class DetailsUserFragment : Fragment() {
                         getString(publicationsResult.error),
                         Toast.LENGTH_LONG
                     ).show()
-
-                else -> {
-                }
             }
         })
     }
@@ -231,9 +230,10 @@ class DetailsUserFragment : Fragment() {
         // Set follow Button
         sharedViewModel.getAuthUser()?.let {
             val follow = publicationViewModel.isAlreadyFollow(userId, it)
-            follow?.let { isFollowed ->
-                setUserFollowButton(isFollowed)
-            }
+            if (follow != null)
+                setUserFollowButton(true)
+            else
+                user_details_follow_btn.visibility = View.GONE
         }
         // Set current user
         this.user = user
