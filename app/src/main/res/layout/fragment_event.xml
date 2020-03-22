@@ -6,42 +6,48 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/fragment_event_location"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="40dp"
-            android:gravity="center"
-            android:maxLines="1"
-            android:textColor="@color/colorAccent"
-            android:textSize="22sp"
-            tools:text="@string/nearby_position_hint" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/fragment_event_no_result"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="20dp"
-            android:text="@string/event_search_no_result"
-            android:textAlignment="center"
-            android:textColor="@color/shadowColorText"
-            android:textSize="24sp"
-            android:visibility="gone" />
+            android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/fragment_event_recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:itemCount="6"
-            tools:listitem="@layout/event_recycler_item" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/fragment_event_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="40dp"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textColor="@color/colorAccent"
+                android:textSize="22sp"
+                tools:text="@string/nearby_position_hint" />
 
-    </LinearLayout>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/fragment_event_no_result"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="20dp"
+                android:text="@string/event_search_no_result"
+                android:textAlignment="center"
+                android:textColor="@color/shadowColorText"
+                android:textSize="24sp"
+                android:visibility="gone" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/fragment_event_recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:itemCount="6"
+                tools:listitem="@layout/event_recycler_item" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
     <ProgressBar
         android:id="@+id/fragment_event_progress"
