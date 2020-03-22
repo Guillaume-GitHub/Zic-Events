@@ -45,7 +45,6 @@ class MainActivity : BaseActivity() {
                 R.id.bottom_navigation_event,
                 R.id.bottom_navigation_search,
                 R.id.bottom_navigation_publication,
-                R.id.bottom_navigation_chat,
                 R.id.bottom_navigation_profile
             )
         )

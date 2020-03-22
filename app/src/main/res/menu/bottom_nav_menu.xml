@@ -17,11 +17,6 @@
         android:title="@string/title_publication" />
 
     <item
-        android:id="@+id/bottom_navigation_chat"
-        android:icon="@drawable/ic_mail_black_24px"
-        android:title="@string/title_chat" />
-
-    <item
         android:id="@+id/bottom_navigation_profile"
         android:icon="@drawable/ic_account_24px"
         android:title="@string/title_account" />
