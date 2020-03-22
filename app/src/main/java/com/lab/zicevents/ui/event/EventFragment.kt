@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,26 +13,27 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.type.LatLng
 
 import com.lab.zicevents.R
-import com.lab.zicevents.data.api.songkick.SongkickRepository
-import com.lab.zicevents.data.geolocation.FusedLocationRepository
+import com.lab.zicevents.activity.MainActivity
 import com.lab.zicevents.data.model.api.songkick.Event
+import com.lab.zicevents.data.model.local.SearchLocation
+import com.lab.zicevents.utils.OnActivityFabClickListener
 import com.lab.zicevents.utils.OnRecyclerItemClickListener
 import com.lab.zicevents.utils.OnRequestPermissionsListener
 import com.lab.zicevents.utils.PermissionHelper
 import com.lab.zicevents.utils.adapter.EventRecyclerAdapter
 import kotlinx.android.synthetic.main.fragment_event.*
 
-class EventFragment : Fragment(), OnRecyclerItemClickListener, OnRequestPermissionsListener {
+class EventFragment : Fragment(), OnRecyclerItemClickListener, OnRequestPermissionsListener , OnActivityFabClickListener{
 
     private var firstInit = false
     private lateinit var eventViewModel: EventViewModel
     private lateinit var eventsRecycler: RecyclerView
     private lateinit var eventsAdapter: EventRecyclerAdapter
     private var eventsResults = ArrayList<Event>()
-    private var locationText: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        (activity as? MainActivity)?.registerFabClickCallback(this)
         setHasOptionsMenu(true)
         initViewModel()
         firstInit = true
@@ -51,16 +51,11 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener, OnRequestPermissi
         super.onViewCreated(view, savedInstanceState)
         configureRecyclerView()
         observeEventsResult()
+        observeSearchLocation()
 
         if (firstInit) {
             getLastKnowLocation()
             firstInit = false
-        } else
-            updatePlaceText(locationText)
-
-        fragment_event_swipeRefresh.setOnRefreshListener {
-            // get last know position and fetch artistEvents
-            getLastKnowLocation()
         }
 
         // Observe dataset result and show message when empty
@@ -102,7 +97,7 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener, OnRequestPermissi
     }
 
     /**
-     * Update Update UI
+     * Update UI
      */
     private fun updatePlaceText(location: String?) {
         fragment_event_location.apply {
@@ -124,7 +119,6 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener, OnRequestPermissi
         eventsRecycler.layoutManager = LinearLayoutManager(context)
         eventsAdapter = EventRecyclerAdapter(eventsResults, this)
         eventsRecycler.adapter = eventsAdapter
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -133,8 +127,11 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener, OnRequestPermissi
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_search) {
-            findNavController().navigate(EventFragmentDirections.eventFragmentToSearchDialog())
+        when(item.itemId){
+            R.id.action_search ->
+                findNavController().navigate(EventFragmentDirections.eventFragmentToSearchDialog())
+            R.id.action_myPosition ->
+                getLastKnowLocation()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -142,9 +139,9 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener, OnRequestPermissi
     /**
      * Fetch Nearby artistEvents async
      * show progress bar
-     * @param position LatLng object with latitude and longitude
+     * @param position SearchLocation object with latitude and longitude
      */
-    private fun fetchEvents(position: LatLng) {
+    private fun fetchEvents(position: SearchLocation) {
         fragment_event_progress.visibility = View.VISIBLE
         eventViewModel.searchNearbyEvent(position)
     }
@@ -188,16 +185,27 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener, OnRequestPermissi
             eventViewModel.position.removeObservers(viewLifecycleOwner) // remove observer
             when {
                 it.data is LatLng -> {
-                    if (fragment_event_swipeRefresh.isRefreshing)
-                        fragment_event_swipeRefresh.isRefreshing = false
-
-                    updatePlaceText(getString(R.string.nearby_position_hint))
-                    locationText = getString(R.string.nearby_position_hint)
-                    fetchEvents(it.data) // Fetch nearby artistEvents
+                    // Get events
+                    fetchEvents(
+                        SearchLocation(  // Fetch nearby artistEvents
+                            displayName = getString(R.string.nearby_position_hint),
+                            latitude = it.data.latitude,
+                            longitude = it.data.longitude
+                        )
+                    )
                 }
                 it.data is LatLng? -> displayErrorMessage(R.string.device_position_error)
                 it.error is Int -> displayErrorMessage(it.error)
             }
+        })
+    }
+
+    /**
+     * Observe search location text change
+     */
+    private fun observeSearchLocation(){
+        eventViewModel.searchLocationText.observe(viewLifecycleOwner, Observer {
+            updatePlaceText(it)
         })
     }
 
@@ -235,5 +243,10 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener, OnRequestPermissi
                 getString(R.string.location_permission_denied),
                 Toast.LENGTH_LONG
             ).show()
+    }
+
+    override fun onFabClick() {
+        val action = EventFragmentDirections.eventFragmentToLocationSearchDialog()
+        findNavController().navigate(action)
     }
 }

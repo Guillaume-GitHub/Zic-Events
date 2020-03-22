@@ -1,12 +1,13 @@
 package com.lab.zicevents.data.api.songkick
 
-import com.google.type.LatLng
 import com.lab.zicevents.utils.base.BaseRepository
 import retrofit2.Call
 import com.lab.zicevents.data.Result
 import com.lab.zicevents.data.model.api.songkick.DetailsEvent
 import com.lab.zicevents.data.model.api.songkick.Event
+import com.lab.zicevents.data.model.api.songkick.LocationSearch
 import com.lab.zicevents.data.model.api.songkick.Songkick
+import com.lab.zicevents.data.model.local.SearchLocation
 
 class SongkickRepository: BaseRepository() {
 
@@ -26,8 +27,22 @@ class SongkickRepository: BaseRepository() {
      * @param location Latlng object containing latitude and longitude
      * @param page Int corresponding to the page to return
      */
-    suspend fun searchNearbyEvents(location: LatLng, page: Int? = null): Result<Songkick> {
+    suspend fun searchNearbyEvents(location: SearchLocation, page: Int? = null): Result<Songkick> {
         return when (val result = getNearbyEvents(location, page).awaitCall()){
+            is Result.Success -> Result.Success(result.data)
+            is Result.Error -> Result.Error(result.exception)
+            is Result.Canceled -> Result.Canceled(result.exception)
+        }
+    }
+
+    /**
+     * Fetch song event next to position
+     * Wait http request result async
+     * @param location Latlng object containing latitude and longitude
+     * @param page Int corresponding to the page to return
+     */
+    suspend fun searchNearbyEvents(venueId: Int, page: Int? = null): Result<Songkick> {
+        return when (val result = getNearbyEvents(venueId, page).awaitCall()){
             is Result.Success -> Result.Success(result.data)
             is Result.Error -> Result.Error(result.exception)
             is Result.Canceled -> Result.Canceled(result.exception)
@@ -39,12 +54,22 @@ class SongkickRepository: BaseRepository() {
      * @param location coordinates of user
      * @param page page result index (default is 1)
      */
-    private fun getNearbyEvents(location: LatLng, page: Int?): Call<Songkick> {
+    private fun getNearbyEvents(location: SearchLocation, page: Int?): Call<Songkick> {
         val index = page ?: 1
         val formattedLoc = "geo:${location.latitude},${location.longitude}"
         return service.getNearbyEvents(location = formattedLoc, page = index)
     }
 
+    /**
+     * Fetch song event next to position
+     * @param venueId id of corresponding venue
+     * @param page page result index (default is 1)
+     */
+    private fun getNearbyEvents(venueId: Int, page: Int?): Call<Songkick> {
+        val index = page ?: 1
+        val formattedLoc = "sk:${venueId}"
+        return service.getNearbyEvents(location = formattedLoc, page = index)
+    }
 
     /**
      * Fetch Event details
@@ -108,4 +133,21 @@ class SongkickRepository: BaseRepository() {
             is Result.Canceled -> Result.Canceled(result.exception)
         }
     }
+
+    //******************************** LOCATION ****************************************
+
+    /**
+     * Search location by name
+     * Wait http request result async
+     * @param query user query
+     * @param perPage number of result to return (MAX 50)
+     */
+    suspend fun getLocationByName(query: String, perPage: Int): Result<LocationSearch> {
+        return when (val result = service.getLocationByName(query, perPage).awaitCall()){
+            is Result.Success -> Result.Success(result.data)
+            is Result.Error -> Result.Error(result.exception)
+            is Result.Canceled -> Result.Canceled(result.exception)
+        }
+    }
+
 }

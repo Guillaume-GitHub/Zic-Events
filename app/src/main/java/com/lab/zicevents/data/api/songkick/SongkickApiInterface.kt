@@ -2,6 +2,7 @@ package com.lab.zicevents.data.api.songkick
 
 import com.lab.zicevents.BuildConfig
 import com.lab.zicevents.data.model.api.songkick.DetailsEvent
+import com.lab.zicevents.data.model.api.songkick.LocationSearch
 import com.lab.zicevents.data.model.api.songkick.Songkick
 import retrofit2.Call
 import retrofit2.http.GET
@@ -15,6 +16,7 @@ interface SongkickApiInterface {
         private const val SEARCH_EVENT_ENDPOINT = "events"
         private const val ARTIST_ENDPOINT = "artists"
         private const val SEARCH_ARTIST_ENDPOINT = "search/artists"
+        private const val SEARCH_VENUE_ENDPOINT = "search/locations"
         private const val OUTPUT_FORMAT = "json"
         private const val KEY = BuildConfig.SONGKICK_KEY
     }
@@ -36,4 +38,8 @@ interface SongkickApiInterface {
     @GET("$SEARCH_ARTIST_ENDPOINT.$OUTPUT_FORMAT?apikey=$KEY")
     fun getArtistByName(@Query("query") query: String,
                         @Query("per_page") per_page: Int): Call<Songkick>
+
+    @GET("$SEARCH_VENUE_ENDPOINT.$OUTPUT_FORMAT?apikey=$KEY")
+    fun getLocationByName(@Query("query") query: String,
+                        @Query("per_page") per_page: Int): Call<LocationSearch>
 }

@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.core.view.isVisible
 import androidx.lifecycle.*
@@ -56,24 +57,42 @@ class MainActivity : BaseActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         // Prevent recreation fragment when navigation item is reselect
-        navView.setOnNavigationItemReselectedListener{
+        navView.setOnNavigationItemReselectedListener {
             // On Reselect do nothing....
         }
 
-        navController.addOnDestinationChangedListener{ _, destination, _ ->
+        navController.addOnDestinationChangedListener { _, destination, _ ->
             if (!main_toolbar.isVisible) main_toolbar.visibility = View.VISIBLE
             if (main_fab.isVisible) main_fab.hide()
 
             when (destination.id) {
-                // R.id.bottom_navigation_profile -> main_toolbar.visibility = View.GONE
-                R.id.bottom_navigation_publication -> main_fab.show()
+                R.id.bottom_navigation_publication -> {
+                    main_fab.setImageDrawable(
+                        ResourcesCompat.getDrawable(
+                            resources,
+                            R.drawable.ic_add_black_24dp,
+                            null
+                        )
+                    )
+                    main_fab.show()
+                }
+                R.id.bottom_navigation_event -> {
+                    main_fab.setImageDrawable(
+                        ResourcesCompat.getDrawable(
+                            resources,
+                            R.drawable.ic_location_city_black_24dp,
+                            null
+                        )
+                    )
+                    main_fab.show()
+                }
                 R.id.empty_publication_placeholder -> main_toolbar.navigationIcon = null
                 else -> {
                 }
             }
         }
 
-        main_fab.setOnClickListener{
+        main_fab.setOnClickListener {
             activityFabCallback.onFabClick()
         }
     }
@@ -81,7 +100,6 @@ class MainActivity : BaseActivity() {
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this, SharedViewModelFactory())
             .get(SharedViewModel(UserRepository(UserDataSource()))::class.java)
-        Log.d("Acitivty SHARED VM", viewModel.toString())
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -135,5 +153,3 @@ class MainActivity : BaseActivity() {
         }
     }
 }
-
-

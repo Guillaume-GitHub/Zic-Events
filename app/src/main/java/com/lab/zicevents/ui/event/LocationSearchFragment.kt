@@ -2,7 +2,9 @@ package com.lab.zicevents.ui.event
 
 import android.os.Bundle
 import android.os.Handler
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.res.ResourcesCompat
@@ -11,31 +13,34 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+
 import com.lab.zicevents.R
-import com.lab.zicevents.data.model.api.songkick.Artist
+import com.lab.zicevents.activity.MainActivity
+import com.lab.zicevents.data.model.api.songkick.Location
+import com.lab.zicevents.data.model.api.songkick.MetroArea
+import com.lab.zicevents.utils.OnActivityFabClickListener
 import com.lab.zicevents.utils.OnRecyclerItemClickListener
-import com.lab.zicevents.utils.adapter.ArtistRecyclerAdapter
+import com.lab.zicevents.utils.adapter.LocationRecyclerAdapter
 import kotlinx.android.synthetic.main.fragment_search_dialog.*
 
-class ArtistSearchFragment : DialogFragment(), OnRecyclerItemClickListener {
+class LocationSearchFragment : DialogFragment(), OnRecyclerItemClickListener{
 
     private lateinit var eventViewModel: EventViewModel
-    private lateinit var adapter: ArtistRecyclerAdapter
-    private var artistList = ArrayList<Artist>()
+    private lateinit var adapter: LocationRecyclerAdapter
+    private var locationList = ArrayList<MetroArea>()
     private var handler: Handler = Handler()
     private var runnable: Runnable? = null
-    private val NB_RESULT = 6
+    private val MAX_RESULT = 6
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NO_FRAME, R.style.AppTheme_FullScreenDialog)
+        setStyle(STYLE_NO_FRAME,R.style.AppTheme_FullScreenDialog)
         retainInstance = true
         initViewModel()
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
@@ -45,13 +50,13 @@ class ArtistSearchFragment : DialogFragment(), OnRecyclerItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         configureRecyclerView()
-        observeArtistResults()
+        observeLocationSearchResults()
 
         fragment_search_dialog_searchView.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (!query.isNullOrBlank() && query.length >= 3)
-                    getArtists(query)
+                    getLocation(query)
                 return false
             }
 
@@ -62,7 +67,7 @@ class ArtistSearchFragment : DialogFragment(), OnRecyclerItemClickListener {
                 }
                 // delay artist search
                 if (!newText.isNullOrBlank() && newText.length >= 3) {
-                    val r = Runnable { getArtists(newText) }
+                    val r = Runnable { getLocation(newText) }
                     runnable = r
                     handler.postDelayed(r, 500)
                 }
@@ -71,7 +76,7 @@ class ArtistSearchFragment : DialogFragment(), OnRecyclerItemClickListener {
         })
 
         fragment_search_dialog_searchView.apply {
-            queryHint = getText(R.string.artist_search_query_hint)
+            queryHint = getText(R.string.location_search_query_hint)
         }
 
         fragment_search_dialog_toolbar.setNavigationOnClickListener {
@@ -92,7 +97,7 @@ class ArtistSearchFragment : DialogFragment(), OnRecyclerItemClickListener {
      */
     private fun configureRecyclerView() {
         fragment_search_dialog_recyclerView.layoutManager = LinearLayoutManager(context)
-        adapter = ArtistRecyclerAdapter(artistList, this)
+        adapter = LocationRecyclerAdapter(locationList, this)
         fragment_search_dialog_recyclerView.adapter = adapter
     }
 
@@ -125,24 +130,24 @@ class ArtistSearchFragment : DialogFragment(), OnRecyclerItemClickListener {
     }
 
     /**
-     * Get artists based on user query search
+     * Get location based on user query search
      * @param query user query string
      */
-    private fun getArtists(query: String) {
-        eventViewModel.getArtistByName(query, NB_RESULT)
+    private fun getLocation(query: String) {
+        eventViewModel.getLocationByName(query, MAX_RESULT)
         fragment_search_dialog_progress.visibility = View.VISIBLE
     }
 
     /**
      * Observe artist search result
      */
-    private fun observeArtistResults() {
-        eventViewModel.artists().observe(viewLifecycleOwner, Observer {
+    private fun observeLocationSearchResults() {
+        eventViewModel.locationList.observe(viewLifecycleOwner, Observer {
             fragment_search_dialog_progress.visibility = View.GONE
 
             when {
                 it.data is List<*> -> {
-                    val list: List<Artist> = it.data.filterIsInstance(Artist::class.java)
+                    val list: List<MetroArea> = it.data.filterIsInstance(MetroArea::class.java)
                     updateUI(ArrayList(list))
                 }
                 it.error is Int -> Toast
@@ -155,21 +160,21 @@ class ArtistSearchFragment : DialogFragment(), OnRecyclerItemClickListener {
 
     /**
      * Update recycler view or display message
-     * @param artists list of artist corresponding to query search (nullable)
+     * @param metroAreaList list of metroArea corresponding to query search (nullable)
      */
-    private fun updateUI(artists: ArrayList<Artist>?){
-        artistList.clear()
+    private fun updateUI(metroAreaList: ArrayList<MetroArea>?){
+        locationList.clear()
 
-        if (!artists.isNullOrEmpty()){
+        if (!metroAreaList.isNullOrEmpty()){
             fragment_search_dialog_message.visibility = View.GONE
-            artistList.addAll(artists)
+            locationList.addAll(metroAreaList)
             // show recycler
             showRecyclerView(true)
             // Hide message
             showMessage(false)
         } else {
             // display message
-            val message = getText(R.string.artist_search_no_result)
+            val message = getText(R.string.location_search_no_result)
             showMessage(true, message.toString())
             // Hide Recycler view
             showRecyclerView(false)
@@ -183,8 +188,7 @@ class ArtistSearchFragment : DialogFragment(), OnRecyclerItemClickListener {
      * @param position item position in adapter
      */
     override fun onItemClicked(position: Int) {
-        eventViewModel.selectArtist(adapter.artistList[position])
-        findNavController().navigate(R.id.artist_fragment)
+        eventViewModel.searchNearbyEvent(adapter.locationList[position])
         this.dismiss()
     }
 }

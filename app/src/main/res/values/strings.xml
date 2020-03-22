@@ -155,9 +155,11 @@
     <string name="search_user_hint">Rechecher une personne …</string>
     <string name="search_user_no_results">Aucun résultat trouvé …</string>
 
-    <!-- ****** EVENT FRAGMENTS ******* -->
+    <!-- ****** EVENT FRAGMENT / ARTIST SEARCH FRAGMENT / LOCATION SEARCH FRAGMENT ******* -->
     <string name="artist_search_query_hint">Rechercher un Artiste</string>
-    <string name="artist_search_no_result">Aucun resultat pour cette recherche. Essayez avec un autre nom.</string>
+    <string name="location_search_query_hint">Rechercher un Lieu</string>
+    <string name="artist_search_no_result">Aucun resultat pour cette recherche. Essayez avec un autre artiste.</string>
+    <string name="location_search_no_result">Aucun resultat pour cette recherche. Essayez avec un autre lieu.</string>
     <string name="event_search_no_result">Aucun Concert ou Festival près de cette position. Essayer avec un autre lieu.</string>
     <string name="event_request_error">Une erreur est survenue lors de la récupération des données</string>
     <string name="nearby_position_hint">À Proximité</string>
