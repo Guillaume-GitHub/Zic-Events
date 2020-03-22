@@ -1,22 +1,15 @@
 package com.lab.zicevents.ui.publication
 
-import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.util.Log
-import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import androidx.navigation.fragment.NavHostFragment.findNavController
-import androidx.navigation.fragment.findNavController
-import com.google.android.material.button.MaterialButton
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.auth.FirebaseUser
 import com.lab.zicevents.R
+import com.lab.zicevents.activity.SharedViewModel
 import com.lab.zicevents.data.database.user.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -29,7 +22,6 @@ import com.lab.zicevents.data.model.local.DataResult
 import com.lab.zicevents.data.model.local.PublicationListResult
 import com.lab.zicevents.data.storage.StorageRepository
 import com.lab.zicevents.utils.base.BaseRepository
-import kotlinx.android.synthetic.main.fragment_details_user.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -37,15 +29,13 @@ class PublicationViewModel(private val publicationRepo: PublicationRepository,
                            private val userRepo: UserRepository,
                            private val storageRepo: StorageRepository): ViewModel() {
 
-    val authUser = FirebaseAuth.getInstance().currentUser
-
     private val publications = MutableLiveData<DataResult>()
     val publicationList: LiveData<DataResult> = publications
 
     private val newPublications = MutableLiveData<DataResult>()
     val newPublicationList: LiveData<DataResult> = newPublications
 
-    private val profile = MutableLiveData<DataResult>()
+    val profile = MutableLiveData<DataResult>()
     val profileResult: LiveData<DataResult> = profile
 
     private val userPublicationList = MutableLiveData<PublicationListResult>()
@@ -83,6 +73,41 @@ class PublicationViewModel(private val publicationRepo: PublicationRepository,
     }
 
     /**
+     * Try to get user profile and Fetch publication from database async
+     * @param userId id of auth user
+     */
+    fun getSubscribedPublications(firebaseUser: FirebaseUser?) {
+        if (firebaseUser != null) {
+
+            GlobalScope.launch(Dispatchers.Main) {
+                when (val result = userRepo.getFirestoreUser(firebaseUser.uid)) {
+                    is Result.Success -> {
+                        val user = result.data.toObject(User::class.java)
+                        val subscriptions = ArrayList<String>()
+                        if (user != null) {
+                            user.subscriptions?.let {
+                                subscriptions.addAll(it)
+                            }
+                            subscriptions.add(user.userId)
+                            getSubscribedPublications(subscriptions)
+                            profile.value = DataResult(data = user)
+                        } else
+                            publications.value = DataResult(error = R.string.fetching_user_error)
+                    }
+                    is Result.Error -> {
+                        publications.value = DataResult(error = R.string.fetching_user_error)
+                    }
+                    is Result.Canceled -> {
+                        publications.value = DataResult(error = R.string.fetching_user_canceled)
+                    }
+                }
+            }
+        }
+        else
+            publications.value = DataResult(error = R.string.fetching_user_error)
+    }
+
+    /**
      * Fetch publications after a specific date
      * @param subscriptionList list of users's id to to filter research
      * @param lastVisiblePublication most recent visible publication
@@ -107,11 +132,9 @@ class PublicationViewModel(private val publicationRepo: PublicationRepository,
                     }
                 }
             }
-        } else{
+        } else
             newPublications.value = DataResult(error = R.string.fetching_publication_error)
-        }
     }
-
 
     /**
      * Get User publications with uid from Firestore database
@@ -159,7 +182,6 @@ class PublicationViewModel(private val publicationRepo: PublicationRepository,
     fun publicationDataChange(message: Editable?) {
         publicationValid.value = !message.isNullOrBlank()
     }
-
 
     /**
      * Upload image to remote Storage Firebase and get uploaded image url

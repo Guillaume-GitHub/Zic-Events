@@ -27,7 +27,7 @@ class SharedViewModel(private val userRepo: UserRepository) : ViewModel() {
         return authUser
     }
 
-    private val user: MutableLiveData<User> by lazy {
+    val user: MutableLiveData<User> by lazy {
         MutableLiveData<User>().also {
             listenUserUpdates()
         }

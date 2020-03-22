@@ -2,6 +2,7 @@ package com.lab.zicevents.ui.publication
 
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,11 +13,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.lab.zicevents.activity.MainActivity
 
 import com.lab.zicevents.R
+import com.lab.zicevents.activity.SharedViewModel
 import com.lab.zicevents.data.model.database.publication.Publication
 import com.lab.zicevents.data.model.database.user.User
+import com.lab.zicevents.data.model.local.DataResult
 import com.lab.zicevents.utils.OnActivityFabClickListener
 import com.lab.zicevents.utils.OnPublicationClickListener
 import com.lab.zicevents.utils.adapter.PublicationRecyclerAdapter
@@ -24,27 +28,30 @@ import kotlinx.android.synthetic.main.fragment_publication.*
 
 class PublicationFragment : Fragment(), OnActivityFabClickListener, OnPublicationClickListener {
     private lateinit var publicationViewModel: PublicationViewModel
+    private lateinit var sharedViewModel: SharedViewModel
     // RecyclerView
     private lateinit var publicationRecycler: RecyclerView
     private lateinit var publicationAdapter: PublicationRecyclerAdapter
     private var publications = ArrayList<Publication>()
-    private var currentUser : User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initViewModel()
-        getAuthUser()
+        initViewModels()
+        getPublications()
         (activity as? MainActivity)?.registerFabClickCallback(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_publication, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         configureRecyclerView()
-        observeProfileResult()
         observePublicationsResult()
         observePublicationCreation()
         observeNewPublicationsResult()
@@ -58,61 +65,41 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener, OnPublicatio
     /**
      * Init Publication ViewModel
      */
-    private fun initViewModel(){
+    private fun initViewModels() {
         this.publicationViewModel = ViewModelProviders
-            .of(this, PublicationViewModelFactory())
+            .of(activity!!, PublicationViewModelFactory())
             .get(PublicationViewModel::class.java)
+
+        this.sharedViewModel = ViewModelProviders
+            .of(activity!!, PublicationViewModelFactory())
+            .get(SharedViewModel::class.java)
     }
 
     /**
      * Configure publication recyclerView
      */
-    private fun configureRecyclerView(){
+    private fun configureRecyclerView() {
         publicationRecycler = fragment_publication_recyclerView
         publicationRecycler.layoutManager = LinearLayoutManager(context)
         publicationAdapter = PublicationRecyclerAdapter(context!!, publications, this)
         publicationRecycler.adapter = publicationAdapter
-        publicationRecycler.addItemDecoration((DividerItemDecoration(context, DividerItemDecoration.VERTICAL)))
-    }
-
-    /**
-     * Get current auth user
-     * get his profile or display error message
-     */
-    private fun getAuthUser(){
-        val currentUser = publicationViewModel.authUser
-        if (currentUser != null)
-            publicationViewModel.getUserProfile(currentUser.uid)
-        else {
-            Toast.makeText(context,getText(R.string.error_when_fetch_user), Toast.LENGTH_LONG).show()
-            displayPlaceholder()
-        }
-    }
-
-    /**
-     * Observe user fetching operation
-     * get and pass result to fetch publications or display error message
-     */
-    private fun observeProfileResult(){
-        publicationViewModel.profileResult.observe(this, Observer {
-            when {
-                it.data is User -> {
-                    currentUser = it.data
-                    getPublications(it.data)
-                }
-                it.error != null -> {
-                    Toast.makeText(context,getString(it.error), Toast.LENGTH_LONG).show()
-                    displayPlaceholder()
-                }
-            }
-        })
+        publicationRecycler.addItemDecoration(
+            (DividerItemDecoration(
+                context,
+                DividerItemDecoration.VERTICAL
+            ))
+        )
     }
 
     /**
      * Fetch publications to database
      * Get all publications of user 's subscriptions
      */
-    private fun getPublications(user: User?) {
+    private fun getPublications() {
+        Log.d("FETCH PUBLICATION", "---------> ${this}")
+        val user = sharedViewModel.getAuthUser()
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+
         if (user != null) {
             val subscriptions = ArrayList<String>()
             user.subscriptions?.let {
@@ -122,27 +109,29 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener, OnPublicatio
             subscriptions.add(user.userId)
             // Fetch publication(s)
             publicationViewModel.getSubscribedPublications(subscriptions)
-        }
-        else
-            displayPlaceholder()
+            // Set user profile
+            publicationViewModel.profile.value = DataResult(data = user)
+        } else
+            // Get publication with auth user id
+            publicationViewModel.getSubscribedPublications(firebaseUser)
     }
 
     /**
      * Observe publications fetching operation
      * get and add result to recyclerView or display error message
      */
-    private fun observePublicationsResult(){
-        publicationViewModel.publicationList.observe(this, Observer {
+    private fun observePublicationsResult() {
+        publicationViewModel.publicationList.observe(viewLifecycleOwner, Observer {
             fragment_publication_progress.visibility = View.GONE
             when {
                 it.data is ArrayList<*> -> {
-                        val list = it.data.filterIsInstance<Publication>()
-                        publications.clear()
-                        publications.addAll(list)
-                        publicationAdapter.notifyDataSetChanged()
+                    val list = it.data.filterIsInstance<Publication>()
+                    publications.clear()
+                    publications.addAll(list)
+                    publicationAdapter.notifyDataSetChanged()
                 }
                 it.error != null -> {
-                    Toast.makeText(context,getString(it.error), Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, getString(it.error), Toast.LENGTH_LONG).show()
                     displayPlaceholder()
                 }
             }
@@ -154,8 +143,8 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener, OnPublicatio
      * Get all publications of user 's subscriptions
      */
     private fun getLastPublications() {
-        val user = currentUser
-        if (user != null && publications.isNotEmpty()){
+        val user = sharedViewModel.getAuthUser()
+        if (user != null && publications.isNotEmpty()) {
             // set swipeRefreshLayout to refreshing
             fragment_publication_swipeRefresh.isRefreshing = true
             val subscriptions = ArrayList<String>()
@@ -164,8 +153,7 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener, OnPublicatio
             subscriptions.add(user.userId)
             // Fetch publication(s)
             publicationViewModel.getLastSubscribedPublications(subscriptions, publications[0])
-        }
-        else
+        } else
             fragment_publication_swipeRefresh.isRefreshing = false
     }
 
@@ -173,14 +161,14 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener, OnPublicatio
      * Observe new publications after fetching operation
      * get and add result to recyclerView or display error message
      */
-    private fun observeNewPublicationsResult(){
-        publicationViewModel.newPublicationList.observe(this, Observer {
+    private fun observeNewPublicationsResult() {
+        publicationViewModel.newPublicationList.observe(viewLifecycleOwner, Observer {
             fragment_publication_swipeRefresh.isRefreshing = false // set refresh to false
             when {
                 it.data is ArrayList<*> -> {
                     val list = it.data.filterIsInstance<Publication>()
-                    if (!list.isNullOrEmpty()){
-                        publications.addAll(0,list)
+                    if (!list.isNullOrEmpty()) {
+                        publications.addAll(0, list)
                         publicationAdapter.notifyItemInserted(0)
                     }
                 }
@@ -194,9 +182,9 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener, OnPublicatio
     /**
      * Observe publication creation, hide progress dialog and dismiss
      */
-    private fun observePublicationCreation(){
-        publicationViewModel.publicationCreationSate.observe(this, Observer {
-            when{
+    private fun observePublicationCreation() {
+        publicationViewModel.publicationCreationSate.observe(viewLifecycleOwner, Observer {
+            when {
                 it.data is Int -> getLastPublications()
                 it.error != null ->
                     Toast.makeText(context, getText(it.error), Toast.LENGTH_LONG).show()
@@ -207,7 +195,7 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener, OnPublicatio
     /**
      * Show empty result fragment
      */
-    private fun displayPlaceholder(){
+    private fun displayPlaceholder() {
         val action = PublicationFragmentDirections
             .actionBottomNavigationPublicationToEmptyPublicationPlaceholder()
         findNavController().navigate(action)
@@ -230,12 +218,13 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener, OnPublicatio
             pseudo = publicationOwner.pseudo,
             profileImageUrl = publicationOwner.profileImage,
             message = publication.message,
-            mediaUrl = publication.mediaUrl)
+            mediaUrl = publication.mediaUrl
+        )
 
         findNavController().navigate(action)
     }
 
     override fun onImageProfileClick(userId: String) {
-        publicationViewModel.navigateToProfile(this,userId)
+        publicationViewModel.navigateToProfile(this, userId)
     }
 }
