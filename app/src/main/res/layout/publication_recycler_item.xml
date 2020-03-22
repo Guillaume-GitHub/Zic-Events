@@ -39,7 +39,7 @@
             android:layout_height="60dp"
             android:layout_toEndOf="@id/publication_user_image_container"
             app:layout_constraintStart_toEndOf="@id/publication_user_image_container"
-            app:layout_constraintEnd_toStartOf="@id/publication_option_btn"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:gravity="center">
 
@@ -66,7 +66,7 @@
                 android:layout_below="@id/publication_username"/>
 
         </RelativeLayout>
-
+<!--
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/publication_option_btn"
             android:layout_width="wrap_content"
@@ -75,7 +75,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
+-->
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/publication_message"
             android:layout_width="0dp"
