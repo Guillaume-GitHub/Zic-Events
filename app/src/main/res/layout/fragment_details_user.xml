@@ -180,7 +180,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/user_details_info_container"
                 android:layout_marginTop="15dp"
-                android:background="@color/colorPrimary"
                 android:orientation="vertical"
                 android:padding="10dp">
 
@@ -205,7 +204,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/user_details_photo_gallery_container"
                 android:layout_marginTop="15dp"
-                android:background="@color/colorPrimary"
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -221,7 +219,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     tools:itemCount="1"
-                    tools:listitem="@layout/publication_recycler_item" />
+                    tools:listitem="@layout/publication_recycler_item"
+                    android:background="@color/colorPrimaryDark"/>
 
             </LinearLayout>
 

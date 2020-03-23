@@ -62,7 +62,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/fragment_search_dialog_progress"
-        android:background="@color/colorPrimary"
         tools:itemCount="5"
         tools:listitem="@layout/simple_list_artist_item" />
 

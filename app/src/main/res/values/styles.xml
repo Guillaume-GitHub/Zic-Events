@@ -7,7 +7,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColor">@color/colorOnPrimary</item>
         <item name="colorControlNormal">@color/colorOnPrimary</item>
-        <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="android:windowBackground">@color/colorPrimaryDark</item>
     </style>
 
     <!-- Splash Screen Style -->
@@ -23,7 +23,7 @@
 
     <!-- Style of TextInputLayout.FilledBox -->
     <style name="AppTheme.TextInputLayout.FilledBox" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
-        <item name="boxBackgroundColor">@color/colorPrimaryLight</item>
+        <item name="boxBackgroundColor">@color/colorPrimary</item>
     </style>
 
     <style name="AppTheme.DatePickerDialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">

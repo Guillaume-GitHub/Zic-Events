@@ -23,6 +23,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/inputLayoutUsername"
+        style="@style/AppTheme.TextInputLayout.FilledBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -44,6 +45,8 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/inputLayoutPassword"
+        style="@style/AppTheme.TextInputLayout.FilledBox"
+
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
