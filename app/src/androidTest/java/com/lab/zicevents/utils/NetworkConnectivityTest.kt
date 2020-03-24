@@ -1,30 +1,29 @@
 package com.lab.zicevents.utils
 
-import com.lab.zicevents.utils.base.NetworkConnectivityHelper
-import org.junit.Before
+import com.lab.zicevents.utils.adapter.NetworkConnectivity
 
 import org.junit.Assert.*
 import org.junit.Test
 
-class NetworkConnectivityHelperTest {
+class NetworkConnectivityTest {
 
     @Test
     fun when_use_default_host_and_internet_available_return_true() {
-        assertEquals(true, NetworkConnectivityHelper.isInternetAvailable())
+        assertEquals(true, NetworkConnectivity.isConnected())
     }
 
     @Test
     fun when_use_correct_host_and_internet_available_return_true() {
         // Set valid Host name
         val host = "google-public-dns-a.google.com"
-        assertEquals(true, NetworkConnectivityHelper.isInternetAvailable(host))
+        assertEquals(true, NetworkConnectivity.isConnected(host))
     }
 
     @Test
     fun when_use_invalid_host_and_internet_available_return_false() {
         // Set valid Host name
         val host = "test-wrong-host#"
-        assertEquals(false, NetworkConnectivityHelper.isInternetAvailable(host))
+        assertEquals(false, NetworkConnectivity.isConnected(host))
     }
 
 }
