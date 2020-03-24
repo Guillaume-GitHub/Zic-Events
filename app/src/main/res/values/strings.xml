@@ -4,6 +4,7 @@
     <string name="welcome">Bienvenue</string>
     <string name="task_success" translatable="false">success</string>
     <string name="task_failure" translatable="false">fail</string>
+    <string name="no_network_connectivity">Vérifier votre connexion internet puis réessayer</string>
 
     <!-- ***** NAVIGATION ***** -->
     <string name="hint_next">Suivant</string>

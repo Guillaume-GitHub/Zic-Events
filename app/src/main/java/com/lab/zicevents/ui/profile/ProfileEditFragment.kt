@@ -26,6 +26,7 @@ import com.lab.zicevents.data.model.local.UploadedImageResult
 import com.lab.zicevents.utils.ImagePickerHelper
 import com.lab.zicevents.utils.OnRequestPermissionsListener
 import com.lab.zicevents.utils.PermissionHelper
+import com.lab.zicevents.utils.adapter.NetworkConnectivity
 import com.lab.zicevents.utils.base.BaseRepository
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile_edit.*
@@ -51,6 +52,9 @@ class ProfileEditFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        if (!NetworkConnectivity.isConnected())
+            Toast.makeText(context, getText(R.string.no_network_connectivity), Toast.LENGTH_SHORT).show()
+
         super.onViewCreated(view, savedInstanceState)
         listenUserUpdates()
         observeUpdateProfileResult()
@@ -97,7 +101,7 @@ class ProfileEditFragment : Fragment(), View.OnClickListener {
      * if null or error display error message
      */
     private fun observeProfileChange(){
-        profileViewModel.userProfileResult.observe(this, Observer {
+        profileViewModel.userProfileResult.observe(viewLifecycleOwner, Observer {
             when {
                 it.data is User -> {
                     Log.d(this::class.java.simpleName, it.data.toString())
@@ -118,7 +122,7 @@ class ProfileEditFragment : Fragment(), View.OnClickListener {
      * else null or error, display message
      */
     private fun observeUpdateProfileResult(){
-        profileViewModel.updateProfileResult.observe(this, Observer {
+        profileViewModel.updateProfileResult.observe(viewLifecycleOwner, Observer {
             when {
                 it.data is Int ->
                     if (it.data == BaseRepository.SUCCESS_TASK)
@@ -279,8 +283,17 @@ class ProfileEditFragment : Fragment(), View.OnClickListener {
      * @param requestId it's an id to retrieve the request when observe result
      */
     private fun uploadImageFile(drawable: Drawable, requestId: Int){
-        val fileName = UUID.randomUUID().toString()
-        profileViewModel.uploadImageFile(userId, drawable, fileName, requestId)
+        if (NetworkConnectivity.isConnected()) {
+            val fileName = UUID.randomUUID().toString()
+            profileViewModel.uploadImageFile(userId, drawable, fileName, requestId)
+            profile_edit_cover_image.alpha = 0.2F // make it more transparent
+        }
+        else
+            Toast.makeText(
+                context,
+                getText(R.string.no_network_connectivity),
+                Toast.LENGTH_SHORT
+            ).show()
     }
 
     /**
@@ -289,7 +302,7 @@ class ProfileEditFragment : Fragment(), View.OnClickListener {
      * else null or error, display message
      */
     private fun observeUploadImageResult(){
-        profileViewModel.uploadImageResult.observe(this, Observer {
+        profileViewModel.uploadImageResult.observe(viewLifecycleOwner, Observer {
             if (it.error != null || it.imageUri == null) {
                 // Display error
                 Toast.makeText(context, getString(R.string.store_image_task_error),
@@ -329,7 +342,6 @@ class ProfileEditFragment : Fragment(), View.OnClickListener {
                     imageUri?.let {
                         // show and upload profile image from his uri
                         ImagePickerHelper.getDrawableFromUri(context, it)?.let {drawable ->
-                            profile_edit_profile_image.alpha = 0.2F // make it more transparent
                             uploadImageFile(drawable, requestCode)
                         }
                     }
@@ -339,7 +351,6 @@ class ProfileEditFragment : Fragment(), View.OnClickListener {
                     val imageUri = data?.data
                     imageUri?.let { it ->
                         ImagePickerHelper.getDrawableFromUri(context, it)?.let {drawable ->
-                            profile_edit_cover_image.alpha = 0.2F // make it more transparent
                             uploadImageFile(drawable, requestCode)
                         }
                     }

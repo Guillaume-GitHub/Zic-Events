@@ -21,6 +21,7 @@ import com.lab.zicevents.utils.OnRecyclerItemClickListener
 import com.lab.zicevents.utils.OnRequestPermissionsListener
 import com.lab.zicevents.utils.PermissionHelper
 import com.lab.zicevents.utils.adapter.EventRecyclerAdapter
+import com.lab.zicevents.utils.adapter.NetworkConnectivity
 import kotlinx.android.synthetic.main.fragment_event.*
 
 class EventFragment : Fragment(), OnRecyclerItemClickListener, OnRequestPermissionsListener , OnActivityFabClickListener{
@@ -86,7 +87,15 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener, OnRequestPermissi
         // Ask permission to user if permission denied
         if (permsResult.isNullOrEmpty()) {
             observePositionOnce()
-            eventViewModel.getLastKnowPosition(context) // get Last know device position
+            if (NetworkConnectivity.isConnected())
+                eventViewModel.getLastKnowPosition(context) // get Last know device position
+            else
+                Toast.makeText(
+                    context,
+                    getText(R.string.no_network_connectivity),
+                    Toast.LENGTH_SHORT
+                ).show()
+
         } else { // ASk permissions to user
             val activity = activity
             PermissionHelper().askRequestPermissions(
@@ -142,8 +151,16 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener, OnRequestPermissi
      * @param position SearchLocation object with latitude and longitude
      */
     private fun fetchEvents(position: SearchLocation) {
-        fragment_event_progress.visibility = View.VISIBLE
-        eventViewModel.searchNearbyEvent(position)
+        if (NetworkConnectivity.isConnected()) {
+            fragment_event_progress.visibility = View.VISIBLE
+            eventViewModel.searchNearbyEvent(position)
+        }
+        else
+            Toast.makeText(
+                context,
+                getText(R.string.no_network_connectivity),
+                Toast.LENGTH_SHORT
+            ).show()
     }
 
     /**

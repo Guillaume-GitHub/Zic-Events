@@ -16,15 +16,18 @@ import com.lab.zicevents.utils.base.BaseFragmentDialog
 import kotlinx.android.synthetic.main.fragment_location_dialog.*
 import android.widget.Toast
 import com.lab.zicevents.data.model.database.user.User
+import com.lab.zicevents.utils.adapter.NetworkConnectivity
 
 /**
  * Dialog [Fragment] subclass.
  * Change user location
  */
 
-class LocationFragmentDialog(private val userId: String,
-                             private val address: Address? = null,
-                             private val viewModel: ProfileViewModel) : BaseFragmentDialog(){
+class LocationFragmentDialog(
+    private val userId: String,
+    private val address: Address? = null,
+    private val viewModel: ProfileViewModel
+) : BaseFragmentDialog() {
 
     private var tempAddress: Address? = null
     private var lastSearch: String? = null
@@ -34,8 +37,10 @@ class LocationFragmentDialog(private val userId: String,
         setStyle(STYLE_NO_FRAME, R.style.AppTheme_FullScreenDialog)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_location_dialog, container, false)
     }
@@ -93,7 +98,7 @@ class LocationFragmentDialog(private val userId: String,
      * Get addresses components async from non formatted address string
      * get location input text as address only if not null or blank
      */
-    private fun getUserPosition(){
+    private fun getUserPosition() {
         when {
             location_dialog_text.text.isNullOrBlank() ->
                 location_dialog_location_inputLayout.error =
@@ -103,12 +108,20 @@ class LocationFragmentDialog(private val userId: String,
                 location_dialog_location_inputLayout.error =
                     getString(R.string.geocoding_enough_text)
 
-            location_dialog_text.text.toString() == lastSearch -> {} // block search for same query between 2 search
+            location_dialog_text.text.toString() == lastSearch -> {
+            } // block search for same query between 2 search
 
             else -> {
-                showProgress(true)
-                viewModel.getGeolocationAddress(location_dialog_text.text.toString())
-                lastSearch = location_dialog_text.text.toString() // save last search string
+                if (NetworkConnectivity.isConnected()) {
+                    showProgress(true)
+                    viewModel.getGeolocationAddress(location_dialog_text.text.toString())
+                    lastSearch = location_dialog_text.text.toString() // save last search string
+                } else
+                    Toast.makeText(
+                        context,
+                        getText(R.string.no_network_connectivity),
+                        Toast.LENGTH_SHORT
+                    ).show()
             }
         }
     }
@@ -117,7 +130,7 @@ class LocationFragmentDialog(private val userId: String,
      * Observe geocoding request result and
      * show result if ok or display error message
      */
-    private fun observeGeocodingResult(){
+    private fun observeGeocodingResult() {
         viewModel.geocodingResult.observe(viewLifecycleOwner, Observer {
             when {
                 it.data is Address ->
@@ -129,8 +142,9 @@ class LocationFragmentDialog(private val userId: String,
                     location_dialog_save.isEnabled = false
                 }
                 it.error is Int ->
-                    Toast.makeText(context,getText(it.error),Toast.LENGTH_LONG).show()
-                else -> {}
+                    Toast.makeText(context, getText(it.error), Toast.LENGTH_LONG).show()
+                else -> {
+                }
             }
             showProgress(false)
         })
@@ -139,7 +153,7 @@ class LocationFragmentDialog(private val userId: String,
     /**
      * Display address in textView,
      */
-    private fun displayResult(address: Address){
+    private fun displayResult(address: Address) {
         val isAddressValid = address.formattedAddress != null && address.geometry != null
         if (isAddressValid) {
             location_dialog_location_inputLayout.error = null
@@ -154,11 +168,11 @@ class LocationFragmentDialog(private val userId: String,
     /**
      * Update User Profile with new address object
      */
-    private fun updateUserProfile(){
+    private fun updateUserProfile() {
         tempAddress?.let {
             val map = HashMap<String, Address>()
             map[User.ADDRESS_FIELD] = it
-            viewModel.updateUserProfile(userId,map)
+            viewModel.updateUserProfile(userId, map)
             this.dismiss()
         }
     }
@@ -168,7 +182,7 @@ class LocationFragmentDialog(private val userId: String,
      * @param visible boolean for show/hide progressBar
      */
     private fun showProgress(visible: Boolean) {
-        if (visible){
+        if (visible) {
             location_dialog_progress.visibility = View.VISIBLE
             location_dialog_search.visibility = View.GONE
         } else {
@@ -186,7 +200,7 @@ class LocationFragmentDialog(private val userId: String,
             val builder = AlertDialog.Builder(context)
             builder.setTitle(getText(R.string.alert_valid_address_title))
                 .setMessage(it)
-                .setPositiveButton(getText(R.string.alert_valid_address_positive_btn)) { _,_ ->
+                .setPositiveButton(getText(R.string.alert_valid_address_positive_btn)) { _, _ ->
                     updateUserProfile()
                 }
                 .setNegativeButton(getText(R.string.alert_valid_address_negative_btn))

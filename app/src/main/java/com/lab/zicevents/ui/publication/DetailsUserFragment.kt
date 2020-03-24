@@ -25,6 +25,7 @@ import com.lab.zicevents.activity.SharedViewModel
 import com.lab.zicevents.data.model.database.publication.Publication
 import com.lab.zicevents.data.model.database.user.User
 import com.lab.zicevents.utils.MarginItemDecoration
+import com.lab.zicevents.utils.adapter.NetworkConnectivity
 import com.lab.zicevents.utils.adapter.PublicationRecyclerAdapter
 import com.lab.zicevents.utils.adapter.UserMediaRecyclerAdapter
 import kotlinx.android.synthetic.main.fragment_details_user.*
@@ -63,6 +64,10 @@ class DetailsUserFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (!NetworkConnectivity.isConnected())
+            Toast.makeText(context, getText(R.string.no_network_connectivity), Toast.LENGTH_SHORT).show()
+
         observeProfileResult()
         observeAuthUserProfileUpdates()
         getUserProfile()

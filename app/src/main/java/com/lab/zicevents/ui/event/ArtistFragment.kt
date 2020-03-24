@@ -21,6 +21,7 @@ import com.lab.zicevents.data.api.songkick.SongkickRepository
 import com.lab.zicevents.data.model.api.songkick.Artist
 import com.lab.zicevents.data.model.api.songkick.Event
 import com.lab.zicevents.utils.OnRecyclerItemClickListener
+import com.lab.zicevents.utils.adapter.NetworkConnectivity
 import com.lab.zicevents.utils.adapter.SimpleEventRecyclerAdapter
 import kotlinx.android.synthetic.main.fragment_artist.*
 
@@ -116,27 +117,34 @@ class ArtistFragment : Fragment(), OnRecyclerItemClickListener {
      */
     @Suppress("UNCHECKED_CAST")
     private fun getArtistEvent(artistId: Int) {
-        eventViewModel.getArtistEvent(artistId)
-        eventViewModel.artistEvents().observe(viewLifecycleOwner, Observer {
-            fragment_artist_progress.visibility = View.GONE
-            when {
-                it.data != null -> {
-                    try {
-                        changeDataSet((it.data as ArrayList<Event>))
-                    } catch (castError: ClassCastException) {
-                        Log.e(this::class.java.simpleName, "", castError)
+        if (NetworkConnectivity.isConnected()) {
+            eventViewModel.getArtistEvent(artistId)
+            eventViewModel.artistEvents().observe(viewLifecycleOwner, Observer {
+                fragment_artist_progress.visibility = View.GONE
+                when {
+                    it.data != null -> {
+                        try {
+                            changeDataSet((it.data as ArrayList<Event>))
+                        } catch (castError: ClassCastException) {
+                            Log.e(this::class.java.simpleName, "", castError)
+                        }
+                    }
+                    it.error != null -> {
+                        Toast.makeText(
+                            context,
+                            getText(it.error),
+                            Toast.LENGTH_LONG
+                        ).show()
+                        changeDataSet(null)
                     }
                 }
-                it.error != null -> {
-                    Toast.makeText(
-                        context,
-                        getText(it.error),
-                        Toast.LENGTH_LONG
-                    ).show()
-                    changeDataSet(null)
-                }
-            }
-        })
+            })
+        } else
+            Toast.makeText(
+                context,
+                getText(R.string.no_network_connectivity),
+                Toast.LENGTH_SHORT
+            ).show()
     }
 
     /**

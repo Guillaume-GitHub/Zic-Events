@@ -24,6 +24,7 @@ import com.lab.zicevents.data.model.database.user.User
 import com.lab.zicevents.data.model.local.DataResult
 import com.lab.zicevents.utils.OnActivityFabClickListener
 import com.lab.zicevents.utils.OnPublicationClickListener
+import com.lab.zicevents.utils.adapter.NetworkConnectivity
 import com.lab.zicevents.utils.adapter.PublicationRecyclerAdapter
 import kotlinx.android.synthetic.main.fragment_publication.*
 
@@ -52,6 +53,10 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener, OnPublicatio
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (!NetworkConnectivity.isConnected())
+            Toast.makeText(context, getText(R.string.no_network_connectivity), Toast.LENGTH_SHORT).show()
+
         configureRecyclerView()
         observePublicationsResult()
         observePublicationCreation()

@@ -15,6 +15,7 @@ import com.lab.zicevents.R
 import com.lab.zicevents.data.model.api.songkick.Artist
 import com.lab.zicevents.utils.OnRecyclerItemClickListener
 import com.lab.zicevents.utils.adapter.ArtistRecyclerAdapter
+import com.lab.zicevents.utils.adapter.NetworkConnectivity
 import kotlinx.android.synthetic.main.fragment_search_dialog.*
 
 class ArtistSearchFragment : DialogFragment(), OnRecyclerItemClickListener {
@@ -100,7 +101,7 @@ class ArtistSearchFragment : DialogFragment(), OnRecyclerItemClickListener {
      * Hide/Show recycler view
      * @param boolean True = shown, False = hide
      */
-    private fun showRecyclerView(boolean: Boolean){
+    private fun showRecyclerView(boolean: Boolean) {
         fragment_search_dialog_recyclerView.apply {
             visibility = if (boolean)
                 View.VISIBLE
@@ -113,13 +114,12 @@ class ArtistSearchFragment : DialogFragment(), OnRecyclerItemClickListener {
      * Hide/Show message
      * @param boolean True = shown, False = hide
      */
-    private fun showMessage(boolean: Boolean, message: String? = null){
+    private fun showMessage(boolean: Boolean, message: String? = null) {
         fragment_search_dialog_message.apply {
             if (boolean) {
                 visibility = View.VISIBLE
                 text = message ?: ""
-            }
-            else
+            } else
                 View.GONE
         }
     }
@@ -129,8 +129,15 @@ class ArtistSearchFragment : DialogFragment(), OnRecyclerItemClickListener {
      * @param query user query string
      */
     private fun getArtists(query: String) {
-        eventViewModel.getArtistByName(query, NB_RESULT)
-        fragment_search_dialog_progress.visibility = View.VISIBLE
+        if (NetworkConnectivity.isConnected()) {
+            eventViewModel.getArtistByName(query, NB_RESULT)
+            fragment_search_dialog_progress.visibility = View.VISIBLE
+        } else
+            Toast.makeText(
+                context,
+                getText(R.string.no_network_connectivity),
+                Toast.LENGTH_SHORT
+            ).show()
     }
 
     /**
@@ -148,7 +155,8 @@ class ArtistSearchFragment : DialogFragment(), OnRecyclerItemClickListener {
                 it.error is Int -> Toast
                     .makeText(context, getText(it.error), Toast.LENGTH_SHORT)
                     .show()
-                else -> {}
+                else -> {
+                }
             }
         })
     }
@@ -157,10 +165,10 @@ class ArtistSearchFragment : DialogFragment(), OnRecyclerItemClickListener {
      * Update recycler view or display message
      * @param artists list of artist corresponding to query search (nullable)
      */
-    private fun updateUI(artists: ArrayList<Artist>?){
+    private fun updateUI(artists: ArrayList<Artist>?) {
         artistList.clear()
 
-        if (!artists.isNullOrEmpty()){
+        if (!artists.isNullOrEmpty()) {
             fragment_search_dialog_message.visibility = View.GONE
             artistList.addAll(artists)
             // show recycler

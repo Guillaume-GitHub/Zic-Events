@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
@@ -19,6 +20,7 @@ import com.lab.zicevents.data.model.database.user.User
 import com.lab.zicevents.utils.MarginItemDecoration
 import com.lab.zicevents.utils.OnRecyclerItemClickListener
 import com.lab.zicevents.utils.adapter.SearchUserRecyclerAdapter
+import com.lab.zicevents.utils.adapter.NetworkConnectivity
 import kotlinx.android.synthetic.main.fragment_user_search.*
 
 class UserSearchFragment : Fragment(), OnRecyclerItemClickListener {
@@ -31,7 +33,11 @@ class UserSearchFragment : Fragment(), OnRecyclerItemClickListener {
     private var handler: Handler = Handler()
     private var runnable: Runnable? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_user_search, container, false)
     }
 
@@ -43,7 +49,7 @@ class UserSearchFragment : Fragment(), OnRecyclerItemClickListener {
         // Listen text changes and perform search after 500ms (after user stop write text)
         user_search.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(text: Editable?) {
-                if (!text.isNullOrBlank()){
+                if (!text.isNullOrBlank()) {
                     val r = Runnable { performSearch(text.toString()) }
                     runnable = r
                     handler.postDelayed(r, 500)
@@ -63,7 +69,7 @@ class UserSearchFragment : Fragment(), OnRecyclerItemClickListener {
         })
     }
 
-    private fun initViewModel(){
+    private fun initViewModel() {
         this.searchViewModel = ViewModelProviders
             .of(this, SearchViewModelFactory())
             .get(SearchViewModel::class.java)
@@ -72,11 +78,11 @@ class UserSearchFragment : Fragment(), OnRecyclerItemClickListener {
     /**
      * Update UI with search results
      */
-    private fun updateUI(list: List<User>?){
+    private fun updateUI(list: List<User>?) {
         // Clean list
         userList.clear()
         // Add user in list if not null
-        if (!list.isNullOrEmpty()){
+        if (!list.isNullOrEmpty()) {
             user_search_no_results_textView.visibility = View.GONE
             userList.addAll(list)
         } else {
@@ -90,7 +96,7 @@ class UserSearchFragment : Fragment(), OnRecyclerItemClickListener {
     /**
      * Configure User recycler view
      */
-    private fun configureRecyclerView(){
+    private fun configureRecyclerView() {
         searchUserRecycler = search_recyclerView
         searchUserRecycler.layoutManager = LinearLayoutManager(context)
         searchUserAdapter = SearchUserRecyclerAdapter(context!!, userList, this)
@@ -102,14 +108,21 @@ class UserSearchFragment : Fragment(), OnRecyclerItemClickListener {
      * Search user in database corresponding to query
      * @param query is string user filter
      */
-    private fun performSearch(query: String){
-        searchViewModel.searchUsers(query)
+    private fun performSearch(query: String) {
+        if (NetworkConnectivity.isConnected())
+            searchViewModel.searchUsers(query)
+        else
+            Toast.makeText(
+                context,
+                getText(R.string.no_network_connectivity),
+                Toast.LENGTH_SHORT
+            ).show()
     }
 
     /**
      * Trigger Results of search
      */
-    private fun observeUsersSearchResult(){
+    private fun observeUsersSearchResult() {
         searchViewModel.searchUsersResult.observe(viewLifecycleOwner, Observer {
             when {
                 it.data is List<*> -> {

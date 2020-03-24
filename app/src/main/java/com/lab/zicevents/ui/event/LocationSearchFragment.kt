@@ -21,9 +21,10 @@ import com.lab.zicevents.data.model.api.songkick.MetroArea
 import com.lab.zicevents.utils.OnActivityFabClickListener
 import com.lab.zicevents.utils.OnRecyclerItemClickListener
 import com.lab.zicevents.utils.adapter.LocationRecyclerAdapter
+import com.lab.zicevents.utils.adapter.NetworkConnectivity
 import kotlinx.android.synthetic.main.fragment_search_dialog.*
 
-class LocationSearchFragment : DialogFragment(), OnRecyclerItemClickListener{
+class LocationSearchFragment : DialogFragment(), OnRecyclerItemClickListener {
 
     private lateinit var eventViewModel: EventViewModel
     private lateinit var adapter: LocationRecyclerAdapter
@@ -34,7 +35,7 @@ class LocationSearchFragment : DialogFragment(), OnRecyclerItemClickListener{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NO_FRAME,R.style.AppTheme_FullScreenDialog)
+        setStyle(STYLE_NO_FRAME, R.style.AppTheme_FullScreenDialog)
         retainInstance = true
         initViewModel()
     }
@@ -105,7 +106,7 @@ class LocationSearchFragment : DialogFragment(), OnRecyclerItemClickListener{
      * Hide/Show recycler view
      * @param boolean True = shown, False = hide
      */
-    private fun showRecyclerView(boolean: Boolean){
+    private fun showRecyclerView(boolean: Boolean) {
         fragment_search_dialog_recyclerView.apply {
             visibility = if (boolean)
                 View.VISIBLE
@@ -118,13 +119,12 @@ class LocationSearchFragment : DialogFragment(), OnRecyclerItemClickListener{
      * Hide/Show message
      * @param boolean True = shown, False = hide
      */
-    private fun showMessage(boolean: Boolean, message: String? = null){
+    private fun showMessage(boolean: Boolean, message: String? = null) {
         fragment_search_dialog_message.apply {
             if (boolean) {
                 visibility = View.VISIBLE
                 text = message ?: ""
-            }
-            else
+            } else
                 View.GONE
         }
     }
@@ -134,8 +134,15 @@ class LocationSearchFragment : DialogFragment(), OnRecyclerItemClickListener{
      * @param query user query string
      */
     private fun getLocation(query: String) {
-        eventViewModel.getLocationByName(query, MAX_RESULT)
-        fragment_search_dialog_progress.visibility = View.VISIBLE
+        if (NetworkConnectivity.isConnected()) {
+            eventViewModel.getLocationByName(query, MAX_RESULT)
+            fragment_search_dialog_progress.visibility = View.VISIBLE
+        } else
+            Toast.makeText(
+                context,
+                getText(R.string.no_network_connectivity),
+                Toast.LENGTH_SHORT
+            ).show()
     }
 
     /**
@@ -153,7 +160,8 @@ class LocationSearchFragment : DialogFragment(), OnRecyclerItemClickListener{
                 it.error is Int -> Toast
                     .makeText(context, getText(it.error), Toast.LENGTH_SHORT)
                     .show()
-                else -> {}
+                else -> {
+                }
             }
         })
     }
@@ -162,10 +170,10 @@ class LocationSearchFragment : DialogFragment(), OnRecyclerItemClickListener{
      * Update recycler view or display message
      * @param metroAreaList list of metroArea corresponding to query search (nullable)
      */
-    private fun updateUI(metroAreaList: ArrayList<MetroArea>?){
+    private fun updateUI(metroAreaList: ArrayList<MetroArea>?) {
         locationList.clear()
 
-        if (!metroAreaList.isNullOrEmpty()){
+        if (!metroAreaList.isNullOrEmpty()) {
             fragment_search_dialog_message.visibility = View.GONE
             locationList.addAll(metroAreaList)
             // show recycler

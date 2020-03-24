@@ -25,6 +25,7 @@ import android.text.Editable
 import android.util.Log
 import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
+import com.lab.zicevents.utils.adapter.NetworkConnectivity
 import kotlinx.android.synthetic.main.publication_recycler_item.*
 
 class AddPublicationFragmentDialog(private val viewModel: PublicationViewModel) :
@@ -118,7 +119,7 @@ class AddPublicationFragmentDialog(private val viewModel: PublicationViewModel) 
      * get and pass result to fetch publications or display error message
      */
     private fun observeProfileResult() {
-        viewModel.profileResult.observe(this, Observer {
+        viewModel.profileResult.observe(viewLifecycleOwner, Observer {
             when {
                 it.data is User -> {
                     currentUser = it.data
@@ -136,7 +137,7 @@ class AddPublicationFragmentDialog(private val viewModel: PublicationViewModel) 
      * Enable/Disable Fab valid button is publication is valid
      */
     private fun observePublicationValidation() {
-        viewModel.publicationValidation.observe(this, Observer {
+        viewModel.publicationValidation.observe(viewLifecycleOwner, Observer {
             publication_dialog_fab.apply {
                 this@AddPublicationFragmentDialog.isPublicationValid = it
                 alpha = if (it) 1f else 0.6f
@@ -211,16 +212,19 @@ class AddPublicationFragmentDialog(private val viewModel: PublicationViewModel) 
      * Show progress dialog and create publication async
      */
     private fun postPublication(){
-        showDialog(true)
-        viewModel.postPublication(currentUser,
-            publication_dialog_message.text, publication_dialog_image.drawable)
+        if (NetworkConnectivity.isConnected()) {
+            showDialog(true)
+            viewModel.postPublication(currentUser,
+                publication_dialog_message.text, publication_dialog_image.drawable)
+        } else
+            Toast.makeText(context, getText(R.string.no_network_connectivity), Toast.LENGTH_SHORT).show()
     }
 
     /**
      * Observe publication creation, hide progress dialog and dismiss
      */
     private fun observePublicationCreation(){
-        viewModel.publicationCreationSate.observe(this, Observer {
+        viewModel.publicationCreationSate.observe(viewLifecycleOwner, Observer {
             showDialog(false)
             dismiss()
         })

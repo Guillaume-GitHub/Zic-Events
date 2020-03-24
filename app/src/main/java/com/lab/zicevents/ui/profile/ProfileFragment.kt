@@ -29,6 +29,7 @@ import com.lab.zicevents.utils.ImagePickerHelper
 import com.lab.zicevents.utils.MarginItemDecoration
 import com.lab.zicevents.utils.OnRequestPermissionsListener
 import com.lab.zicevents.utils.PermissionHelper
+import com.lab.zicevents.utils.adapter.NetworkConnectivity
 import com.lab.zicevents.utils.adapter.PublicationRecyclerAdapter
 import com.lab.zicevents.utils.adapter.UserMediaRecyclerAdapter
 import java.util.*
@@ -61,6 +62,9 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (!NetworkConnectivity.isConnected())
+            Toast.makeText(context, getText(R.string.no_network_connectivity), Toast.LENGTH_SHORT).show()
 
         this.initViewModel()
         // Fetch user information
@@ -153,7 +157,7 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
      * if null or error display error message
      */
     private fun observeProfileChange(){
-        profileViewModel.userProfileResult.observe(this, Observer {
+        profileViewModel.userProfileResult.observe(viewLifecycleOwner, Observer {
             when {
                 it.data is User -> {
                     Log.d(this::class.java.simpleName, it.data.toString())
@@ -187,7 +191,7 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
      * Display publication in recycler or display message if error
      */
     private fun observePublicationResult(){
-        profileViewModel.userPublications.observe(this, Observer {
+        profileViewModel.userPublications.observe(viewLifecycleOwner, Observer {
             val publicationsResult = it
             when {
                 !publicationsResult.list.isNullOrEmpty() -> {
@@ -212,8 +216,17 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
      * @param
      */
     private fun uploadImageFile(drawable: Drawable, requestId: Int){
-        val imageRef = UUID.randomUUID().toString()
-        profileViewModel.uploadImageFile(auth.currentUser!!.uid, drawable, imageRef,requestId)
+        if (NetworkConnectivity.isConnected()) {
+            val imageRef = UUID.randomUUID().toString()
+            profileViewModel.uploadImageFile(auth.currentUser!!.uid, drawable, imageRef,requestId)
+            fragment_profile_user_image.alpha = 0.2F // make it more transparent
+        }
+        else
+            Toast.makeText(
+                context,
+                getText(R.string.no_network_connectivity),
+                Toast.LENGTH_SHORT
+            ).show()
     }
 
     /**
@@ -222,7 +235,7 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
      * else null or error, display message
      */
     private fun observeUploadImageResult(){
-        profileViewModel.uploadImageResult.observe(this, Observer {
+        profileViewModel.uploadImageResult.observe(viewLifecycleOwner, Observer {
             if (it.error != null || it.imageUri == null) {
                 // Display error
                 Toast.makeText(context, getString(R.string.store_image_task_error),
@@ -388,7 +401,6 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
                     imageUri?.let {
                         // show and upload profile image from his uri
                         ImagePickerHelper.getDrawableFromUri(context, it)?.let {drawable ->
-                            fragment_profile_user_image.alpha = 0.2F // make it more transparent
                             uploadImageFile(drawable, requestCode)
                         }
                     }
@@ -398,12 +410,10 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
                     val imageUri = data?.data
                     imageUri?.let { it ->
                         ImagePickerHelper.getDrawableFromUri(context, it)?.let {drawable ->
-                            fragment_profile_cover_image.alpha = 0.2F // make it more transparent
                             uploadImageFile(drawable, requestCode)
                         }
                     }
                 }
-                else -> {}
             }
         }
     }
