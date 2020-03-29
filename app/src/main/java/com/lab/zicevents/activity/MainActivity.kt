@@ -85,17 +85,6 @@ class MainActivity : BaseActivity() {
                     )
                     main_fab.show()
                 }
-                R.id.empty_publication_placeholder -> {
-                    main_toolbar.navigationIcon = null
-                    main_fab.setImageDrawable(
-                        ResourcesCompat.getDrawable(
-                            resources,
-                            R.drawable.ic_add_black_24dp,
-                            null
-                        )
-                    )
-                    main_fab.show()
-                }
                 else -> {
                 }
             }
