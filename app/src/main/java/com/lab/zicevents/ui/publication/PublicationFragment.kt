@@ -70,9 +70,7 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener, OnPublicatio
         // Observe dataset result and show empty fragment when empty
         publicationAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onChanged() {
-                if (publications.isEmpty()) {
-                    displayPlaceholder()
-                }
+                displayPlaceholder(publications.isEmpty())
             }
         })
     }
@@ -146,7 +144,6 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener, OnPublicatio
                 }
                 it.error != null -> {
                     Toast.makeText(context, getString(it.error), Toast.LENGTH_LONG).show()
-                    displayPlaceholder()
                 }
             }
         })
@@ -168,7 +165,7 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener, OnPublicatio
             // Fetch publication(s)
             publicationViewModel.getLastSubscribedPublications(subscriptions, publications[0])
         } else
-            fragment_publication_swipeRefresh.isRefreshing = false
+            getPublications()
     }
 
     /**
@@ -209,10 +206,20 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener, OnPublicatio
     /**
      * Show empty result fragment
      */
-    private fun displayPlaceholder() {
+    private fun displayPlaceholder(boolean: Boolean) {
+        if (boolean) {
+            fragment_publication_no_result.visibility = View.VISIBLE
+            fragment_publication_recyclerView.visibility = View.GONE
+        } else {
+            fragment_publication_no_result.visibility = View.GONE
+            fragment_publication_recyclerView.visibility = View.VISIBLE
+        }
+        //TODO : correct EmptyPublicationPlaceholder bug
+        /*
         val action = PublicationFragmentDirections
             .actionBottomNavigationPublicationToEmptyPublicationPlaceholder()
         findNavController().navigate(action)
+         */
     }
 
     override fun onFabClick() {
