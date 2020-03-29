@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class SearchViewModel(private val userRepo: UserRepository) : ViewModel() {
 
-    private val userSearch = MutableLiveData<DataResult>()
+    val userSearch = MutableLiveData<DataResult>()
     val searchUsersResult: LiveData<DataResult> = userSearch
 
     fun searchUsers(query: String){

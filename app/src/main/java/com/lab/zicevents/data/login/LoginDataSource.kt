@@ -7,6 +7,7 @@ import com.facebook.AccessToken
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.lang.Exception
@@ -15,12 +16,12 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-class LoginDataSource {
+class LoginDataSource(firebaseAuth: FirebaseAuth? = null) {
 
     private val TAG = this.javaClass.simpleName
 
     // Firebase Auth instance
-    private val auth = FirebaseAuth.getInstance()
+    private val auth = firebaseAuth ?: FirebaseAuth.getInstance()
 
     /**
      * Try to create user with his email and password

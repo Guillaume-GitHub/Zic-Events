@@ -29,22 +29,22 @@ class PublicationViewModel(private val publicationRepo: PublicationRepository,
                            private val userRepo: UserRepository,
                            private val storageRepo: StorageRepository): ViewModel() {
 
-    private val publications = MutableLiveData<DataResult>()
+    val publications = MutableLiveData<DataResult>()
     val publicationList: LiveData<DataResult> = publications
 
-    private val newPublications = MutableLiveData<DataResult>()
+    val newPublications = MutableLiveData<DataResult>()
     val newPublicationList: LiveData<DataResult> = newPublications
 
     val profile = MutableLiveData<DataResult>()
     val profileResult: LiveData<DataResult> = profile
 
-    private val userPublicationList = MutableLiveData<PublicationListResult>()
+    val userPublicationList = MutableLiveData<PublicationListResult>()
     val userPublications: LiveData<PublicationListResult> = userPublicationList
 
-    private val publicationValid = MutableLiveData<Boolean>()
+    val publicationValid = MutableLiveData<Boolean>()
     val publicationValidation: LiveData<Boolean> = publicationValid
 
-    private val addPublication = MutableLiveData<DataResult>()
+    val addPublication = MutableLiveData<DataResult>()
     val publicationCreationSate: LiveData<DataResult> = addPublication
 
     /**
@@ -92,10 +92,10 @@ class PublicationViewModel(private val publicationRepo: PublicationRepository,
                             getSubscribedPublications(subscriptions)
                             profile.value = DataResult(data = user)
                         } else
-                            publications.value = DataResult(error = R.string.fetching_user_error)
+                            publications.value = DataResult(error = R.string.fetch_user_publication_error)
                     }
                     is Result.Error -> {
-                        publications.value = DataResult(error = R.string.fetching_user_error)
+                        publications.value = DataResult(error = R.string.fetch_user_publication_error)
                     }
                     is Result.Canceled -> {
                         publications.value = DataResult(error = R.string.fetching_user_canceled)

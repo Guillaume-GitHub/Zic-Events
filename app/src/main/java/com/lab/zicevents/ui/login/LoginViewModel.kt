@@ -286,7 +286,7 @@ class LoginViewModel(val loginRepository: LoginRepository,
      * @param email input email text
      * @return Boolean that indicate if e-mail is valid or not
      */
-    private fun isValidEmail(email: String?): Boolean {
+    fun isValidEmail(email: String?): Boolean {
         return if (email.isNullOrBlank()) false
         else email.matches(Regex("^([0-9a-zA-Z]([\\+\\-\\_\\.][0-9a-zA-Z]+)*)+@(([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]*\\.)+[a-zA-Z0-9]{2,17})\$"))
     }
@@ -297,7 +297,7 @@ class LoginViewModel(val loginRepository: LoginRepository,
      * @return Boolean that indicate if name is correctly formatted
      *
      */
-    private fun isUsernameValid(name: String?): Boolean {
+    fun isUsernameValid(name: String?): Boolean {
         return if (name.isNullOrBlank()) false
         else {
             if (name.length < 3 || name.length >100)
@@ -312,7 +312,7 @@ class LoginViewModel(val loginRepository: LoginRepository,
      * @param password input password text
      * @return Boolean that indicate if password is valid or not
      */
-    private fun isPasswordValid(password: String?): Boolean{
+    fun isPasswordValid(password: String?): Boolean{
         //TODO: Split regex to trigger specific error
         return if (password.isNullOrBlank()) false
         else return password.matches(Regex("^.*(?=.{8,})(?=..*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_]).*$"))
@@ -323,7 +323,7 @@ class LoginViewModel(val loginRepository: LoginRepository,
      * @param phoneNumber input phone number text
      * @return Boolean that indicate if phone number is correctly formatted
      */
-    private fun isPhoneNumberValid(phoneNumber: String?): Boolean{
+    fun isPhoneNumberValid(phoneNumber: String?): Boolean{
         return if (phoneNumber.isNullOrBlank()) true
         else //French number format regex
             phoneNumber.matches(Regex("^(?:(?:\\+|00)33|0)\\s*[1-9](?:[\\s.-]*\\d{2}){4}\$"))
@@ -403,7 +403,7 @@ class LoginViewModel(val loginRepository: LoginRepository,
      * Format pseudo for corresponding to standard pseudo format
      * example : #Random_Pseudo, #RanDomPseuDo3453 etc ...
      */
-    private fun generatePseudo(username: String): String {
+    fun generatePseudo(username: String): String {
         var str = username.replace(Regex("[^a-zA-Z0-9_ ]"), "")
         str = str.replace(" ", "_")
         str = "#$str"

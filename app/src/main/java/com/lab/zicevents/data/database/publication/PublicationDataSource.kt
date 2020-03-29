@@ -10,9 +10,9 @@ import com.lab.zicevents.data.model.database.user.User
 /**
  *  CRUD Firebase Publication collection
  */
-class PublicationDataSource {
+class PublicationDataSource(firestore: FirebaseFirestore? = null) {
 
-    private val database = FirebaseFirestore.getInstance()
+    private val database =  firestore ?: FirebaseFirestore.getInstance()
     private val COLLECTION = "publications"
     private val USER_ID_FIELD = "userId"
 

@@ -44,6 +44,10 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
 }
 
 dependencies {
@@ -64,6 +68,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    //For accessing Test helpers to test LiveData
+    testImplementation 'androidx.arch.core:core-testing:2.1.0'
     implementation 'com.android.support:multidex:1.0.3'
     // coroutines
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2"
@@ -96,4 +102,7 @@ dependencies {
     // GLIDE
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
+    // MOCKITO FOR TESTING
+    testImplementation 'org.mockito:mockito-core:2.+'
 }

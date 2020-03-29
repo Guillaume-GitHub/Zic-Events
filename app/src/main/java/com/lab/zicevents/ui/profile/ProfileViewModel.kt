@@ -40,19 +40,19 @@ class ProfileViewModel(private val userRepo: UserRepository,
     private var userUpdateListener: ListenerRegistration? = null
     val dateFormat: DateFormat = SimpleDateFormat.getDateInstance()
 
-    private val profileDataResult = MutableLiveData<DataResult>()
+    val profileDataResult = MutableLiveData<DataResult>()
     val userProfileResult: LiveData<DataResult> = profileDataResult
 
-    private val uploadedImage = MutableLiveData<UploadedImageResult>()
+    val uploadedImage = MutableLiveData<UploadedImageResult>()
     val uploadImageResult: LiveData<UploadedImageResult> = uploadedImage
 
-    private val publicationList = MutableLiveData<PublicationListResult>()
+    val publicationList = MutableLiveData<PublicationListResult>()
     val userPublications: LiveData<PublicationListResult> = publicationList
 
-    private val updatedProfile = MutableLiveData<DataResult>()
+    val updatedProfile = MutableLiveData<DataResult>()
     val updateProfileResult: LiveData<DataResult> = updatedProfile
 
-    private val geocodingAddress = MutableLiveData<DataResult>()
+    val geocodingAddress = MutableLiveData<DataResult>()
     val geocodingResult: LiveData<DataResult> = geocodingAddress
 
     /**
@@ -214,7 +214,7 @@ class ProfileViewModel(private val userRepo: UserRepository,
      * Check if all value in Map<K,V> are correctly formatted
      * @return isValid Boolean
      */
-    private fun isProfileFieldsValid(map: Map<String, Any?>): Boolean{
+    fun isProfileFieldsValid(map: Map<String, Any?>): Boolean{
         var isValid = true
         map.keys.forEach {
             when (it){

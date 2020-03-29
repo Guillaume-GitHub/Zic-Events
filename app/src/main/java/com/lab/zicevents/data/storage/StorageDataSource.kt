@@ -1,6 +1,7 @@
 package com.lab.zicevents.data.storage
 
 import android.graphics.drawable.Drawable
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
@@ -10,9 +11,9 @@ import com.lab.zicevents.utils.ImagePickerHelper
  *  Upload/Download/Delete Firebase Storage
  */
 
-class StorageDataSource {
+class StorageDataSource(firebaseStorage: FirebaseStorage? = null) {
 
-    private val storage = FirebaseStorage.getInstance()
+    private val storage = firebaseStorage ?: FirebaseStorage.getInstance()
     private val IMAGE_EXTENSION = ".jpeg"
 
     //****************** UPLOAD *********************//
