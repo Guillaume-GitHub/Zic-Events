@@ -236,7 +236,7 @@ class DetailsUserFragment : Fragment() {
         sharedViewModel.getAuthUser()?.let {
             val follow = publicationViewModel.isAlreadyFollow(userId, it)
             if (follow != null)
-                setUserFollowButton(true)
+                setUserFollowButton(follow)
             else
                 user_details_follow_btn.visibility = View.GONE
         }
