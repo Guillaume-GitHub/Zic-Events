@@ -66,6 +66,15 @@ class PublicationFragment : Fragment(), OnActivityFabClickListener, OnPublicatio
         fragment_publication_swipeRefresh.setOnRefreshListener {
             getLastPublications()
         }
+
+        // Observe dataset result and show empty fragment when empty
+        publicationAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onChanged() {
+                if (publications.isEmpty()) {
+                    displayPlaceholder()
+                }
+            }
+        })
     }
 
     /**
