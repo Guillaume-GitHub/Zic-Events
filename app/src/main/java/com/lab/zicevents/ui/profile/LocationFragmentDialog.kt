@@ -112,7 +112,7 @@ class LocationFragmentDialog(
             } // block search for same query between 2 search
 
             else -> {
-                if (NetworkConnectivity.isConnected()) {
+                if (NetworkConnectivity.isOnline(context)) {
                     showProgress(true)
                     viewModel.getGeolocationAddress(location_dialog_text.text.toString())
                     lastSearch = location_dialog_text.text.toString() // save last search string

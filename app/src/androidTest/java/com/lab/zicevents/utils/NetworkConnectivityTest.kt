@@ -1,5 +1,6 @@
 package com.lab.zicevents.utils
 
+import androidx.test.platform.app.InstrumentationRegistry
 import com.lab.zicevents.utils.adapter.NetworkConnectivity
 
 import org.junit.Assert.*
@@ -26,4 +27,10 @@ class NetworkConnectivityTest {
         assertEquals(false, NetworkConnectivity.isConnected(host))
     }
 
+    @Test
+    fun checkIsOnlineTrue() {
+        // Set valid Host name
+        val context = InstrumentationRegistry.getInstrumentation().context
+        assertEquals(true, NetworkConnectivity.isOnline(context))
+    }
 }

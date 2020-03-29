@@ -134,7 +134,7 @@ class LocationSearchFragment : DialogFragment(), OnRecyclerItemClickListener {
      * @param query user query string
      */
     private fun getLocation(query: String) {
-        if (NetworkConnectivity.isConnected()) {
+        if (NetworkConnectivity.isOnline(context)) {
             eventViewModel.getLocationByName(query, MAX_RESULT)
             fragment_search_dialog_progress.visibility = View.VISIBLE
         } else

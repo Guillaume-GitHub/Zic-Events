@@ -129,7 +129,7 @@ class ArtistSearchFragment : DialogFragment(), OnRecyclerItemClickListener {
      * @param query user query string
      */
     private fun getArtists(query: String) {
-        if (NetworkConnectivity.isConnected()) {
+        if (NetworkConnectivity.isOnline(context)) {
             eventViewModel.getArtistByName(query, NB_RESULT)
             fragment_search_dialog_progress.visibility = View.VISIBLE
         } else

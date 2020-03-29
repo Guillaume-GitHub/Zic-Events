@@ -109,7 +109,7 @@ class UserSearchFragment : Fragment(), OnRecyclerItemClickListener {
      * @param query is string user filter
      */
     private fun performSearch(query: String) {
-        if (NetworkConnectivity.isConnected())
+        if (NetworkConnectivity.isOnline(context))
             searchViewModel.searchUsers(query)
         else
             Toast.makeText(

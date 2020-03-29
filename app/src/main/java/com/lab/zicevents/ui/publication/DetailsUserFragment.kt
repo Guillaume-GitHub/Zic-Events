@@ -65,7 +65,7 @@ class DetailsUserFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (!NetworkConnectivity.isConnected())
+        if (!NetworkConnectivity.isOnline(context))
             Toast.makeText(context, getText(R.string.no_network_connectivity), Toast.LENGTH_SHORT).show()
 
         observeProfileResult()

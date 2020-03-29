@@ -117,7 +117,7 @@ class ArtistFragment : Fragment(), OnRecyclerItemClickListener {
      */
     @Suppress("UNCHECKED_CAST")
     private fun getArtistEvent(artistId: Int) {
-        if (NetworkConnectivity.isConnected()) {
+        if (NetworkConnectivity.isOnline(context)) {
             eventViewModel.getArtistEvent(artistId)
             eventViewModel.artistEvents().observe(viewLifecycleOwner, Observer {
                 fragment_artist_progress.visibility = View.GONE

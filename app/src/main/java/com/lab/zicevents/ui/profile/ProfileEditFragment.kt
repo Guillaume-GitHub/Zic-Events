@@ -52,7 +52,7 @@ class ProfileEditFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        if (!NetworkConnectivity.isConnected())
+        if (!NetworkConnectivity.isOnline(context))
             Toast.makeText(context, getText(R.string.no_network_connectivity), Toast.LENGTH_SHORT).show()
 
         super.onViewCreated(view, savedInstanceState)
@@ -283,7 +283,7 @@ class ProfileEditFragment : Fragment(), View.OnClickListener {
      * @param requestId it's an id to retrieve the request when observe result
      */
     private fun uploadImageFile(drawable: Drawable, requestId: Int){
-        if (NetworkConnectivity.isConnected()) {
+        if (NetworkConnectivity.isOnline(context)) {
             val fileName = UUID.randomUUID().toString()
             profileViewModel.uploadImageFile(userId, drawable, fileName, requestId)
             profile_edit_cover_image.alpha = 0.2F // make it more transparent

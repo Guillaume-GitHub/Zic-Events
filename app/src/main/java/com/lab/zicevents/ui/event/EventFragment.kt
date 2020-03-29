@@ -87,7 +87,7 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener, OnRequestPermissi
         // Ask permission to user if permission denied
         if (permsResult.isNullOrEmpty()) {
             observePositionOnce()
-            if (NetworkConnectivity.isConnected())
+            if (NetworkConnectivity.isOnline(context))
                 eventViewModel.getLastKnowPosition(context) // get Last know device position
             else
                 Toast.makeText(
@@ -151,7 +151,7 @@ class EventFragment : Fragment(), OnRecyclerItemClickListener, OnRequestPermissi
      * @param position SearchLocation object with latitude and longitude
      */
     private fun fetchEvents(position: SearchLocation) {
-        if (NetworkConnectivity.isConnected()) {
+        if (NetworkConnectivity.isOnline(context)) {
             fragment_event_progress.visibility = View.VISIBLE
             eventViewModel.searchNearbyEvent(position)
         }

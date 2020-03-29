@@ -63,7 +63,7 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (!NetworkConnectivity.isConnected())
+        if (!NetworkConnectivity.isOnline(context))
             Toast.makeText(context, getText(R.string.no_network_connectivity), Toast.LENGTH_SHORT).show()
 
         this.initViewModel()
@@ -216,7 +216,7 @@ class ProfileFragment: Fragment() ,View.OnClickListener {
      * @param
      */
     private fun uploadImageFile(drawable: Drawable, requestId: Int){
-        if (NetworkConnectivity.isConnected()) {
+        if (NetworkConnectivity.isOnline(context)) {
             val imageRef = UUID.randomUUID().toString()
             profileViewModel.uploadImageFile(auth.currentUser!!.uid, drawable, imageRef,requestId)
             fragment_profile_user_image.alpha = 0.2F // make it more transparent

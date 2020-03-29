@@ -212,7 +212,7 @@ class AddPublicationFragmentDialog(private val viewModel: PublicationViewModel) 
      * Show progress dialog and create publication async
      */
     private fun postPublication(){
-        if (NetworkConnectivity.isConnected()) {
+        if (NetworkConnectivity.isOnline(context)) {
             showDialog(true)
             viewModel.postPublication(currentUser,
                 publication_dialog_message.text, publication_dialog_image.drawable)
